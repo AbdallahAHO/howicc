@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "sessionCount": 9,
+  "totalHours": 12.08,
+  "totalCostUsd": 320.34,
+  "currentStreak": 2,
+  "longestStreak": 2,
+  "activeDays": 2,
+  "topRepos": [
+    {
+      "fullName": "feature/rel-217-chat",
+      "sessionCount": 4
+    },
+    {
+      "fullName": "axetay/really-app",
+      "sessionCount": 2
+    },
+    {
+      "fullName": "personal/howicc",
+      "sessionCount": 2
+    }
+  ]
+}

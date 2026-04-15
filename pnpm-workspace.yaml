@@ -1,4 +1,5 @@
 packages:
-  - 'app'
-  - 'cli'
-  - 'packages/*'
+  - "app"
+  - "apps/*"
+  - "packages/*"
+  - "tooling/*"

@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "howicc-jobs",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-09",
+  "account_id": "8767944cf017742f142dba58aea8858d",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "production",
+    "PRODUCT_NAME": "HowiCC",
+    "JOBS_WORKER_NAME": "howicc-jobs",
+    "API_BASE_URL": "https://api.howi.cc",
+    "DB_PROVIDER": "d1",
+    "STORAGE_PROVIDER": "r2"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "howicc-prod-db",
+      "database_id": "d00dc94e-4d30-4386-acc5-e6d95476bcda"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "howicc-prod-assets",
+      "binding": "ASSETS"
+    }
+  ],
+  "queues": {
+    "consumers": [
+      {
+        "queue": "howicc-prod-ingest"
+      }
+    ]
+  }
+}

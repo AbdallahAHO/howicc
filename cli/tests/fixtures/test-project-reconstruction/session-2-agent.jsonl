@@ -1,2 +1,0 @@
-{"type":"user","uuid":"tool-result-1","sessionId":"session-2","timestamp":"2024-01-01T11:00:02.000Z","parentUuid":"assistant-2","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tool-edit-1","content":"Edit completed successfully"}]}}
-{"type":"summary","uuid":"summary-2","leafUuid":"assistant-2","summary":"Refactored API endpoints","timestamp":"2024-01-01T11:05:00.000Z"}

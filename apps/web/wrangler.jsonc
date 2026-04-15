@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "howicc-web",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-04-09",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist/client"
+  },
+  "vars": {
+    "APP_ENV": "production",
+    "PUBLIC_PRODUCT_NAME": "HowiCC",
+    "PUBLIC_SITE_URL": "https://howi.cc",
+    "PUBLIC_API_URL": "https://api.howi.cc",
+    "API_SERVER_URL": "https://api.howi.cc"
+  }
+}

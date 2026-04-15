@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "id": "conv_4bbf3eb3",
+  "slug": "user-profile-aggregation-system",
+  "title": "user-profile-aggregation-system",
+  "visibility": "public",
+  "status": "ready",
+  "sourceApp": "claude_code",
+  "sourceSessionId": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428",
+  "sourceProjectKey": "-workspace-howicc",
+  "currentRevisionId": "rev_6bd4fabe",
+  "createdAt": "2026-04-10T08:16:45.671000Z",
+  "updatedAt": "2026-04-10T08:16:45.736000Z",
+  "repository": {
+    "owner": "personal",
+    "name": "howicc",
+    "fullName": "personal/howicc",
+    "source": "cwd_derived"
+  },
+  "currentRevision": {
+    "id": "rev_6bd4fabe",
+    "sourceRevisionHash": "d609dde51808bad7f5bd5950adea9b2d2b0b73f78ff524e052216688dfaf276c:ad319c3b385708ac89eaae8ac8f9add9181aeb1744e9f94cfd6c91c834795bbb:5abd83d931aebd4c244e2f9f8869a361dbf78321119b30c5f8086b3521f54047:aa4072f2b36a01abd91bfe26a92238cf754d0f561a4e58f2caaf9138df85cd35:5c52a981556de8b759d43d16c13628b429e41351f9f67eb3b03b29c40267b9de:c9de5a28acf95c5106f8ddf3464c9610fc08deeed6431ff89e5f604ae9ee9b10:6a024514ec19a72712ff0b1cdf13e1caf3030fddfc2412334a8aeabcc7f4881f:f481c35a67fc77dea1efa202f90dc412d21408793686f9fbdf44432154f1a04c:de78894c94b7566cdd296994bd20dd3154622e068f728a720531eef6807f91a0:63f06aa4ef69934465bfb83ef91cee3ee31b23816c05b829ac858ca6e784c485:c9e397ec6c1bbc7ab8daeed6ff32079cec8fbe48e99eafc2c569933627ff0937:aabe8173190768e016a3fd6e1d5d522d7adb17ec45ba9366c07538c7ff26e023:e6c3230ed1485c85fb98ca73b02c34ca6946ef681dc7ad6e31fa24b0bf77d445:70ba5a995ff6f028d225c8a973a4cbc61c9f5c6b007a08b91e6655db2849514c:7f1357a7ab5de73945d448ce69e8af4d5f0554242673567b2082155252bdf214:f54123434f4f64e2fe0d529a94c3236c7d07342e8ef1c918c15325d18d227e24:70d59cea6dd59fa7f7a3c60ccff8316f89e96f0f520011d2299b052549314f16:18122ddff1499a27e7fda294cb52b267ece46d406c39915c1684f0c4170f049d:824192a7a9c142ccc27a4c4a148ecb988dfaee4548430e0fecb3572d359aa72e:a24e590d94b970b7c38730c2a1f3da08e2c487e0efad6c6ee2fefa8261640ed2:7f59a57a3b27d837f5b16a88920ee6b8ad0a679a096dcf1e04e6ad06772a83fe:c26de7c6696db5bbe78cb8e2d7381c65b1d3e998885f41531128ad928f8aaff4:bce5745f4a7008515c78c0a99f605f7bcedc644602bfb06378c0062282a61eb2:ff22813f44085eded44461e526435abbd3a52f40b036378b68a4e5589458b2a6:096ccd6ba469cff9f4166cc795621295176dfe772b8e4ea404bbfaf92205241e:2d08ddbcc2c84526d59a39c9af38c775a371d169e418aba61ddf3fa455cc7307:b494f24e1346d57dca341cb5d16967f58706576e92db7b07b4b9777a782640c2:b7aeaeadb766c85f84c1a24a7fc5514da892e71116e3fa83335e86ca94a9ddf6",
+    "parserVersion": "claude-code-adapter-v0",
+    "canonicalSchemaVersion": 1,
+    "renderSchemaVersion": 1,
+    "summary": null,
+    "createdAt": "2026-04-10T08:16:45.673000Z"
+  }
+}

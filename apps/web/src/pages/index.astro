@@ -1,0 +1,30 @@
+---
+import { env } from '../env'
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{env.PUBLIC_PRODUCT_NAME}</title>
+  </head>
+  <body>
+    <main style="max-width: 720px; margin: 4rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.6; padding: 0 1rem;">
+      <h1>{env.PUBLIC_PRODUCT_NAME}</h1>
+      <p>
+        Share Claude Code and other coding-agent conversations as structured, readable web pages.
+      </p>
+      <p>
+        The rebuild is now running on canonical sessions, render documents, Better Auth, and a Cloudflare-native stack.
+      </p>
+      <div style="margin-top: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="/login" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.8rem 1rem; background: #111827; color: white; border-radius: 999px; text-decoration: none; font-weight: 600;">Continue with GitHub</a>
+        <a href="https://api.howi.cc/health" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.8rem 1rem; border: 1px solid #d1d5db; color: #111827; border-radius: 999px; text-decoration: none;">API health</a>
+      </div>
+      <p style="margin-top: 1.5rem; color: #6b7280; font-size: 0.95rem;">
+        Web: <code>{env.PUBLIC_SITE_URL}</code><br />
+        API: <code>{env.PUBLIC_API_URL}</code>
+      </p>
+    </main>
+  </body>
+</html>

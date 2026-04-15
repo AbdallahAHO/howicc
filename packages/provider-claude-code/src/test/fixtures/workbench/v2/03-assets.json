@@ -1,0 +1,146 @@
+[
+  {
+    "id": "asset:17bb6dd56a760c36",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428.jsonl",
+    "bytes": 5225945,
+    "sha256": "c5df9b7b51215b56"
+  },
+  {
+    "id": "asset:f39e743d46ec7cc2",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a075d55c9ba8b0653.jsonl",
+    "bytes": 232994,
+    "sha256": "aa4072f2b36a01ab"
+  },
+  {
+    "id": "asset:8fdda4b3b540cba5",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a075d55c9ba8b0653.meta.json",
+    "bytes": 76,
+    "sha256": "5c52a981556de8b7"
+  },
+  {
+    "id": "asset:f532863227f8b1ec",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a09b44af95d1bf5bf.jsonl",
+    "bytes": 207324,
+    "sha256": "c9de5a28acf95c51"
+  },
+  {
+    "id": "asset:75207dcd14b47895",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a09b44af95d1bf5bf.meta.json",
+    "bytes": 67,
+    "sha256": "6a024514ec19a727"
+  },
+  {
+    "id": "asset:6a45fbc0f0fa04fb",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a5eff8fc9137bb306.jsonl",
+    "bytes": 403134,
+    "sha256": "70ba5a995ff6f028"
+  },
+  {
+    "id": "asset:99f6d817375c7808",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a5eff8fc9137bb306.meta.json",
+    "bytes": 64,
+    "sha256": "7f1357a7ab5de739"
+  },
+  {
+    "id": "asset:bf96b62c96a55bd0",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a7898d5f90ce75795.jsonl",
+    "bytes": 214825,
+    "sha256": "f54123434f4f64e2"
+  },
+  {
+    "id": "asset:807785a0f47e0ec6",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a7898d5f90ce75795.meta.json",
+    "bytes": 69,
+    "sha256": "70d59cea6dd59fa7"
+  },
+  {
+    "id": "asset:359a9c968721ab37",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a88873bba9000afc2.jsonl",
+    "bytes": 216434,
+    "sha256": "18122ddff1499a27"
+  },
+  {
+    "id": "asset:68baef0ed3fea8c0",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a88873bba9000afc2.meta.json",
+    "bytes": 67,
+    "sha256": "824192a7a9c142cc"
+  },
+  {
+    "id": "asset:456c8a6c184f4939",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a98270a49f74505e0.jsonl",
+    "bytes": 209516,
+    "sha256": "a24e590d94b970b7"
+  },
+  {
+    "id": "asset:f665a0aafc9bb1dd",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a98270a49f74505e0.meta.json",
+    "bytes": 72,
+    "sha256": "7f59a57a3b27d837"
+  },
+  {
+    "id": "asset:5e6501c71eed9241",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-aa98cce373418ed8b.jsonl",
+    "bytes": 296433,
+    "sha256": "c26de7c6696db5bb"
+  },
+  {
+    "id": "asset:149caa8b18734aa5",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-aa98cce373418ed8b.meta.json",
+    "bytes": 67,
+    "sha256": "bce5745f4a700851"
+  },
+  {
+    "id": "asset:6ae479a712321acc",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-af129e829f7d99864.jsonl",
+    "bytes": 192654,
+    "sha256": "2d08ddbcc2c84526"
+  },
+  {
+    "id": "asset:81e0f05a8eda9aaa",
+    "kind": "source_file",
+    "storage": "bundle",
+    "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-af129e829f7d99864.meta.json",
+    "bytes": 75,
+    "sha256": "b494f24e1346d57d"
+  },
+  {
+    "id": "asset:2a05256d34b25f4f",
+    "kind": "plan_file",
+    "storage": "bundle",
+    "relPath": "plans/squishy-mapping-fog.md",
+    "bytes": 7668,
+    "sha256": "b7aeaeadb766c85f"
+  }
+]

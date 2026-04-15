@@ -1,0 +1,113 @@
+{
+  "eventTypeCounts": {
+    "assistant_message": 118,
+    "tool_call": 273,
+    "tool_result": 253,
+    "hook": 22,
+    "system_notice": 20,
+    "user_message": 25
+  },
+  "toolNameCounts": {
+    "Bash": 76,
+    "Read": 67,
+    "Edit": 56,
+    "TaskUpdate": 20,
+    "Write": 18,
+    "Glob": 13,
+    "TaskCreate": 10,
+    "Agent": 8,
+    "ToolSearch": 3,
+    "EnterPlanMode": 1,
+    "ExitPlanMode": 1
+  },
+  "toolsBySource": {
+    "native": [
+      "Agent",
+      "Read",
+      "Glob",
+      "Bash",
+      "Write",
+      "Edit",
+      "ToolSearch",
+      "TaskCreate",
+      "TaskUpdate",
+      "EnterPlanMode",
+      "ExitPlanMode"
+    ],
+    "mcp": [],
+    "repl_virtual": []
+  },
+  "toolLabelCoverage": {
+    "Bash": {
+      "total": 76,
+      "withLabel": 76,
+      "coverage": "100%"
+    },
+    "Read": {
+      "total": 67,
+      "withLabel": 67,
+      "coverage": "100%"
+    },
+    "Edit": {
+      "total": 56,
+      "withLabel": 56,
+      "coverage": "100%"
+    },
+    "TaskUpdate": {
+      "total": 20,
+      "withLabel": 0,
+      "coverage": "0%"
+    },
+    "Write": {
+      "total": 18,
+      "withLabel": 18,
+      "coverage": "100%"
+    },
+    "Glob": {
+      "total": 13,
+      "withLabel": 13,
+      "coverage": "100%"
+    },
+    "TaskCreate": {
+      "total": 10,
+      "withLabel": 10,
+      "coverage": "100%"
+    },
+    "Agent": {
+      "total": 8,
+      "withLabel": 8,
+      "coverage": "100%"
+    },
+    "ToolSearch": {
+      "total": 3,
+      "withLabel": 0,
+      "coverage": "0%"
+    },
+    "EnterPlanMode": {
+      "total": 1,
+      "withLabel": 0,
+      "coverage": "0%"
+    },
+    "ExitPlanMode": {
+      "total": 1,
+      "withLabel": 0,
+      "coverage": "0%"
+    }
+  },
+  "resultStatusCounts": {
+    "ok": 237,
+    "error": 16
+  },
+  "messageStats": {
+    "userMessages": 25,
+    "userMessagesWithMeta": 0,
+    "assistantMessages": 118,
+    "thinkingMessages": 0,
+    "regularAssistantMessages": 118
+  },
+  "artifactTypes": {
+    "plan": 1,
+    "tool_decision": 16,
+    "tool_output": 251
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "id": "conv_66b51f9e",
+  "slug": "warning-console-output-during-zsh-initialization-detected-when-u",
+  "title": "[WARNING]: Console output during zsh initialization detected.  When using Powerlevel10k with instant prompt, console ...",
+  "visibility": "private",
+  "status": "ready",
+  "sourceApp": "claude_code",
+  "sourceSessionId": "9c76e9a0-49aa-47e8-b5dd-4ddca51b0512",
+  "sourceProjectKey": "-workspace-howicc",
+  "currentRevisionId": "rev_70adbbc8",
+  "createdAt": "2026-04-10T08:16:45.223000Z",
+  "updatedAt": "2026-04-10T08:16:45.230000Z",
+  "repository": {
+    "owner": "personal",
+    "name": "howicc",
+    "fullName": "personal/howicc",
+    "source": "cwd_derived"
+  },
+  "currentRevision": {
+    "id": "rev_70adbbc8",
+    "sourceRevisionHash": "fa4e2628ead426cc6a69b3b4899ffdfadab84e30bbbe03b0a1eb8f3fc710bb77",
+    "parserVersion": "claude-code-adapter-v0",
+    "canonicalSchemaVersion": 1,
+    "renderSchemaVersion": 1,
+    "summary": null,
+    "createdAt": "2026-04-10T08:16:45.224000Z"
+  }
+}

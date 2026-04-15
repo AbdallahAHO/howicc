@@ -1,0 +1,22 @@
+{
+  "name": "@howicc/vitest-config",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./base": "./src/base.ts"
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').mkdirSync('dist',{recursive:true});require('node:fs').writeFileSync('dist/.keep','')\"",
+    "dev": "echo \"No dev task for @howicc/vitest-config\"",
+    "test": "echo \"Vitest config package has no tests\"",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "vitest": "^3.0.5"
+  },
+  "devDependencies": {
+    "@howicc/typescript-config": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

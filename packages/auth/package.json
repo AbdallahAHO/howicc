@@ -1,0 +1,33 @@
+{
+  "name": "@howicc/auth",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Auth helpers and token primitives for HowiCC",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./keys": "./src/keys.ts",
+    "./server": "./src/server.ts",
+    "./client/vanilla": "./src/client/vanilla.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.3.8",
+    "@howicc/db": "workspace:*",
+    "better-auth": "^1.3.8",
+    "envin": "^1.2.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@howicc/typescript-config": "workspace:*",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

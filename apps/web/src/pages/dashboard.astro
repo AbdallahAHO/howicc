@@ -1,0 +1,46 @@
+---
+import AuthActionsIsland from '../components/auth/AuthActionsIsland'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+const session = locals.auth.session!
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - HowiCC</title>
+  </head>
+  <body>
+    <main style="max-width: 980px; margin: 3rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.65; padding: 0 1rem;">
+      <section style="border: 1px solid #e5e7eb; border-radius: 1.25rem; padding: 2rem; background: white;">
+        <h1 style="font-size: 3rem; margin: 0 0 0.5rem;">Dashboard - Astro</h1>
+        <p style="margin: 0 0 2rem; color: #6b7280;">SSR-authenticated page powered by Better Auth and Astro middleware.</p>
+
+        <p style="font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem;">
+          Status: Logged In
+        </p>
+
+        <div style="display: grid; gap: 0.85rem; font-size: 1.15rem;">
+          <div><strong>Welcome:</strong> {user.name}</div>
+          <div><strong>Email:</strong> {user.email}</div>
+          <div><strong>User ID:</strong> {user.id}</div>
+          <div><strong>Session ID:</strong> {session.id}</div>
+          <div><strong>Created At:</strong> {user.createdAt ?? 'Unknown'}</div>
+          <div><strong>Updated At:</strong> {user.updatedAt ?? 'Unknown'}</div>
+        </div>
+
+        <AuthActionsIsland client:load apiUrl={locals.authApiUrl} />
+      </section>
+    </main>
+  </body>
+</html>

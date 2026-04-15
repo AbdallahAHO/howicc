@@ -1,0 +1,61 @@
+{
+  "name": "@howicc/cli",
+  "version": "2.0.0",
+  "description": "HowiCC CLI for inspecting, exporting, and eventually syncing local coding-agent conversations",
+  "license": "MIT",
+  "author": {
+    "name": "Abdallah Othman",
+    "email": "contact@abdallahaho.com",
+    "url": "https://abdallahaho.com"
+  },
+  "type": "module",
+  "bin": {
+    "howicc": "./bin/howicc.cjs",
+    "howi": "./bin/howicc.cjs"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepack": "pnpm run build",
+    "pack:dry-run": "pnpm pack",
+    "type-check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --passWithNoTests"
+  },
+  "homepage": "https://howi.cc",
+  "dependencies": {
+    "@howicc/api-client": "workspace:*",
+    "@howicc/canonical": "workspace:*",
+    "@howicc/model-pricing": "workspace:*",
+    "@howicc/parser-core": "workspace:*",
+    "@howicc/privacy": "workspace:*",
+    "@howicc/profile": "workspace:*",
+    "@howicc/provider-claude-code": "workspace:*",
+    "@howicc/render": "workspace:*",
+    "@howicc/storage": "workspace:*",
+    "@inquirer/prompts": "^7.2.0",
+    "chalk": "^5.4.1",
+    "commander": "^12.1.0",
+    "conf": "^13.0.1",
+    "ora": "^8.1.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@howicc/typescript-config": "workspace:*",
+    "@types/node": "^22.10.2",
+    "tsup": "^8.3.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

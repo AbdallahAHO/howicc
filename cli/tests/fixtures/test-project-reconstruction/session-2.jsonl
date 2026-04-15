@@ -1,2 +1,0 @@
-{"type":"user","uuid":"user-2","sessionId":"session-2","timestamp":"2024-01-01T11:00:00.000Z","message":{"role":"user","content":"Refactor the API"},"cwd":"/Users/test/project"}
-{"type":"assistant","uuid":"assistant-2","sessionId":"session-2","timestamp":"2024-01-01T11:00:01.000Z","parentUuid":"user-2","message":{"role":"assistant","content":[{"type":"text","text":"I will refactor."},{"type":"tool_use","id":"tool-edit-1","name":"Edit","input":{"file_path":"api.py","old_string":"old","new_string":"new"}}]}}

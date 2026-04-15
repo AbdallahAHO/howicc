@@ -1,0 +1,38 @@
+{
+  "name": "@howicc/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8787 --ip 127.0.0.1",
+    "build": "tsc -p tsconfig.json",
+    "cf:deploy": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc",
+    "db:reset:local": "rm -rf .wrangler/state/v3/d1",
+    "db:migrate:local": "pnpm exec wrangler d1 migrations apply DB --local --config wrangler.jsonc",
+    "db:prepare:local": "pnpm run db:reset:local && pnpm run db:migrate:local",
+    "test": "vitest run --passWithNoTests",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@howicc/auth": "workspace:*",
+    "@howicc/canonical": "workspace:*",
+    "@howicc/contracts": "workspace:*",
+    "@howicc/db": "workspace:*",
+    "@howicc/model-pricing": "workspace:*",
+    "@howicc/profile": "workspace:*",
+    "@howicc/storage": "workspace:*",
+    "@hono/node-server": "^1.13.7",
+    "@hono/zod-openapi": "^0.18.3",
+    "@scalar/hono-api-reference": "^0.5.160",
+    "drizzle-orm": "^0.36.4",
+    "envin": "^1.2.0",
+    "hono": "^4.6.16",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@howicc/typescript-config": "workspace:*",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

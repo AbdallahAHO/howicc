@@ -1,0 +1,83 @@
+{
+  "sessionId": "fb48afb4-b791-4ad2-8cb4-d9551d154e17",
+  "provider": "claude_code",
+  "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+  "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+  "gitBranch": "feature/rel-217-chat",
+  "title": "commit this and push a branch and open draft PR with nice description and task list",
+  "createdAt": "2026-04-06T13:00:32.124Z",
+  "updatedAt": "2026-04-06T19:36:54.853Z",
+  "durationMs": 2190844,
+  "dayOfWeek": 1,
+  "turnCount": 5,
+  "messageCount": 14,
+  "toolRunCount": 22,
+  "toolCategories": {
+    "read": 11,
+    "write": 3,
+    "search": 2,
+    "command": 6,
+    "agent": 0,
+    "mcp": 0,
+    "plan": 0,
+    "question": 0,
+    "task": 0,
+    "web": 0,
+    "other": 0
+  },
+  "errorCount": 0,
+  "rejectionCount": 0,
+  "interruptionCount": 0,
+  "compactionCount": 0,
+  "subagentCount": 2,
+  "hasPlan": false,
+  "hasThinking": false,
+  "models": [
+    {
+      "model": "claude-opus-4-6",
+      "inputTokens": 10205,
+      "outputTokens": 36819
+    }
+  ],
+  "hourOfDay": 15,
+  "sessionType": "mixed",
+  "filesChanged": [
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md"
+  ],
+  "filesRead": [
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/server.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/property.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/discovery.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/saved.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/preferences.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/alerts.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/collections.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/compare.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/__tests__/unit/capabilities-drift.test.ts",
+    "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md"
+  ],
+  "languages": {
+    "md": 3
+  },
+  "fileIterationDepth": 3,
+  "gitCommits": 1,
+  "gitPushes": 1,
+  "prLinks": [
+    {
+      "url": "https://github.com/axetay/really-app/pull/138",
+      "number": 138,
+      "repository": "axetay/really-app"
+    }
+  ],
+  "mcpServersConfigured": [
+    "claude_ai_DocFork",
+    "claude_ai_Figma",
+    "pencil"
+  ],
+  "mcpServersUsed": [],
+  "skillsTriggered": [],
+  "providerDigest": {
+    "cacheHitRate": 0.8884266251911627,
+    "activeDurationMs": 2190844
+  }
+}

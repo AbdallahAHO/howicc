@@ -1,0 +1,276 @@
+[
+  {
+    "toolName": "Bash",
+    "displayName": "Bash",
+    "source": "native",
+    "callCount": 76,
+    "inputKeys": [
+      "command",
+      "description",
+      "timeout"
+    ],
+    "sampleLabels": [
+      "Find session file by ID",
+      "List existing test files",
+      "Count lines in session file"
+    ],
+    "sampleInputs": [
+      {
+        "command": "find ~/.claude/projects -name \"f40fecf9-e6c8-4c57-ac3a-2eacd12cd428*\" -type f 2>/dev/null",
+        "description": "Find session file by ID"
+      },
+      {
+        "command": "ls /Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/",
+        "description": "List existing test files"
+      }
+    ]
+  },
+  {
+    "toolName": "Read",
+    "displayName": "Read",
+    "source": "native",
+    "callCount": 67,
+    "inputKeys": [
+      "file_path",
+      "limit",
+      "offset"
+    ],
+    "sampleLabels": [
+      "/Users/abdallah/.claude/usage-data/report.html",
+      "/Users/abdallah/Developer/personal/howicc/packages/canonical/src/session.ts",
+      "/Users/abdallah/Developer/personal/howicc/packages/canonical/src/event.ts"
+    ],
+    "sampleInputs": [
+      {
+        "file_path": "/Users/abdallah/.claude/usage-data/report.html",
+        "limit": 100
+      },
+      {
+        "file_path": "/Users/abdallah/Developer/personal/howicc/packages/canonical/src/session.ts"
+      }
+    ]
+  },
+  {
+    "toolName": "Edit",
+    "displayName": "Edit",
+    "source": "native",
+    "callCount": 56,
+    "inputKeys": [
+      "replace_all",
+      "file_path",
+      "old_string",
+      "new_string"
+    ],
+    "sampleLabels": [
+      "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-render.ts",
+      "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/parse/metrics.ts",
+      "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/parse/raw.ts"
+    ],
+    "sampleInputs": [
+      {
+        "replace_all": false,
+        "file_path": "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-render.ts",
+        "old_string": "import { buildRenderDocument } from '@howicc/render'",
+        "new_string": "import { buildRenderDocument } from '../../../../render/src/buildRenderDocument'"
+      },
+      {
+        "replace_all": false,
+        "file_path": "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-render.ts",
+        "old_string": "import { buildRenderDocument } from '../../../../render/src/buildRenderDocument'",
+        "new_string": "import { buildRenderDocument } from '../../../../render/src/buildRenderDocument.js'"
+      }
+    ]
+  },
+  {
+    "toolName": "TaskUpdate",
+    "displayName": "TaskUpdate",
+    "source": "native",
+    "callCount": 20,
+    "inputKeys": [
+      "taskId",
+      "status"
+    ],
+    "sampleLabels": [],
+    "sampleInputs": [
+      {
+        "taskId": "4",
+        "status": "in_progress"
+      },
+      {
+        "taskId": "4",
+        "status": "completed"
+      }
+    ]
+  },
+  {
+    "toolName": "Write",
+    "displayName": "Write",
+    "source": "native",
+    "callCount": 18,
+    "inputKeys": [
+      "file_path",
+      "content"
+    ],
+    "sampleLabels": [
+      "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-session.ts",
+      "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-render.ts",
+      "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/prototype-profile.ts"
+    ],
+    "sampleInputs": [
+      {
+        "file_path": "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-session.ts",
+        "content": "/**\n * Quick script to run the full pipeline on a specific session and dump output.\n * Usage: npx tsx src/__tests__/dump-session.ts <sessionId>\n */\nimport { writeFile } from 'node:fs/promises'\nimport ..."
+      },
+      {
+        "file_path": "/Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/src/__tests__/dump-render.ts",
+        "content": "/**\n * Runs the full pipeline + render layer on a session and shows what blocks are produced.\n * Usage: npx tsx src/__tests__/dump-render.ts <sessionId>\n */\nimport { buildClaudeCanonicalSession } from..."
+      }
+    ]
+  },
+  {
+    "toolName": "Glob",
+    "displayName": "Glob",
+    "source": "native",
+    "callCount": 13,
+    "inputKeys": [
+      "pattern"
+    ],
+    "sampleLabels": [
+      "packages/canonical/src/**/*.ts",
+      "revamp/claude-code-understanding/**/*.md",
+      "packages/db/README.md"
+    ],
+    "sampleInputs": [
+      {
+        "pattern": "packages/canonical/src/**/*.ts"
+      },
+      {
+        "pattern": "revamp/claude-code-understanding/**/*.md"
+      }
+    ]
+  },
+  {
+    "toolName": "TaskCreate",
+    "displayName": "TaskCreate",
+    "source": "native",
+    "callCount": 10,
+    "inputKeys": [
+      "subject",
+      "description",
+      "activeForm"
+    ],
+    "sampleLabels": [
+      "CC stores the same API response usage on every content block entry within one response. The pipeline sums all of them, o",
+      "Entries with content [{\"type\":\"thinking\",\"thinking\":\"\",\"signature\":\"...\"}] produce raw JSON gibberish in assistant text.",
+      "Most Read/Glob/Grep/Bash tool calls have empty commentLabel. Extract from input.file_path (Read), input.pattern (Glob/Gr"
+    ],
+    "sampleInputs": [
+      {
+        "subject": "Fix token overcounting in metrics.ts (2-3x inflation)",
+        "description": "CC stores the same API response usage on every content block entry within one response. The pipeline sums all of them, overcounting input tokens by 2.3x and cache tokens by 1.9-3.1x. Fix by deduplicat...",
+        "activeForm": "Fixing token overcounting"
+      },
+      {
+        "subject": "Filter thinking blocks from assistant message events",
+        "description": "Entries with content [{\"type\":\"thinking\",\"thinking\":\"\",\"signature\":\"...\"}] produce raw JSON gibberish in assistant text. Filter them out in buildEvents.ts — the thinking content is empty/redacted for ...",
+        "activeForm": "Filtering thinking blocks"
+      }
+    ]
+  },
+  {
+    "toolName": "Agent",
+    "displayName": "Agent",
+    "source": "native",
+    "callCount": 8,
+    "inputKeys": [
+      "description",
+      "subagent_type",
+      "prompt"
+    ],
+    "sampleLabels": [
+      "Explore claude-code project",
+      "Explore provider-claude-code package",
+      "Explore CC session metadata"
+    ],
+    "sampleInputs": [
+      {
+        "description": "Explore claude-code project",
+        "subagent_type": "Explore",
+        "prompt": "Explore the project at /Users/abdallah/Developer/playground/claude-code thoroughly. I need to understand:\n1. What this project does — look at package.json, README, main entry points\n2. How it generate..."
+      },
+      {
+        "description": "Explore provider-claude-code package",
+        "subagent_type": "Explore",
+        "prompt": "Thoroughly explore the package at /Users/abdallah/Developer/personal/howicc/packages/provider-claude-code/\n\nI need to understand:\n1. What this package does - read package.json, README, all source file..."
+      }
+    ]
+  },
+  {
+    "toolName": "ToolSearch",
+    "displayName": "ToolSearch",
+    "source": "native",
+    "callCount": 3,
+    "inputKeys": [
+      "query",
+      "max_results"
+    ],
+    "sampleLabels": [],
+    "sampleInputs": [
+      {
+        "query": "select:TaskCreate,TaskUpdate",
+        "max_results": 2
+      },
+      {
+        "query": "select:EnterPlanMode",
+        "max_results": 1
+      }
+    ]
+  },
+  {
+    "toolName": "EnterPlanMode",
+    "displayName": "EnterPlanMode",
+    "source": "native",
+    "callCount": 1,
+    "inputKeys": [],
+    "sampleLabels": [],
+    "sampleInputs": [
+      {}
+    ]
+  },
+  {
+    "toolName": "ExitPlanMode",
+    "displayName": "ExitPlanMode",
+    "source": "native",
+    "callCount": 1,
+    "inputKeys": [
+      "allowedPrompts",
+      "plan",
+      "planFilePath"
+    ],
+    "sampleLabels": [],
+    "sampleInputs": [
+      {
+        "allowedPrompts": [
+          {
+            "tool": "Bash",
+            "prompt": "run tests"
+          },
+          {
+            "tool": "Bash",
+            "prompt": "type check packages"
+          },
+          {
+            "tool": "Bash",
+            "prompt": "list directory contents"
+          },
+          {
+            "tool": "Bash",
+            "prompt": "run prototype script against real session data"
+          }
+        ],
+        "plan": "# Profile & Insights System\n\n## Context\n\nHowiCC can parse CC sessions into canonical form, but has no way to aggregate data across sessions into a user-wide profile. The prototype we ran against 117 r...",
+        "planFilePath": "/Users/abdallah/.claude/plans/squishy-mapping-fog.md"
+      }
+    ]
+  }
+]

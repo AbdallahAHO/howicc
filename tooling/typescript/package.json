@@ -1,0 +1,20 @@
+{
+  "name": "@howicc/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared TypeScript configurations for the HowiCC monorepo",
+  "exports": {
+    "./base.json": "./base.json",
+    "./library.json": "./library.json",
+    "./node.json": "./node.json",
+    "./worker.json": "./worker.json",
+    "./astro.json": "./astro.json",
+    "./react-library.json": "./react-library.json"
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').mkdirSync('dist',{recursive:true});require('node:fs').writeFileSync('dist/.keep','')\"",
+    "dev": "echo \"No dev task for @howicc/typescript-config\"",
+    "test": "echo \"No tests for @howicc/typescript-config\"",
+    "type-check": "echo \"No type-check task for @howicc/typescript-config\""
+  }
+}

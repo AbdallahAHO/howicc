@@ -1,0 +1,9 @@
+{
+  "extends": "@howicc/typescript-config/worker.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["node"]
+  },
+  "include": ["src/**/*"]
+}

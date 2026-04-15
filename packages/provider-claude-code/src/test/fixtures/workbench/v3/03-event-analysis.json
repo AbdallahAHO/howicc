@@ -1,0 +1,113 @@
+{
+  "eventTypeCounts": {
+    "assistant_message": 161,
+    "tool_call": 340,
+    "tool_result": 320,
+    "hook": 26,
+    "system_notice": 24,
+    "user_message": 29
+  },
+  "toolNameCounts": {
+    "Bash": 106,
+    "Edit": 81,
+    "Read": 79,
+    "TaskUpdate": 20,
+    "Write": 18,
+    "Glob": 13,
+    "TaskCreate": 10,
+    "Agent": 8,
+    "ToolSearch": 3,
+    "EnterPlanMode": 1,
+    "ExitPlanMode": 1
+  },
+  "toolsBySource": {
+    "native": [
+      "Agent",
+      "Read",
+      "Glob",
+      "Bash",
+      "Write",
+      "Edit",
+      "ToolSearch",
+      "TaskCreate",
+      "TaskUpdate",
+      "EnterPlanMode",
+      "ExitPlanMode"
+    ],
+    "mcp": [],
+    "repl_virtual": []
+  },
+  "toolLabelCoverage": {
+    "Bash": {
+      "total": 106,
+      "withLabel": 106,
+      "coverage": "100%"
+    },
+    "Edit": {
+      "total": 81,
+      "withLabel": 81,
+      "coverage": "100%"
+    },
+    "Read": {
+      "total": 79,
+      "withLabel": 79,
+      "coverage": "100%"
+    },
+    "TaskUpdate": {
+      "total": 20,
+      "withLabel": 20,
+      "coverage": "100%"
+    },
+    "Write": {
+      "total": 18,
+      "withLabel": 18,
+      "coverage": "100%"
+    },
+    "Glob": {
+      "total": 13,
+      "withLabel": 13,
+      "coverage": "100%"
+    },
+    "TaskCreate": {
+      "total": 10,
+      "withLabel": 10,
+      "coverage": "100%"
+    },
+    "Agent": {
+      "total": 8,
+      "withLabel": 8,
+      "coverage": "100%"
+    },
+    "ToolSearch": {
+      "total": 3,
+      "withLabel": 3,
+      "coverage": "100%"
+    },
+    "EnterPlanMode": {
+      "total": 1,
+      "withLabel": 0,
+      "coverage": "0%"
+    },
+    "ExitPlanMode": {
+      "total": 1,
+      "withLabel": 0,
+      "coverage": "0%"
+    }
+  },
+  "resultStatusCounts": {
+    "ok": 303,
+    "error": 17
+  },
+  "messageStats": {
+    "userMessages": 29,
+    "userMessagesWithMeta": 0,
+    "assistantMessages": 161,
+    "thinkingMessages": 0,
+    "regularAssistantMessages": 161
+  },
+  "artifactTypes": {
+    "plan": 1,
+    "tool_decision": 17,
+    "tool_output": 318
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "@howicc/db",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Drizzle schema and metadata storage models for HowiCC",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./src/config.ts",
+    "./keys": "./src/keys.ts",
+    "./schema": "./src/schema/index.ts",
+    "./adapters": "./src/adapters/index.ts",
+    "./adapters/d1": "./src/adapters/d1.ts",
+    "./adapters/postgres": "./src/adapters/postgres.ts",
+    "./types": "./src/types.ts",
+    "./zod": "./src/zod.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.36.4",
+    "drizzle-zod": "^0.5.1",
+    "envin": "^1.2.0",
+    "postgres": "^3.4.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@howicc/typescript-config": "workspace:*",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

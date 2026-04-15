@@ -1,0 +1,24 @@
+# Cloudflare Worker variables for local API development.
+# Copy to `apps/api/.dev.vars` when wiring wrangler locally.
+
+APP_ENV="development"
+PRODUCT_NAME="HowiCC"
+API_BASE_URL="http://localhost:8787"
+WEB_APP_URL="http://localhost:4321"
+SHARE_TOKEN_SECRET="dev-share-token-secret-change-me-please"
+
+BETTER_AUTH_SECRET="dev-better-auth-secret-change-me-please"
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+
+DB_PROVIDER="d1"
+DATABASE_URL=""
+
+STORAGE_PROVIDER="r2"
+STORAGE_BUCKET_NAME=""
+STORAGE_REGION="auto"
+STORAGE_ENDPOINT=""
+STORAGE_ACCESS_KEY_ID=""
+STORAGE_SECRET_ACCESS_KEY=""
+
+# D1, R2, and Queue objects themselves should come from Wrangler bindings.

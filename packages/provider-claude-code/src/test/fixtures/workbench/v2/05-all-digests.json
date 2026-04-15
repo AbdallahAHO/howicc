@@ -1,0 +1,5930 @@
+[
+  {
+    "sessionId": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-personal-howicc",
+    "projectPath": "/Users/abdallah/Developer/personal/howicc",
+    "gitBranch": "chore/howicc-revamp-foundation",
+    "createdAt": "2026-04-09T03:59:40.731Z",
+    "updatedAt": "2026-04-09T08:18:02.755Z",
+    "durationMs": 10694031,
+    "turnCount": 26,
+    "messageCount": 165,
+    "toolRunCount": 308,
+    "toolCategories": {
+      "read": 75,
+      "write": 83,
+      "search": 13,
+      "command": 94,
+      "agent": 8,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 30,
+      "web": 0,
+      "other": 3
+    },
+    "errorCount": 16,
+    "rejectionCount": 16,
+    "interruptionCount": 1,
+    "subagentCount": 8,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 23817,
+        "outputTokens": 171945
+      }
+    ],
+    "hourOfDay": 5,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9785442075520533,
+      "activeDurationMs": 10694031
+    }
+  },
+  {
+    "sessionId": "aa4f3718-3b43-4813-918d-a3662b908d92",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-09T08:14:17.038Z",
+    "updatedAt": "2026-04-09T08:16:27.383Z",
+    "durationMs": 130345,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 2,
+    "toolCategories": {
+      "read": 2,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3972,
+        "outputTokens": 7305
+      }
+    ],
+    "hourOfDay": 10,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.47738009545182347,
+      "activeDurationMs": 130345
+    }
+  },
+  {
+    "sessionId": "b3b51e5a-1a9a-40fc-93f0-2e51fcc7dd24",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-09T06:39:34.357Z",
+    "updatedAt": "2026-04-09T06:50:08.867Z",
+    "durationMs": 634510,
+    "turnCount": 5,
+    "messageCount": 29,
+    "toolRunCount": 31,
+    "toolCategories": {
+      "read": 12,
+      "write": 2,
+      "search": 8,
+      "command": 0,
+      "agent": 9,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 10,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3588,
+        "outputTokens": 11462
+      }
+    ],
+    "hourOfDay": 8,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8839304507210343,
+      "activeDurationMs": 634510
+    }
+  },
+  {
+    "sessionId": "606a79b4-4c8d-49e2-892b-3971458b869f",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-09T00:55:47.929Z",
+    "updatedAt": "2026-04-09T02:48:26.093Z",
+    "durationMs": 2148920,
+    "turnCount": 7,
+    "messageCount": 72,
+    "toolRunCount": 118,
+    "toolCategories": {
+      "read": 28,
+      "write": 11,
+      "search": 11,
+      "command": 51,
+      "agent": 5,
+      "mcp": 0,
+      "plan": 1,
+      "question": 0,
+      "task": 3,
+      "web": 5,
+      "other": 3
+    },
+    "errorCount": 5,
+    "rejectionCount": 5,
+    "interruptionCount": 1,
+    "subagentCount": 4,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 11386,
+        "outputTokens": 55197
+      }
+    ],
+    "hourOfDay": 2,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9571773705874398,
+      "activeDurationMs": 2148920
+    }
+  },
+  {
+    "sessionId": "fecf4d03-b1dd-4fd7-ad3f-4e98ea760696",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-09T04:35:56.261Z",
+    "updatedAt": "2026-04-09T04:50:28.604Z",
+    "durationMs": 835413,
+    "turnCount": 8,
+    "messageCount": 24,
+    "toolRunCount": 21,
+    "toolCategories": {
+      "read": 2,
+      "write": 2,
+      "search": 6,
+      "command": 9,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 1,
+      "other": 1
+    },
+    "errorCount": 6,
+    "rejectionCount": 6,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 108,
+        "outputTokens": 3954
+      }
+    ],
+    "hourOfDay": 6,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9248924261114648,
+      "activeDurationMs": 835413
+    }
+  },
+  {
+    "sessionId": "7af9cc22-3c3e-4ef9-82a3-200d0f71b00c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-personal-howicc",
+    "projectPath": "/Users/abdallah/Developer/personal/howicc",
+    "gitBranch": "chore/howicc-revamp-foundation",
+    "createdAt": "2026-04-09T03:57:35.204Z",
+    "updatedAt": "2026-04-09T03:58:35.018Z",
+    "durationMs": 59814,
+    "turnCount": 0,
+    "messageCount": 1,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 45
+      }
+    ],
+    "hourOfDay": 5,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 59814
+    }
+  },
+  {
+    "sessionId": "6b2f09ab-6268-494d-b1a3-45e51285d673",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer",
+    "projectPath": "/Users/abdallah/Developer",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-09T03:33:36.324Z",
+    "updatedAt": "2026-04-09T03:34:36.111Z",
+    "durationMs": 59787,
+    "turnCount": 0,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 77
+      }
+    ],
+    "hourOfDay": 5,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 59787
+    }
+  },
+  {
+    "sessionId": "b56e8e77-6ce4-4e0c-9556-0c5ad43082ce",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-09T00:41:13.296Z",
+    "updatedAt": "2026-04-09T01:52:32.631Z",
+    "durationMs": 1011157,
+    "turnCount": 4,
+    "messageCount": 21,
+    "toolRunCount": 44,
+    "toolCategories": {
+      "read": 15,
+      "write": 0,
+      "search": 15,
+      "command": 9,
+      "agent": 3,
+      "mcp": 0,
+      "plan": 0,
+      "question": 1,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 1,
+    "subagentCount": 3,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 20460,
+        "outputTokens": 9666
+      }
+    ],
+    "hourOfDay": 2,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9092614587961855,
+      "activeDurationMs": 1011157
+    }
+  },
+  {
+    "sessionId": "d20a181a-d427-4d48-8dfd-4847deedb353",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-08T22:39:55.876Z",
+    "updatedAt": "2026-04-09T00:52:22.678Z",
+    "durationMs": 1698858,
+    "turnCount": 5,
+    "messageCount": 21,
+    "toolRunCount": 71,
+    "toolCategories": {
+      "read": 39,
+      "write": 0,
+      "search": 9,
+      "command": 22,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 18911,
+        "outputTokens": 14936
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8268142470425727,
+      "activeDurationMs": 1698858
+    }
+  },
+  {
+    "sessionId": "4674e702-b4e3-496b-9e31-3436e0591661",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-08T22:26:35.991Z",
+    "updatedAt": "2026-04-09T00:40:40.641Z",
+    "durationMs": 4659608,
+    "turnCount": 19,
+    "messageCount": 81,
+    "toolRunCount": 145,
+    "toolCategories": {
+      "read": 31,
+      "write": 7,
+      "search": 13,
+      "command": 74,
+      "agent": 7,
+      "mcp": 0,
+      "plan": 3,
+      "question": 0,
+      "task": 6,
+      "web": 0,
+      "other": 4
+    },
+    "errorCount": 6,
+    "rejectionCount": 6,
+    "interruptionCount": 3,
+    "subagentCount": 7,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 15394,
+        "outputTokens": 58904
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9376176396313023,
+      "activeDurationMs": 4659608
+    }
+  },
+  {
+    "sessionId": "06dbdf0c-d23b-40e6-bab5-ff88a52df7a6",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-08T22:55:13.560Z",
+    "updatedAt": "2026-04-08T22:58:47.921Z",
+    "durationMs": 214361,
+    "turnCount": 2,
+    "messageCount": 11,
+    "toolRunCount": 25,
+    "toolCategories": {
+      "read": 4,
+      "write": 4,
+      "search": 1,
+      "command": 16,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6473,
+        "outputTokens": 7658
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.943294088147426,
+      "activeDurationMs": 214361
+    }
+  },
+  {
+    "sessionId": "05d5be9c-a613-42a1-afc2-7c53a8a5692d",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-08T21:30:06.395Z",
+    "updatedAt": "2026-04-08T23:06:29.971Z",
+    "durationMs": 4487836,
+    "turnCount": 9,
+    "messageCount": 126,
+    "toolRunCount": 269,
+    "toolCategories": {
+      "read": 79,
+      "write": 68,
+      "search": 20,
+      "command": 30,
+      "agent": 6,
+      "mcp": 0,
+      "plan": 2,
+      "question": 1,
+      "task": 58,
+      "web": 0,
+      "other": 5
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 1,
+    "subagentCount": 6,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 14799,
+        "outputTokens": 80724
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9847724341741826,
+      "activeDurationMs": 4487836
+    }
+  },
+  {
+    "sessionId": "8848ed13-b11c-4eca-ae8e-05b449728f1b",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-08T20:48:09.074Z",
+    "updatedAt": "2026-04-08T22:19:51.140Z",
+    "durationMs": 2603830,
+    "turnCount": 15,
+    "messageCount": 54,
+    "toolRunCount": 72,
+    "toolCategories": {
+      "read": 25,
+      "write": 0,
+      "search": 28,
+      "command": 9,
+      "agent": 9,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 1,
+    "subagentCount": 9,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 17921,
+        "outputTokens": 35058
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9081394324547267,
+      "activeDurationMs": 2603830
+    }
+  },
+  {
+    "sessionId": "8818e5da-ed48-434c-b662-615dffc41f05",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-08T21:39:23.168Z",
+    "updatedAt": "2026-04-08T21:46:33.989Z",
+    "durationMs": 430821,
+    "turnCount": 1,
+    "messageCount": 3,
+    "toolRunCount": 4,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 4,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 4,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 4440,
+        "outputTokens": 6255
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.6569859951344599,
+      "activeDurationMs": 430821
+    }
+  },
+  {
+    "sessionId": "72d83915-5fcc-4d27-a785-1e5d47ac7d92",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-08T21:39:12.837Z",
+    "updatedAt": "2026-04-08T21:39:19.601Z",
+    "durationMs": 6764,
+    "turnCount": 0,
+    "messageCount": 2,
+    "toolRunCount": 3,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 3,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 2,
+        "outputTokens": 348
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.31580347405102016,
+      "activeDurationMs": 6764
+    }
+  },
+  {
+    "sessionId": "39f331ec-4ec2-4a2f-9cc2-94ac161968b3",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-08T20:50:05.558Z",
+    "updatedAt": "2026-04-08T21:33:42.542Z",
+    "durationMs": 1279014,
+    "turnCount": 7,
+    "messageCount": 18,
+    "toolRunCount": 30,
+    "toolCategories": {
+      "read": 17,
+      "write": 0,
+      "search": 1,
+      "command": 8,
+      "agent": 4,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 6,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6830,
+        "outputTokens": 13762
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8699542961513154,
+      "activeDurationMs": 1279014
+    }
+  },
+  {
+    "sessionId": "1b425327-ca84-4334-8771-b30737c7fdf8",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-04T16:54:16.862Z",
+    "updatedAt": "2026-04-08T20:35:23.166Z",
+    "durationMs": 2653622,
+    "turnCount": 0,
+    "messageCount": 1,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 25,
+        "outputTokens": 4097
+      },
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 196,
+        "outputTokens": 4428
+      }
+    ],
+    "hourOfDay": 18,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "claude_ai_Really",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.7570578708500573,
+      "activeDurationMs": 2653622
+    }
+  },
+  {
+    "sessionId": "cdf37e02-40ad-45b5-98b8-b761591b4183",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer",
+    "projectPath": "/Users/abdallah/Developer",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-08T20:33:21.289Z",
+    "updatedAt": "2026-04-08T20:33:21.289Z",
+    "durationMs": 0,
+    "turnCount": 0,
+    "messageCount": 3,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {}
+  },
+  {
+    "sessionId": "fb48afb4-b791-4ad2-8cb4-d9551d154e17",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-06T13:00:32.124Z",
+    "updatedAt": "2026-04-06T19:36:54.853Z",
+    "durationMs": 2190844,
+    "turnCount": 5,
+    "messageCount": 14,
+    "toolRunCount": 22,
+    "toolCategories": {
+      "read": 11,
+      "write": 3,
+      "search": 2,
+      "command": 6,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 2,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 10205,
+        "outputTokens": 36819
+      }
+    ],
+    "hourOfDay": 15,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8884266251911627,
+      "activeDurationMs": 2190844
+    }
+  },
+  {
+    "sessionId": "f46ae9e0-861d-41fd-b4ea-efd3ff2bb8ef",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-06T10:28:27.288Z",
+    "updatedAt": "2026-04-06T10:32:18.146Z",
+    "durationMs": 230858,
+    "turnCount": 2,
+    "messageCount": 14,
+    "toolRunCount": 24,
+    "toolCategories": {
+      "read": 7,
+      "write": 6,
+      "search": 0,
+      "command": 11,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 4160,
+        "outputTokens": 8073
+      }
+    ],
+    "hourOfDay": 12,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9017662239978634,
+      "activeDurationMs": 230858
+    }
+  },
+  {
+    "sessionId": "903f3cb8-e087-40d5-b553-3c43e6355ae4",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-05T21:32:40.887Z",
+    "updatedAt": "2026-04-05T21:35:06.333Z",
+    "durationMs": 145446,
+    "turnCount": 1,
+    "messageCount": 15,
+    "toolRunCount": 34,
+    "toolCategories": {
+      "read": 19,
+      "write": 4,
+      "search": 5,
+      "command": 3,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 4,
+    "rejectionCount": 4,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 7865,
+        "outputTokens": 6638
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9397709396180367,
+      "activeDurationMs": 145446
+    }
+  },
+  {
+    "sessionId": "c385b8f0-f0e9-43c8-a53f-305d809c18d6",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-05T17:30:45.373Z",
+    "updatedAt": "2026-04-05T20:06:35.029Z",
+    "durationMs": 5707275,
+    "turnCount": 14,
+    "messageCount": 67,
+    "toolRunCount": 170,
+    "toolCategories": {
+      "read": 24,
+      "write": 32,
+      "search": 19,
+      "command": 89,
+      "agent": 4,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 8,
+    "rejectionCount": 8,
+    "interruptionCount": 3,
+    "subagentCount": 4,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 12536,
+        "outputTokens": 201687
+      }
+    ],
+    "hourOfDay": 19,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "jira-cli",
+        "invocationCount": 1
+      },
+      {
+        "name": "clerk-backend-api",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9283436551665366,
+      "activeDurationMs": 5707275
+    }
+  },
+  {
+    "sessionId": "6f36b1fa-6ce1-4b80-954e-a03dec0e3e8c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-05T21:32:09.314Z",
+    "updatedAt": "2026-04-05T21:32:12.099Z",
+    "durationMs": 2785,
+    "turnCount": 0,
+    "messageCount": 1,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 4
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 2785
+    }
+  },
+  {
+    "sessionId": "4a38c69e-1f14-4b5e-9cde-4fd7adc04c17",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-05T21:23:58.422Z",
+    "updatedAt": "2026-04-05T21:23:58.547Z",
+    "durationMs": 125,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 125
+    }
+  },
+  {
+    "sessionId": "d8ff5409-0760-4240-88c0-4607d1310cc6",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-05T21:11:46.994Z",
+    "updatedAt": "2026-04-05T21:21:23.968Z",
+    "durationMs": 484800,
+    "turnCount": 2,
+    "messageCount": 4,
+    "toolRunCount": 18,
+    "toolCategories": {
+      "read": 5,
+      "write": 0,
+      "search": 6,
+      "command": 7,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 975,
+        "outputTokens": 6733
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9313625039608224,
+      "activeDurationMs": 484800
+    }
+  },
+  {
+    "sessionId": "9d30ecd5-bd2c-41bd-8efa-55fe45dd687a",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-05T20:37:42.990Z",
+    "updatedAt": "2026-04-05T21:01:18.019Z",
+    "durationMs": 1182625,
+    "turnCount": 1,
+    "messageCount": 31,
+    "toolRunCount": 68,
+    "toolCategories": {
+      "read": 17,
+      "write": 15,
+      "search": 7,
+      "command": 20,
+      "agent": 2,
+      "mcp": 0,
+      "plan": 1,
+      "question": 1,
+      "task": 1,
+      "web": 0,
+      "other": 4
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 0,
+    "subagentCount": 2,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 8576,
+        "outputTokens": 41975
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "jira",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.944197970685207,
+      "activeDurationMs": 1182625
+    }
+  },
+  {
+    "sessionId": "4fe3558c-57a3-4603-bacb-95e2dee4a809",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-05T19:18:27.972Z",
+    "updatedAt": "2026-04-05T20:08:42.642Z",
+    "durationMs": 455867,
+    "turnCount": 3,
+    "messageCount": 8,
+    "toolRunCount": 9,
+    "toolCategories": {
+      "read": 1,
+      "write": 2,
+      "search": 0,
+      "command": 6,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 27,
+        "outputTokens": 3803
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9116810893903922,
+      "activeDurationMs": 455867
+    }
+  },
+  {
+    "sessionId": "40f11713-991b-4802-8ffb-a8e8f7073158",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+    "gitBranch": "feat/wave0",
+    "createdAt": "2026-04-05T20:37:22.423Z",
+    "updatedAt": "2026-04-05T20:37:31.017Z",
+    "durationMs": 8594,
+    "turnCount": 1,
+    "messageCount": 1,
+    "toolRunCount": 2,
+    "toolCategories": {
+      "read": 1,
+      "write": 0,
+      "search": 0,
+      "command": 1,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6,
+        "outputTokens": 674
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 8594
+    }
+  },
+  {
+    "sessionId": "e773849e-c8c6-4b57-85c0-3ed045ab3d90",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-05T18:54:41.644Z",
+    "updatedAt": "2026-04-05T19:03:32.305Z",
+    "durationMs": 530661,
+    "turnCount": 1,
+    "messageCount": 10,
+    "toolRunCount": 35,
+    "toolCategories": {
+      "read": 7,
+      "write": 4,
+      "search": 1,
+      "command": 23,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 46,
+        "outputTokens": 10797
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9675419613321579,
+      "activeDurationMs": 530661
+    }
+  },
+  {
+    "sessionId": "16351354-6b3d-4876-83af-73dbe65d4eb3",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-05T16:02:27.550Z",
+    "updatedAt": "2026-04-05T16:43:07.210Z",
+    "durationMs": 2059548,
+    "turnCount": 9,
+    "messageCount": 52,
+    "toolRunCount": 96,
+    "toolCategories": {
+      "read": 26,
+      "write": 15,
+      "search": 17,
+      "command": 38,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 969,
+        "outputTokens": 3413
+      },
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 192,
+        "outputTokens": 50035
+      }
+    ],
+    "hourOfDay": 18,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9665010177830691,
+      "activeDurationMs": 2059548
+    }
+  },
+  {
+    "sessionId": "2c55a91d-140f-4dac-9566-5ac84c6fd509",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-05T17:26:08.319Z",
+    "updatedAt": "2026-04-05T17:26:08.795Z",
+    "durationMs": 476,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 19,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 476
+    }
+  },
+  {
+    "sessionId": "da21d24a-f3f0-449e-861a-e2d2f3380a9c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-05T16:16:58.670Z",
+    "updatedAt": "2026-04-05T17:10:17.163Z",
+    "durationMs": 2732937,
+    "turnCount": 11,
+    "messageCount": 52,
+    "toolRunCount": 116,
+    "toolCategories": {
+      "read": 23,
+      "write": 19,
+      "search": 15,
+      "command": 44,
+      "agent": 0,
+      "mcp": 14,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 4,
+    "rejectionCount": 4,
+    "interruptionCount": 2,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 1578,
+        "outputTokens": 69216
+      }
+    ],
+    "hourOfDay": 18,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 14
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9647611161494684,
+      "activeDurationMs": 2732937
+    }
+  },
+  {
+    "sessionId": "3b991ceb-10f0-4d9d-b1cb-7f9744de52f9",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "fix/lazy-client-init-for-smoke-boot",
+    "createdAt": "2026-04-05T14:09:04.504Z",
+    "updatedAt": "2026-04-05T15:32:04.274Z",
+    "durationMs": 1975297,
+    "turnCount": 5,
+    "messageCount": 31,
+    "toolRunCount": 106,
+    "toolCategories": {
+      "read": 18,
+      "write": 4,
+      "search": 8,
+      "command": 76,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 6,
+    "rejectionCount": 6,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 5260,
+        "outputTokens": 46672
+      }
+    ],
+    "hourOfDay": 16,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9517547620924696,
+      "activeDurationMs": 1975297
+    }
+  },
+  {
+    "sessionId": "3e2c07a1-8319-4445-9a07-0b6ac4284af4",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "fix/deploy-reliability-and-smoke-tests",
+    "createdAt": "2026-04-05T13:44:20.191Z",
+    "updatedAt": "2026-04-05T13:46:31.093Z",
+    "durationMs": 130902,
+    "turnCount": 2,
+    "messageCount": 5,
+    "toolRunCount": 8,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 5,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 2,
+      "other": 1
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 503,
+        "outputTokens": 3466
+      }
+    ],
+    "hourOfDay": 15,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.7405364865653812,
+      "activeDurationMs": 130902
+    }
+  },
+  {
+    "sessionId": "7d267875-7dd8-4af8-a00b-4739a5e08e38",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "fix/deploy-reliability-and-smoke-tests",
+    "createdAt": "2026-04-05T13:43:56.149Z",
+    "updatedAt": "2026-04-05T13:43:56.614Z",
+    "durationMs": 465,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 15,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 465
+    }
+  },
+  {
+    "sessionId": "f77c11ca-a908-46df-a773-36a02265e315",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "fix/deploy-reliability-and-smoke-tests",
+    "createdAt": "2026-04-05T12:33:09.772Z",
+    "updatedAt": "2026-04-05T13:43:51.377Z",
+    "durationMs": 3207706,
+    "turnCount": 11,
+    "messageCount": 58,
+    "toolRunCount": 146,
+    "toolCategories": {
+      "read": 23,
+      "write": 21,
+      "search": 0,
+      "command": 76,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 2,
+      "task": 20,
+      "web": 0,
+      "other": 4
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 2402,
+        "outputTokens": 61092
+      }
+    ],
+    "hourOfDay": 14,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9785074130906443,
+      "activeDurationMs": 3207706
+    }
+  },
+  {
+    "sessionId": "4031ccc5-f0ef-4fb8-8696-41d262fdc2f0",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "fix/deploy-reliability-and-smoke-tests",
+    "createdAt": "2026-04-05T10:36:30.474Z",
+    "updatedAt": "2026-04-05T12:32:21.933Z",
+    "durationMs": 6127291,
+    "turnCount": 15,
+    "messageCount": 96,
+    "toolRunCount": 348,
+    "toolCategories": {
+      "read": 32,
+      "write": 54,
+      "search": 3,
+      "command": 259,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 14,
+    "rejectionCount": 14,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 438,
+        "outputTokens": 197433
+      }
+    ],
+    "hourOfDay": 12,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9908694276891931,
+      "activeDurationMs": 6127291
+    }
+  },
+  {
+    "sessionId": "05d188c4-2062-4c58-986e-f2d0d658da60",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-05T08:29:26.299Z",
+    "updatedAt": "2026-04-05T09:43:00.027Z",
+    "durationMs": 2956345,
+    "turnCount": 6,
+    "messageCount": 65,
+    "toolRunCount": 166,
+    "toolCategories": {
+      "read": 27,
+      "write": 48,
+      "search": 1,
+      "command": 89,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 1,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 12023,
+        "outputTokens": 67604
+      }
+    ],
+    "hourOfDay": 10,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.975729199788109,
+      "activeDurationMs": 2956345
+    }
+  },
+  {
+    "sessionId": "52560755-254d-4569-9fd8-1cbd8a1dc0bd",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T22:10:11.505Z",
+    "updatedAt": "2026-04-04T23:00:34.488Z",
+    "durationMs": 2742468,
+    "turnCount": 11,
+    "messageCount": 87,
+    "toolRunCount": 184,
+    "toolCategories": {
+      "read": 39,
+      "write": 41,
+      "search": 8,
+      "command": 84,
+      "agent": 0,
+      "mcp": 11,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 7,
+    "rejectionCount": 7,
+    "interruptionCount": 4,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6732,
+        "outputTokens": 61181
+      },
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 860,
+        "outputTokens": 12882
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 11
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9785291299721308,
+      "activeDurationMs": 2742468
+    }
+  },
+  {
+    "sessionId": "cea8e8a9-ca2d-40cc-b114-74c6fc68401a",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T22:32:51.810Z",
+    "updatedAt": "2026-04-05T08:29:11.898Z",
+    "durationMs": 2524153,
+    "turnCount": 18,
+    "messageCount": 86,
+    "toolRunCount": 144,
+    "toolCategories": {
+      "read": 21,
+      "write": 22,
+      "search": 11,
+      "command": 75,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 13,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 6,
+    "rejectionCount": 6,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3463,
+        "outputTokens": 86691
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "clerk-backend-api",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9730851273041479,
+      "activeDurationMs": 2524153
+    }
+  },
+  {
+    "sessionId": "17c53397-be88-4f28-b678-002bf1733b4a",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T22:03:53.151Z",
+    "updatedAt": "2026-04-04T22:11:05.156Z",
+    "durationMs": 432005,
+    "turnCount": 1,
+    "messageCount": 4,
+    "toolRunCount": 54,
+    "toolCategories": {
+      "read": 5,
+      "write": 0,
+      "search": 4,
+      "command": 45,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 60,
+        "outputTokens": 19158
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9773831586227016,
+      "activeDurationMs": 432005
+    }
+  },
+  {
+    "sessionId": "01b9be9a-877b-4cdc-8abd-05d651016d7d",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T21:40:43.775Z",
+    "updatedAt": "2026-04-04T22:02:35.928Z",
+    "durationMs": 1312153,
+    "turnCount": 6,
+    "messageCount": 38,
+    "toolRunCount": 71,
+    "toolCategories": {
+      "read": 10,
+      "write": 13,
+      "search": 1,
+      "command": 46,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 7,
+    "rejectionCount": 7,
+    "interruptionCount": 2,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 88,
+        "outputTokens": 29397
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "jira",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9800480373759385,
+      "activeDurationMs": 1312153
+    }
+  },
+  {
+    "sessionId": "dd82094b-276f-4848-b07f-a5a0017dd3a0",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-packages-search-cdk",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really/packages/search/cdk",
+    "gitBranch": "main",
+    "createdAt": "2026-04-04T21:51:20.050Z",
+    "updatedAt": "2026-04-04T21:51:33.205Z",
+    "durationMs": 13155,
+    "turnCount": 1,
+    "messageCount": 1,
+    "toolRunCount": 1,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 1,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 3,
+        "outputTokens": 233
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.4869752874221764,
+      "activeDurationMs": 13155
+    }
+  },
+  {
+    "sessionId": "6959a36d-60fe-4756-8e23-4a02ba050924",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T21:21:37.249Z",
+    "updatedAt": "2026-04-04T21:45:19.016Z",
+    "durationMs": 712378,
+    "turnCount": 2,
+    "messageCount": 20,
+    "toolRunCount": 45,
+    "toolCategories": {
+      "read": 7,
+      "write": 7,
+      "search": 3,
+      "command": 28,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 63,
+        "outputTokens": 20327
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9602365847610869,
+      "activeDurationMs": 712378
+    }
+  },
+  {
+    "sessionId": "e722f9c3-a34c-41f9-83c2-69f66e3b3d39",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-packages-search-cdk",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really/packages/search/cdk",
+    "gitBranch": "main",
+    "createdAt": "2026-04-02T22:00:31.425Z",
+    "updatedAt": "2026-04-04T21:51:10.567Z",
+    "durationMs": 2079618,
+    "turnCount": 5,
+    "messageCount": 30,
+    "toolRunCount": 88,
+    "toolCategories": {
+      "read": 7,
+      "write": 1,
+      "search": 4,
+      "command": 76,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 4,
+    "rejectionCount": 4,
+    "interruptionCount": 2,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 825,
+        "outputTokens": 27416
+      }
+    ],
+    "hourOfDay": 0,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9470097300203983,
+      "activeDurationMs": 2079618
+    }
+  },
+  {
+    "sessionId": "68c6f6c6-2cda-44d9-9491-8933611e3202",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T21:10:30.067Z",
+    "updatedAt": "2026-04-04T21:37:36.002Z",
+    "durationMs": 1625935,
+    "turnCount": 4,
+    "messageCount": 38,
+    "toolRunCount": 208,
+    "toolCategories": {
+      "read": 61,
+      "write": 23,
+      "search": 1,
+      "command": 121,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 1,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 5,
+    "rejectionCount": 5,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 23690,
+        "outputTokens": 84784
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9873611082467878,
+      "activeDurationMs": 1625935
+    }
+  },
+  {
+    "sessionId": "e868dcfc-9e1b-43fd-bbdb-96ddfb0091b4",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-single-property-page",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/single-property-page",
+    "gitBranch": "feat/single-property-page",
+    "createdAt": "2026-03-23T07:22:33.336Z",
+    "updatedAt": "2026-03-23T15:44:29.421Z",
+    "durationMs": 24943329,
+    "turnCount": 1,
+    "messageCount": 1,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 1,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 18119,
+        "outputTokens": 218610
+      }
+    ],
+    "hourOfDay": 8,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9730056422724657,
+      "activeDurationMs": 24943329
+    }
+  },
+  {
+    "sessionId": "c16dfa18-48ba-4758-b7f1-5b9359151f3f",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-branding-system",
+    "createdAt": "2026-04-04T21:05:18.087Z",
+    "updatedAt": "2026-04-04T21:05:18.087Z",
+    "turnCount": 0,
+    "messageCount": 0,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 3,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {}
+  },
+  {
+    "sessionId": "d5621b33-92a6-49bc-814c-167c8105a38b",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-single-property-page",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/single-property-page",
+    "gitBranch": "feat/single-property-page",
+    "createdAt": "2026-03-23T05:37:10.589Z",
+    "updatedAt": "2026-03-23T07:17:44.295Z",
+    "durationMs": 5184963,
+    "turnCount": 0,
+    "messageCount": 0,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 2,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 13641,
+        "outputTokens": 89621
+      }
+    ],
+    "hourOfDay": 6,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9803312347177026,
+      "activeDurationMs": 5184963
+    }
+  },
+  {
+    "sessionId": "33e41503-e5d2-47cc-82f4-6d01a5bbe0b2",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-area-editorial",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-area-editorial",
+    "gitBranch": "main",
+    "createdAt": "2026-03-21T19:26:40.706Z",
+    "updatedAt": "2026-03-22T15:48:15.954Z",
+    "durationMs": 9475953,
+    "turnCount": 0,
+    "messageCount": 0,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 4,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 5821,
+        "outputTokens": 89095
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9633367771507414,
+      "activeDurationMs": 9475953
+    }
+  },
+  {
+    "sessionId": "9935414e-5088-45f1-bb77-7e2e2d3ef434",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T20:36:22.678Z",
+    "updatedAt": "2026-04-04T21:04:44.205Z",
+    "durationMs": 1701527,
+    "turnCount": 12,
+    "messageCount": 45,
+    "toolRunCount": 128,
+    "toolCategories": {
+      "read": 2,
+      "write": 0,
+      "search": 0,
+      "command": 123,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 3,
+      "other": 0
+    },
+    "errorCount": 5,
+    "rejectionCount": 5,
+    "interruptionCount": 3,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 105,
+        "outputTokens": 12325
+      },
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 1480,
+        "outputTokens": 41855
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9805059230895575,
+      "activeDurationMs": 1701527
+    }
+  },
+  {
+    "sessionId": "75a602f9-c5e3-4056-a36d-7e89e4af0502",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-personal-job-hunter",
+    "projectPath": "/Users/abdallah/Developer/personal/job-hunter",
+    "gitBranch": "main",
+    "createdAt": "2026-04-03T19:54:05.100Z",
+    "updatedAt": "2026-04-03T20:43:29.986Z",
+    "durationMs": 2633740,
+    "turnCount": 7,
+    "messageCount": 75,
+    "toolRunCount": 108,
+    "toolCategories": {
+      "read": 36,
+      "write": 41,
+      "search": 5,
+      "command": 16,
+      "agent": 4,
+      "mcp": 0,
+      "plan": 3,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 3
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 0,
+    "subagentCount": 4,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 9000,
+        "outputTokens": 39097
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9651906787341031,
+      "activeDurationMs": 2633740
+    }
+  },
+  {
+    "sessionId": "def6af7e-1442-4937-bf84-2ca1e6b4cc5b",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Library-CloudStorage-GoogleDrive-abdallah-ali-hassan-gmail-com-My-Drive-JD-20-29-Family---memories-22-Family-22-04-Anas-Job-Hunt",
+    "projectPath": "/Users/abdallah/Library/CloudStorage/GoogleDrive-abdallah.ali.hassan@gmail.com/My Drive/JD/20-29 Family & memories/22 Family/22.04 Anas Job Hunt",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-03T15:35:23.386Z",
+    "updatedAt": "2026-04-03T16:18:37.731Z",
+    "durationMs": 2542178,
+    "turnCount": 10,
+    "messageCount": 55,
+    "toolRunCount": 85,
+    "toolCategories": {
+      "read": 11,
+      "write": 20,
+      "search": 0,
+      "command": 16,
+      "agent": 0,
+      "mcp": 29,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 9
+    },
+    "errorCount": 8,
+    "rejectionCount": 8,
+    "interruptionCount": 4,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 140,
+        "outputTokens": 74459
+      }
+    ],
+    "hourOfDay": 17,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [
+      {
+        "server": "claude-in-chrome",
+        "toolCallCount": 4
+      },
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 2
+      },
+      {
+        "server": "pencil",
+        "toolCallCount": 23
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.969540776014205,
+      "activeDurationMs": 2542178
+    }
+  },
+  {
+    "sessionId": "ec203e96-8401-4f08-8528-72b0a1a30346",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-personal-job-hunter",
+    "projectPath": "/Users/abdallah/Developer/personal/job-hunter",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-03T15:15:15.854Z",
+    "updatedAt": "2026-04-03T20:45:21.831Z",
+    "durationMs": 10415265,
+    "turnCount": 32,
+    "messageCount": 240,
+    "toolRunCount": 423,
+    "toolCategories": {
+      "read": 49,
+      "write": 123,
+      "search": 1,
+      "command": 192,
+      "agent": 5,
+      "mcp": 6,
+      "plan": 6,
+      "question": 3,
+      "task": 25,
+      "web": 4,
+      "other": 9
+    },
+    "errorCount": 23,
+    "rejectionCount": 23,
+    "interruptionCount": 6,
+    "subagentCount": 5,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 5018,
+        "outputTokens": 139282
+      }
+    ],
+    "hourOfDay": 17,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [
+      {
+        "server": "claude_ai_DocFork",
+        "toolCallCount": 2
+      },
+      {
+        "server": "pencil",
+        "toolCallCount": 4
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9643360394948274,
+      "activeDurationMs": 10415265
+    }
+  },
+  {
+    "sessionId": "d8b05611-7d6b-4e7b-ad51-f40afea87137",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T20:39:37.520Z",
+    "updatedAt": "2026-04-04T20:39:38.001Z",
+    "durationMs": 481,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 481
+    }
+  },
+  {
+    "sessionId": "522ef1cb-04b3-4116-ad1e-690fc4ddf41a",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T20:34:37.519Z",
+    "updatedAt": "2026-04-04T20:34:49.958Z",
+    "durationMs": 12439,
+    "turnCount": 0,
+    "messageCount": 1,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 3,
+        "outputTokens": 556
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 12439
+    }
+  },
+  {
+    "sessionId": "868ee485-65db-4547-8f36-12d38aa89eb3",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-04T15:57:13.739Z",
+    "updatedAt": "2026-04-04T20:34:22.098Z",
+    "durationMs": 11141649,
+    "turnCount": 40,
+    "messageCount": 329,
+    "toolRunCount": 521,
+    "toolCategories": {
+      "read": 107,
+      "write": 115,
+      "search": 24,
+      "command": 258,
+      "agent": 6,
+      "mcp": 1,
+      "plan": 1,
+      "question": 0,
+      "task": 0,
+      "web": 4,
+      "other": 5
+    },
+    "errorCount": 28,
+    "rejectionCount": 28,
+    "interruptionCount": 10,
+    "subagentCount": 7,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 30840,
+        "outputTokens": 158658
+      }
+    ],
+    "hourOfDay": 17,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 1
+      }
+    ],
+    "skillsTriggered": [
+      {
+        "name": "jira",
+        "invocationCount": 1
+      },
+      {
+        "name": "commit",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9789736123360199,
+      "activeDurationMs": 11141649
+    }
+  },
+  {
+    "sessionId": "b0dde63d-c728-4746-a0e9-5388282031b3",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-04T14:56:13.776Z",
+    "updatedAt": "2026-04-04T15:51:36.950Z",
+    "durationMs": 3104636,
+    "turnCount": 13,
+    "messageCount": 52,
+    "toolRunCount": 186,
+    "toolCategories": {
+      "read": 13,
+      "write": 24,
+      "search": 0,
+      "command": 143,
+      "agent": 2,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 6,
+    "rejectionCount": 6,
+    "interruptionCount": 2,
+    "subagentCount": 2,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 348,
+        "outputTokens": 12304
+      },
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 2599,
+        "outputTokens": 42422
+      }
+    ],
+    "hourOfDay": 16,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9462639455999481,
+      "activeDurationMs": 3104636
+    }
+  },
+  {
+    "sessionId": "9b915247-89fa-426c-be32-9397be3c72f6",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-04T15:07:31.317Z",
+    "updatedAt": "2026-04-04T15:21:07.209Z",
+    "durationMs": 548149,
+    "turnCount": 2,
+    "messageCount": 7,
+    "toolRunCount": 11,
+    "toolCategories": {
+      "read": 9,
+      "write": 0,
+      "search": 1,
+      "command": 0,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 4654,
+        "outputTokens": 4057
+      }
+    ],
+    "hourOfDay": 17,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.6118155634184245,
+      "activeDurationMs": 548149
+    }
+  },
+  {
+    "sessionId": "1c9be020-c36e-4a5b-ac3e-59f0494a268c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-04T13:55:28.640Z",
+    "updatedAt": "2026-04-04T15:56:41.611Z",
+    "durationMs": 3082203,
+    "turnCount": 10,
+    "messageCount": 61,
+    "toolRunCount": 159,
+    "toolCategories": {
+      "read": 37,
+      "write": 25,
+      "search": 5,
+      "command": 91,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 9,
+    "rejectionCount": 9,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6248,
+        "outputTokens": 57746
+      }
+    ],
+    "hourOfDay": 15,
+    "mcpServersConfigured": [
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.969206243676832,
+      "activeDurationMs": 3082203
+    }
+  },
+  {
+    "sessionId": "46a246cb-a8b2-4c31-9dfe-a215ecd160c8",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "mcp",
+    "createdAt": "2026-04-03T09:38:41.902Z",
+    "updatedAt": "2026-04-03T21:14:29.867Z",
+    "durationMs": 16242098,
+    "turnCount": 57,
+    "messageCount": 366,
+    "toolRunCount": 554,
+    "toolCategories": {
+      "read": 52,
+      "write": 120,
+      "search": 38,
+      "command": 265,
+      "agent": 8,
+      "mcp": 12,
+      "plan": 2,
+      "question": 2,
+      "task": 28,
+      "web": 19,
+      "other": 8
+    },
+    "errorCount": 40,
+    "rejectionCount": 40,
+    "interruptionCount": 12,
+    "subagentCount": 8,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6482,
+        "outputTokens": 237285
+      }
+    ],
+    "hourOfDay": 11,
+    "mcpServersConfigured": [
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [
+      {
+        "server": "claude_ai_DocFork",
+        "toolCallCount": 12
+      }
+    ],
+    "skillsTriggered": [
+      {
+        "name": "clerk-backend-api",
+        "invocationCount": 1
+      },
+      {
+        "name": "commit",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9707786891452257,
+      "activeDurationMs": 16242098
+    }
+  },
+  {
+    "sessionId": "93556c67-4c25-4681-baec-1af09bff85ad",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Library-CloudStorage-GoogleDrive-abdallah-ali-hassan-gmail-com-My-Drive-JD-20-29-Family---memories-22-Family-22-04-Anas-Job-Hunt",
+    "projectPath": "/Users/abdallah/Library/CloudStorage/GoogleDrive-abdallah.ali.hassan@gmail.com/My Drive/JD/20-29 Family & memories/22 Family/22.04 Anas Job Hunt",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-03T19:47:27.767Z",
+    "updatedAt": "2026-04-03T19:49:03.278Z",
+    "durationMs": 95511,
+    "turnCount": 0,
+    "messageCount": 9,
+    "toolRunCount": 5,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 4,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 10,
+        "outputTokens": 4145
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "pencil",
+        "toolCallCount": 4
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8211475226806982,
+      "activeDurationMs": 95511
+    }
+  },
+  {
+    "sessionId": "3440628c-7376-47fa-a667-52d67479e9a8",
+    "provider": "claude_code",
+    "projectKey": "-",
+    "projectPath": "/",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-03T16:21:19.501Z",
+    "updatedAt": "2026-04-03T16:39:17.044Z",
+    "durationMs": 910060,
+    "turnCount": 0,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 57,
+        "outputTokens": 22897
+      }
+    ],
+    "hourOfDay": 18,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8408139389465106,
+      "activeDurationMs": 910060
+    }
+  },
+  {
+    "sessionId": "81fc1b63-cf0e-4e0b-8f1b-70a3f2b71079",
+    "provider": "claude_code",
+    "projectKey": "-",
+    "projectPath": "/",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-03T16:23:18.379Z",
+    "updatedAt": "2026-04-03T16:30:51.349Z",
+    "durationMs": 452970,
+    "turnCount": 0,
+    "messageCount": 28,
+    "toolRunCount": 22,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 16,
+      "plan": 4,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 31,
+        "outputTokens": 25345
+      }
+    ],
+    "hourOfDay": 18,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "pencil",
+        "toolCallCount": 16
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9569563790412293,
+      "activeDurationMs": 452970
+    }
+  },
+  {
+    "sessionId": "a85a4ed0-9479-4f82-b0a2-01fcd9ee1db1",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-03T09:37:24.413Z",
+    "updatedAt": "2026-04-03T09:37:24.903Z",
+    "durationMs": 490,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 11,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 490
+    }
+  },
+  {
+    "sessionId": "be371c72-da8c-4c0d-802b-0eee95d1b9a7",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-04-02T21:35:03.384Z",
+    "updatedAt": "2026-04-03T09:16:40.017Z",
+    "durationMs": 8688592,
+    "turnCount": 24,
+    "messageCount": 197,
+    "toolRunCount": 381,
+    "toolCategories": {
+      "read": 54,
+      "write": 40,
+      "search": 24,
+      "command": 226,
+      "agent": 6,
+      "mcp": 0,
+      "plan": 1,
+      "question": 0,
+      "task": 18,
+      "web": 6,
+      "other": 6
+    },
+    "errorCount": 32,
+    "rejectionCount": 32,
+    "interruptionCount": 7,
+    "subagentCount": 7,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 26076,
+        "outputTokens": 121340
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "clerk-backend-api",
+        "invocationCount": 1
+      },
+      {
+        "name": "jira",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9754507915907583,
+      "activeDurationMs": 8688592
+    }
+  },
+  {
+    "sessionId": "f5c4ce7e-4266-4f10-bc93-07cd4ddcb541",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-03T08:40:46.354Z",
+    "updatedAt": "2026-04-03T08:42:20.053Z",
+    "durationMs": 93699,
+    "turnCount": 2,
+    "messageCount": 4,
+    "toolRunCount": 5,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 1,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 3,
+      "other": 1
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 10,
+        "outputTokens": 459
+      }
+    ],
+    "hourOfDay": 10,
+    "mcpServersConfigured": [
+      "claude-in-chrome",
+      "claude_ai_DocFork",
+      "claude_ai_Figma",
+      "pencil"
+    ],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.71702219452567,
+      "activeDurationMs": 93699
+    }
+  },
+  {
+    "sessionId": "019bca7d-4574-4162-bcc1-ab4c12227781",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-02T21:31:32.589Z",
+    "updatedAt": "2026-04-02T21:31:33.054Z",
+    "durationMs": 465,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 465
+    }
+  },
+  {
+    "sessionId": "1ffecc9b-a210-40e2-9857-dcd4d9ea8210",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-02T21:31:12.246Z",
+    "updatedAt": "2026-04-02T21:31:16.388Z",
+    "durationMs": 4142,
+    "turnCount": 1,
+    "messageCount": 5,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 4142
+    }
+  },
+  {
+    "sessionId": "f16043a8-1d7b-482c-9823-a10c6283477f",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-02T20:21:15.021Z",
+    "updatedAt": "2026-04-02T21:30:47.929Z",
+    "durationMs": 4055772,
+    "turnCount": 20,
+    "messageCount": 122,
+    "toolRunCount": 230,
+    "toolCategories": {
+      "read": 35,
+      "write": 23,
+      "search": 7,
+      "command": 144,
+      "agent": 5,
+      "mcp": 0,
+      "plan": 4,
+      "question": 3,
+      "task": 0,
+      "web": 4,
+      "other": 5
+    },
+    "errorCount": 20,
+    "rejectionCount": 20,
+    "interruptionCount": 3,
+    "subagentCount": 5,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 7663,
+        "outputTokens": 44970
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9802529207777914,
+      "activeDurationMs": 4055772
+    }
+  },
+  {
+    "sessionId": "7c72d128-20fd-4007-8aa8-4739c78b26b8",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T20:42:55.395Z",
+    "updatedAt": "2026-04-02T21:01:25.516Z",
+    "durationMs": 1110121,
+    "turnCount": 4,
+    "messageCount": 28,
+    "toolRunCount": 42,
+    "toolCategories": {
+      "read": 6,
+      "write": 13,
+      "search": 0,
+      "command": 13,
+      "agent": 6,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 1,
+    "subagentCount": 6,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3233,
+        "outputTokens": 17443
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9472548840083022,
+      "activeDurationMs": 1110121
+    }
+  },
+  {
+    "sessionId": "351e0077-bde1-4094-ab3d-cc7788ab0080",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T18:15:14.484Z",
+    "updatedAt": "2026-04-02T20:14:26.389Z",
+    "durationMs": 2580902,
+    "turnCount": 13,
+    "messageCount": 55,
+    "toolRunCount": 105,
+    "toolCategories": {
+      "read": 27,
+      "write": 13,
+      "search": 0,
+      "command": 52,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 1,
+      "question": 0,
+      "task": 0,
+      "web": 8,
+      "other": 3
+    },
+    "errorCount": 4,
+    "rejectionCount": 4,
+    "interruptionCount": 2,
+    "subagentCount": 1,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 1971,
+        "outputTokens": 19950
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9287550481868942,
+      "activeDurationMs": 2580902
+    }
+  },
+  {
+    "sessionId": "bfb838b6-6123-47d9-a044-1bf18c38fa69",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-02T20:09:59.033Z",
+    "updatedAt": "2026-04-02T20:21:12.214Z",
+    "durationMs": 354271,
+    "turnCount": 1,
+    "messageCount": 8,
+    "toolRunCount": 9,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 9,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 914,
+        "outputTokens": 1672
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.7324204644798358,
+      "activeDurationMs": 354271
+    }
+  },
+  {
+    "sessionId": "a9c9a1d6-8910-408b-97d9-a6312e05d336",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T20:19:18.960Z",
+    "updatedAt": "2026-04-02T20:20:40.627Z",
+    "durationMs": 81667,
+    "turnCount": 2,
+    "messageCount": 10,
+    "toolRunCount": 1,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 1,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 371
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.4565267974870085,
+      "activeDurationMs": 81667
+    }
+  },
+  {
+    "sessionId": "6177e477-dd6c-4f33-a035-042bd745c671",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T20:03:51.899Z",
+    "updatedAt": "2026-04-02T20:15:19.320Z",
+    "durationMs": 602587,
+    "turnCount": 1,
+    "messageCount": 10,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 90
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 602587
+    }
+  },
+  {
+    "sessionId": "02a2a357-5d5b-4c1b-a1ce-0453eda87067",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T19:44:50.151Z",
+    "updatedAt": "2026-04-02T20:03:20.763Z",
+    "durationMs": 1021564,
+    "turnCount": 2,
+    "messageCount": 14,
+    "toolRunCount": 32,
+    "toolCategories": {
+      "read": 10,
+      "write": 5,
+      "search": 8,
+      "command": 6,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 1,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 2019,
+        "outputTokens": 7035
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9152429883919792,
+      "activeDurationMs": 1021564
+    }
+  },
+  {
+    "sessionId": "f8f0cbfb-d3a7-4e51-8e2c-de18b984b8bb",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T18:14:39.769Z",
+    "updatedAt": "2026-04-02T19:56:48.895Z",
+    "durationMs": 1818533,
+    "turnCount": 8,
+    "messageCount": 39,
+    "toolRunCount": 89,
+    "toolCategories": {
+      "read": 18,
+      "write": 14,
+      "search": 7,
+      "command": 37,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 0,
+      "web": 8,
+      "other": 2
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 18764,
+        "outputTokens": 20889
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9338789725096658,
+      "activeDurationMs": 1818533
+    }
+  },
+  {
+    "sessionId": "746adc4e-9bc1-4ad2-98ac-123d16edadb1",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-02T19:17:44.266Z",
+    "updatedAt": "2026-04-02T19:22:42.931Z",
+    "durationMs": 298665,
+    "turnCount": 1,
+    "messageCount": 19,
+    "toolRunCount": 38,
+    "toolCategories": {
+      "read": 10,
+      "write": 16,
+      "search": 2,
+      "command": 3,
+      "agent": 1,
+      "mcp": 4,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 5989,
+        "outputTokens": 10894
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 4
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9478328261250522,
+      "activeDurationMs": 298665
+    }
+  },
+  {
+    "sessionId": "6a2ca9e2-c196-4c47-9186-97e79ae2cea7",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "rel-218-allie-fe",
+    "createdAt": "2026-04-02T18:29:31.430Z",
+    "updatedAt": "2026-04-02T19:43:57.346Z",
+    "durationMs": 2845989,
+    "turnCount": 13,
+    "messageCount": 83,
+    "toolRunCount": 151,
+    "toolCategories": {
+      "read": 31,
+      "write": 31,
+      "search": 11,
+      "command": 39,
+      "agent": 4,
+      "mcp": 25,
+      "plan": 1,
+      "question": 0,
+      "task": 0,
+      "web": 1,
+      "other": 8
+    },
+    "errorCount": 12,
+    "rejectionCount": 12,
+    "interruptionCount": 4,
+    "subagentCount": 4,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 5522,
+        "outputTokens": 39917
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 25
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9722479850449687,
+      "activeDurationMs": 2845989
+    }
+  },
+  {
+    "sessionId": "79d4c8a4-d41e-49c1-88aa-c9aa127b2eb3",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work",
+    "projectPath": "/Users/abdallah/Developer/work",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T18:00:58.099Z",
+    "updatedAt": "2026-04-02T18:01:57.571Z",
+    "durationMs": 59472,
+    "turnCount": 2,
+    "messageCount": 6,
+    "toolRunCount": 2,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 2,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 8,
+        "outputTokens": 1090
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.7405004173456815,
+      "activeDurationMs": 59472
+    }
+  },
+  {
+    "sessionId": "4e4028f4-2ad9-4686-8ca6-f357b4e615fb",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-02T07:27:10.559Z",
+    "updatedAt": "2026-04-02T08:20:53.727Z",
+    "durationMs": 2831975,
+    "turnCount": 3,
+    "messageCount": 67,
+    "toolRunCount": 182,
+    "toolCategories": {
+      "read": 30,
+      "write": 58,
+      "search": 24,
+      "command": 28,
+      "agent": 5,
+      "mcp": 7,
+      "plan": 3,
+      "question": 0,
+      "task": 17,
+      "web": 5,
+      "other": 5
+    },
+    "errorCount": 5,
+    "rejectionCount": 5,
+    "interruptionCount": 0,
+    "subagentCount": 6,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3764,
+        "outputTokens": 60941
+      }
+    ],
+    "hourOfDay": 9,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "claude_ai_DocFork",
+        "toolCallCount": 7
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9730751224477471,
+      "activeDurationMs": 2831975
+    }
+  },
+  {
+    "sessionId": "6bf8fb85-8e72-435a-a014-c36b1e3f0e2c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-04-01T20:46:20.124Z",
+    "updatedAt": "2026-04-01T22:15:25.780Z",
+    "durationMs": 4729360,
+    "turnCount": 28,
+    "messageCount": 89,
+    "toolRunCount": 119,
+    "toolCategories": {
+      "read": 12,
+      "write": 9,
+      "search": 0,
+      "command": 76,
+      "agent": 6,
+      "mcp": 0,
+      "plan": 1,
+      "question": 1,
+      "task": 0,
+      "web": 11,
+      "other": 3
+    },
+    "errorCount": 8,
+    "rejectionCount": 8,
+    "interruptionCount": 5,
+    "subagentCount": 5,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 4105,
+        "outputTokens": 104408
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9717808729657808,
+      "activeDurationMs": 4729360
+    }
+  },
+  {
+    "sessionId": "c2e37cde-1176-40d9-ae61-bce0832318c4",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-04-01T20:45:05.611Z",
+    "updatedAt": "2026-04-02T07:26:28.993Z",
+    "durationMs": 300471,
+    "turnCount": 0,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 300471
+    }
+  },
+  {
+    "sessionId": "6cb573bf-c557-4c24-86ca-fc9942ff5010",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-04-01T20:13:54.971Z",
+    "updatedAt": "2026-04-01T20:44:34.092Z",
+    "durationMs": 966828,
+    "turnCount": 3,
+    "messageCount": 11,
+    "toolRunCount": 8,
+    "toolCategories": {
+      "read": 1,
+      "write": 1,
+      "search": 0,
+      "command": 3,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 1,
+      "other": 1
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 16,
+        "outputTokens": 18662
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.645327937986987,
+      "activeDurationMs": 966828
+    }
+  },
+  {
+    "sessionId": "3e305008-37af-464d-b32f-250f7aa07f0e",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-04-01T20:12:57.951Z",
+    "updatedAt": "2026-04-01T20:13:52.811Z",
+    "durationMs": 54860,
+    "turnCount": 1,
+    "messageCount": 5,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 54860
+    }
+  },
+  {
+    "sessionId": "07c3d672-80e0-4bb4-aff9-5a5e4ca9d4b1",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T20:53:04.759Z",
+    "updatedAt": "2026-04-01T20:12:46.773Z",
+    "durationMs": 3991919,
+    "turnCount": 28,
+    "messageCount": 121,
+    "toolRunCount": 146,
+    "toolCategories": {
+      "read": 34,
+      "write": 16,
+      "search": 37,
+      "command": 54,
+      "agent": 4,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 4,
+    "subagentCount": 5,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 1686,
+        "outputTokens": 8390
+      },
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 2849,
+        "outputTokens": 32529
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9471862580680148,
+      "activeDurationMs": 3991919
+    }
+  },
+  {
+    "sessionId": "07a64630-1fda-4fd7-9fb1-0724cc732937",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:43:41.665Z",
+    "updatedAt": "2026-03-31T21:43:41.665Z",
+    "durationMs": 0,
+    "turnCount": 0,
+    "messageCount": 3,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {}
+  },
+  {
+    "sessionId": "1f160d7c-3436-48bb-b598-60bf9ef413ec",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:43:35.022Z",
+    "updatedAt": "2026-03-31T21:43:35.022Z",
+    "durationMs": 0,
+    "turnCount": 0,
+    "messageCount": 3,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {}
+  },
+  {
+    "sessionId": "c3f231a7-2685-405d-be60-3833e4125c23",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:42:27.203Z",
+    "updatedAt": "2026-03-31T21:42:27.203Z",
+    "durationMs": 0,
+    "turnCount": 0,
+    "messageCount": 3,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {}
+  },
+  {
+    "sessionId": "6f24f32b-53cc-4576-ba74-dfecfb38408c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:27:59.424Z",
+    "updatedAt": "2026-03-31T21:28:02.449Z",
+    "durationMs": 3025,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 13
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 3025
+    }
+  },
+  {
+    "sessionId": "31cbf5cd-b865-48d4-b6e1-7c866d8fc88a",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:18:37.613Z",
+    "updatedAt": "2026-03-31T21:18:40.498Z",
+    "durationMs": 2885,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 13
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.5323140118667276,
+      "activeDurationMs": 2885
+    }
+  },
+  {
+    "sessionId": "efbc010f-1023-44c7-8b93-696b3ea44fbf",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:17:22.051Z",
+    "updatedAt": "2026-03-31T21:17:24.965Z",
+    "durationMs": 2914,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 13
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 2914
+    }
+  },
+  {
+    "sessionId": "7672b57a-bff9-484e-a38a-78fd6b00c94c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+    "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+    "gitBranch": "main",
+    "createdAt": "2026-03-31T21:00:47.729Z",
+    "updatedAt": "2026-03-31T21:00:50.246Z",
+    "durationMs": 2517,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3,
+        "outputTokens": 13
+      }
+    ],
+    "hourOfDay": 23,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0,
+      "activeDurationMs": 2517
+    }
+  },
+  {
+    "sessionId": "c264805e-4167-4a8c-9115-e3ec92488290",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-temp-claude-code",
+    "projectPath": "/Users/abdallah/Developer/temp/claude-code",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-31T20:41:59.654Z",
+    "updatedAt": "2026-03-31T20:47:51.083Z",
+    "durationMs": 351423,
+    "turnCount": 2,
+    "messageCount": 10,
+    "toolRunCount": 10,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 1,
+      "command": 8,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 79,
+        "outputTokens": 1525
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "commit",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9215136163481681,
+      "activeDurationMs": 351423
+    }
+  },
+  {
+    "sessionId": "4368e741-11f9-4d0d-955e-84d3fd6e9605",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-temp-claude-code",
+    "projectPath": "/Users/abdallah/Developer/temp/claude-code",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-31T20:25:41.462Z",
+    "updatedAt": "2026-03-31T20:52:03.301Z",
+    "durationMs": 1374008,
+    "turnCount": 2,
+    "messageCount": 35,
+    "toolRunCount": 67,
+    "toolCategories": {
+      "read": 16,
+      "write": 13,
+      "search": 7,
+      "command": 29,
+      "agent": 2,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 2,
+    "subagentCount": 2,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 5859,
+        "outputTokens": 17896
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.950375734282657,
+      "activeDurationMs": 1374008
+    }
+  },
+  {
+    "sessionId": "97e31cdf-f830-4af9-a80b-ae047686959a",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-31T06:04:21.351Z",
+    "updatedAt": "2026-03-31T06:45:54.209Z",
+    "durationMs": 1230839,
+    "turnCount": 4,
+    "messageCount": 34,
+    "toolRunCount": 29,
+    "toolCategories": {
+      "read": 4,
+      "write": 1,
+      "search": 1,
+      "command": 22,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 838,
+        "outputTokens": 13086
+      }
+    ],
+    "hourOfDay": 8,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.903919743134432,
+      "activeDurationMs": 1230839
+    }
+  },
+  {
+    "sessionId": "cc131233-048c-4d7d-b3cc-5e7d1eedfe44",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-30T20:16:36.300Z",
+    "updatedAt": "2026-03-31T06:13:54.461Z",
+    "durationMs": 4411282,
+    "turnCount": 7,
+    "messageCount": 105,
+    "toolRunCount": 125,
+    "toolCategories": {
+      "read": 14,
+      "write": 6,
+      "search": 7,
+      "command": 95,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 2,
+      "other": 1
+    },
+    "errorCount": 6,
+    "rejectionCount": 6,
+    "interruptionCount": 3,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 385,
+        "outputTokens": 19200
+      },
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 437,
+        "outputTokens": 11676
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9029282696271634,
+      "activeDurationMs": 4411282
+    }
+  },
+  {
+    "sessionId": "157f4f4e-e1e2-4217-b7d9-3e38c763c02f",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-30T19:00:23.103Z",
+    "updatedAt": "2026-03-31T06:04:14.435Z",
+    "durationMs": 3595497,
+    "turnCount": 21,
+    "messageCount": 123,
+    "toolRunCount": 134,
+    "toolCategories": {
+      "read": 20,
+      "write": 39,
+      "search": 1,
+      "command": 54,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 15,
+      "web": 1,
+      "other": 3
+    },
+    "errorCount": 4,
+    "rejectionCount": 4,
+    "interruptionCount": 2,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 1956,
+        "outputTokens": 33175
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "commit",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9636525385234929,
+      "activeDurationMs": 3595497
+    }
+  },
+  {
+    "sessionId": "19bdd90e-3685-4389-b101-01334e726d0c",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-29T10:10:09.220Z",
+    "updatedAt": "2026-03-30T11:30:20.393Z",
+    "durationMs": 3034732,
+    "turnCount": 6,
+    "messageCount": 41,
+    "toolRunCount": 43,
+    "toolCategories": {
+      "read": 20,
+      "write": 3,
+      "search": 4,
+      "command": 0,
+      "agent": 11,
+      "mcp": 0,
+      "plan": 4,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 0,
+    "subagentCount": 11,
+    "hasPlan": true,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 2477,
+        "outputTokens": 28747
+      }
+    ],
+    "hourOfDay": 12,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.8529267822869014,
+      "activeDurationMs": 3034732
+    }
+  },
+  {
+    "sessionId": "09226aa1-7185-42b3-b98a-bdeb9bd0855d",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-30T19:31:31.680Z",
+    "updatedAt": "2026-03-30T20:16:17.302Z",
+    "durationMs": 2607833,
+    "turnCount": 5,
+    "messageCount": 70,
+    "toolRunCount": 96,
+    "toolCategories": {
+      "read": 25,
+      "write": 12,
+      "search": 8,
+      "command": 50,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 4,
+    "rejectionCount": 4,
+    "interruptionCount": 0,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 9201,
+        "outputTokens": 19378
+      }
+    ],
+    "hourOfDay": 21,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9366322538857086,
+      "activeDurationMs": 2607833
+    }
+  },
+  {
+    "sessionId": "15ea5edb-2eed-45aa-9531-afb75a5c8dad",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "feat/dep-update",
+    "createdAt": "2026-03-30T11:38:55.075Z",
+    "updatedAt": "2026-03-30T18:54:09.391Z",
+    "durationMs": 9876677,
+    "turnCount": 1,
+    "messageCount": 4,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 15,
+    "hasPlan": true,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6632,
+        "outputTokens": 87491
+      }
+    ],
+    "hourOfDay": 13,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.980336908369393,
+      "activeDurationMs": 9876677
+    }
+  },
+  {
+    "sessionId": "6a327015-879f-40c1-9693-4fa6e5c3e74d",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "feat/dep-update",
+    "createdAt": "2026-03-30T11:29:39.825Z",
+    "updatedAt": "2026-03-30T11:38:46.341Z",
+    "durationMs": 546516,
+    "turnCount": 8,
+    "messageCount": 39,
+    "toolRunCount": 33,
+    "toolCategories": {
+      "read": 11,
+      "write": 7,
+      "search": 8,
+      "command": 5,
+      "agent": 0,
+      "mcp": 1,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 763,
+        "outputTokens": 8864
+      }
+    ],
+    "hourOfDay": 13,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "claude_ai_DocFork",
+        "toolCallCount": 1
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9361552817118313,
+      "activeDurationMs": 546516
+    }
+  },
+  {
+    "sessionId": "cb196fd1-0448-452d-a426-20a7fa6583a4",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-30T07:20:50.545Z",
+    "updatedAt": "2026-03-30T10:28:44.707Z",
+    "durationMs": 7488013,
+    "turnCount": 23,
+    "messageCount": 161,
+    "toolRunCount": 253,
+    "toolCategories": {
+      "read": 36,
+      "write": 41,
+      "search": 4,
+      "command": 155,
+      "agent": 1,
+      "mcp": 1,
+      "plan": 0,
+      "question": 0,
+      "task": 13,
+      "web": 0,
+      "other": 2
+    },
+    "errorCount": 11,
+    "rejectionCount": 11,
+    "interruptionCount": 2,
+    "subagentCount": 3,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 12857,
+        "outputTokens": 66423
+      }
+    ],
+    "hourOfDay": 9,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "claude_ai_Google_Calendar",
+        "toolCallCount": 1
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9486614090978418,
+      "activeDurationMs": 7488013
+    }
+  },
+  {
+    "sessionId": "df836ade-ed6f-47ca-900d-f2f42c812c85",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-escalay",
+    "projectPath": "/Users/abdallah/Developer/work/escalay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-30T08:55:19.886Z",
+    "updatedAt": "2026-03-30T09:35:54.209Z",
+    "durationMs": 2434323,
+    "turnCount": 10,
+    "messageCount": 120,
+    "toolRunCount": 192,
+    "toolCategories": {
+      "read": 24,
+      "write": 22,
+      "search": 5,
+      "command": 115,
+      "agent": 5,
+      "mcp": 0,
+      "plan": 1,
+      "question": 1,
+      "task": 15,
+      "web": 0,
+      "other": 4
+    },
+    "errorCount": 13,
+    "rejectionCount": 13,
+    "interruptionCount": 1,
+    "subagentCount": 5,
+    "hasPlan": true,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3446,
+        "outputTokens": 44298
+      }
+    ],
+    "hourOfDay": 10,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9885707983664734,
+      "activeDurationMs": 2434323
+    }
+  },
+  {
+    "sessionId": "e3e46abc-a6a8-4a25-80c5-9e85caa7e0dd",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-30T04:44:18.422Z",
+    "updatedAt": "2026-03-30T07:20:11.470Z",
+    "durationMs": 4717909,
+    "turnCount": 19,
+    "messageCount": 179,
+    "toolRunCount": 251,
+    "toolCategories": {
+      "read": 54,
+      "write": 49,
+      "search": 34,
+      "command": 81,
+      "agent": 9,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 21,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 1,
+    "rejectionCount": 1,
+    "interruptionCount": 1,
+    "subagentCount": 9,
+    "hasPlan": true,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 311,
+        "outputTokens": 84074
+      }
+    ],
+    "hourOfDay": 6,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9772208102730131,
+      "activeDurationMs": 4717909
+    }
+  },
+  {
+    "sessionId": "811d6eab-a66c-45a7-a7ea-440cdda2cb20",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-30T04:45:39.765Z",
+    "updatedAt": "2026-03-30T07:17:56.968Z",
+    "durationMs": 8196702,
+    "turnCount": 54,
+    "messageCount": 229,
+    "toolRunCount": 222,
+    "toolCategories": {
+      "read": 23,
+      "write": 73,
+      "search": 4,
+      "command": 104,
+      "agent": 8,
+      "mcp": 0,
+      "plan": 2,
+      "question": 0,
+      "task": 0,
+      "web": 4,
+      "other": 4
+    },
+    "errorCount": 14,
+    "rejectionCount": 14,
+    "interruptionCount": 3,
+    "subagentCount": 8,
+    "hasPlan": true,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3794,
+        "outputTokens": 93096
+      }
+    ],
+    "hourOfDay": 6,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "gws-calendar",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9771556033520892,
+      "activeDurationMs": 8196702
+    }
+  },
+  {
+    "sessionId": "1bee17fb-12e2-4338-9b3e-4d04a74aa39d",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "feat/rel-210-share-FE",
+    "createdAt": "2026-03-30T04:41:50.678Z",
+    "updatedAt": "2026-03-30T04:41:51.202Z",
+    "durationMs": 524,
+    "turnCount": 1,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 6,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 524
+    }
+  },
+  {
+    "sessionId": "12ce7126-0e4c-498a-88e9-7a04fe84a0b3",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-escalay-escalay-log",
+    "projectPath": "/Users/abdallah/Developer/work/escalay/escalay-log",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-28T19:33:59.746Z",
+    "updatedAt": "2026-03-29T10:24:44.416Z",
+    "durationMs": 20940636,
+    "turnCount": 60,
+    "messageCount": 374,
+    "toolRunCount": 553,
+    "toolCategories": {
+      "read": 47,
+      "write": 124,
+      "search": 5,
+      "command": 265,
+      "agent": 7,
+      "mcp": 43,
+      "plan": 2,
+      "question": 3,
+      "task": 31,
+      "web": 16,
+      "other": 10
+    },
+    "errorCount": 55,
+    "rejectionCount": 55,
+    "interruptionCount": 14,
+    "subagentCount": 7,
+    "hasPlan": true,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 6931,
+        "outputTokens": 340051
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "claude_ai_DocFork",
+        "toolCallCount": 14
+      },
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 29
+      }
+    ],
+    "skillsTriggered": [
+      {
+        "name": "chrome-devtools",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.973329329281324,
+      "activeDurationMs": 20940636
+    }
+  },
+  {
+    "sessionId": "5b15501b-a3f6-49d1-8294-7e2363adc3bf",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay",
+    "projectPath": "/Users/abdallah/Developer/work/axetay",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-29T11:27:03.938Z",
+    "updatedAt": "2026-03-29T12:04:24.379Z",
+    "durationMs": 804924,
+    "turnCount": 4,
+    "messageCount": 28,
+    "toolRunCount": 40,
+    "toolCategories": {
+      "read": 11,
+      "write": 5,
+      "search": 7,
+      "command": 5,
+      "agent": 0,
+      "mcp": 7,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 5
+    },
+    "errorCount": 3,
+    "rejectionCount": 3,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 663,
+        "outputTokens": 5806
+      }
+    ],
+    "hourOfDay": 13,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "claude-in-chrome",
+        "toolCallCount": 7
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9156027521490983,
+      "activeDurationMs": 804924
+    }
+  },
+  {
+    "sessionId": "b5f94d3e-306f-487d-b89b-8fbd323d1ee8",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-29T11:06:33.621Z",
+    "updatedAt": "2026-03-29T11:35:09.463Z",
+    "durationMs": 1715842,
+    "turnCount": 7,
+    "messageCount": 31,
+    "toolRunCount": 20,
+    "toolCategories": {
+      "read": 6,
+      "write": 9,
+      "search": 0,
+      "command": 0,
+      "agent": 5,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 0,
+    "subagentCount": 5,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 1705,
+        "outputTokens": 32541
+      }
+    ],
+    "hourOfDay": 13,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9277624901968069,
+      "activeDurationMs": 1715842
+    }
+  },
+  {
+    "sessionId": "a1f53401-2a0f-4338-90f5-050ab3f65024",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "feat/clean-up",
+    "createdAt": "2026-03-29T07:42:49.557Z",
+    "updatedAt": "2026-03-29T09:59:53.097Z",
+    "durationMs": 4937551,
+    "turnCount": 23,
+    "messageCount": 124,
+    "toolRunCount": 152,
+    "toolCategories": {
+      "read": 28,
+      "write": 34,
+      "search": 35,
+      "command": 46,
+      "agent": 4,
+      "mcp": 4,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 1
+    },
+    "errorCount": 7,
+    "rejectionCount": 7,
+    "interruptionCount": 0,
+    "subagentCount": 4,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3171,
+        "outputTokens": 56079
+      }
+    ],
+    "hourOfDay": 9,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 4
+      }
+    ],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9591605139939884,
+      "activeDurationMs": 4937551
+    }
+  },
+  {
+    "sessionId": "97d86af5-e5c0-43f8-b56a-5243959e5ce7",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "feat/clean-up",
+    "createdAt": "2026-03-29T09:18:03.222Z",
+    "updatedAt": "2026-03-29T10:26:17.335Z",
+    "durationMs": 2687151,
+    "turnCount": 17,
+    "messageCount": 128,
+    "toolRunCount": 190,
+    "toolCategories": {
+      "read": 42,
+      "write": 25,
+      "search": 45,
+      "command": 76,
+      "agent": 2,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 8,
+    "rejectionCount": 8,
+    "interruptionCount": 4,
+    "subagentCount": 3,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 9911,
+        "outputTokens": 39165
+      }
+    ],
+    "hourOfDay": 11,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9808816367912462,
+      "activeDurationMs": 2687151
+    }
+  },
+  {
+    "sessionId": "847af536-a733-4f51-8dbb-b30d10f48dd0",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "feat/clean-up",
+    "createdAt": "2026-03-29T11:06:10.257Z",
+    "updatedAt": "2026-03-29T11:06:27.488Z",
+    "durationMs": 17231,
+    "turnCount": 0,
+    "messageCount": 9,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 13,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 17231
+    }
+  },
+  {
+    "sessionId": "24832e31-9d55-41b7-a942-9ae9c47dc8a5",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-personal-nubian",
+    "projectPath": "/Users/abdallah/Developer/personal/nubian",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-27T21:17:25.478Z",
+    "updatedAt": "2026-03-29T09:26:07.578Z",
+    "durationMs": 38618565,
+    "turnCount": 68,
+    "messageCount": 582,
+    "toolRunCount": 656,
+    "toolCategories": {
+      "read": 125,
+      "write": 88,
+      "search": 0,
+      "command": 389,
+      "agent": 1,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 34,
+      "web": 16,
+      "other": 3
+    },
+    "errorCount": 23,
+    "rejectionCount": 23,
+    "interruptionCount": 8,
+    "subagentCount": 1,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 21789,
+        "outputTokens": 265021
+      }
+    ],
+    "hourOfDay": 22,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.856602984475836,
+      "activeDurationMs": 38618565
+    }
+  },
+  {
+    "sessionId": "974e937a-8910-4b29-9640-7f3bcd90fd8f",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-temp",
+    "projectPath": "/Users/abdallah/Developer/temp",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-27T19:52:47.246Z",
+    "updatedAt": "2026-03-27T20:17:29.837Z",
+    "durationMs": 1482591,
+    "turnCount": 4,
+    "messageCount": 80,
+    "toolRunCount": 139,
+    "toolCategories": {
+      "read": 17,
+      "write": 9,
+      "search": 0,
+      "command": 43,
+      "agent": 15,
+      "mcp": 37,
+      "plan": 0,
+      "question": 0,
+      "task": 15,
+      "web": 0,
+      "other": 3
+    },
+    "errorCount": 5,
+    "rejectionCount": 5,
+    "interruptionCount": 0,
+    "subagentCount": 11,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 227,
+        "outputTokens": 48399
+      }
+    ],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 37
+      }
+    ],
+    "skillsTriggered": [
+      {
+        "name": "clone-website",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9872507436921614,
+      "activeDurationMs": 1482591
+    }
+  },
+  {
+    "sessionId": "4f042f27-32c4-45ab-9195-c9b3f3e3bc22",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-temp-test-clone",
+    "projectPath": "/Users/abdallah/Developer/temp",
+    "gitBranch": "main",
+    "createdAt": "2026-03-27T18:56:27.029Z",
+    "updatedAt": "2026-03-27T19:51:18.086Z",
+    "durationMs": 3291057,
+    "turnCount": 4,
+    "messageCount": 146,
+    "toolRunCount": 204,
+    "toolCategories": {
+      "read": 13,
+      "write": 22,
+      "search": 1,
+      "command": 38,
+      "agent": 3,
+      "mcp": 109,
+      "plan": 0,
+      "question": 0,
+      "task": 13,
+      "web": 0,
+      "other": 5
+    },
+    "errorCount": 12,
+    "rejectionCount": 12,
+    "interruptionCount": 0,
+    "subagentCount": 3,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 1181,
+        "outputTokens": 72946
+      }
+    ],
+    "hourOfDay": 19,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [
+      {
+        "server": "claude-in-chrome",
+        "toolCallCount": 103
+      },
+      {
+        "server": "chrome-devtools",
+        "toolCallCount": 6
+      }
+    ],
+    "skillsTriggered": [
+      {
+        "name": "clone-website",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9725889925123518,
+      "activeDurationMs": 3291057
+    }
+  },
+  {
+    "sessionId": "4c068be3-29f3-4dfb-8056-285722c8f961",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah",
+    "projectPath": "/Users/abdallah",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-27T19:21:32.083Z",
+    "updatedAt": "2026-03-27T19:21:32.771Z",
+    "durationMs": 688,
+    "turnCount": 0,
+    "messageCount": 2,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [],
+    "hourOfDay": 20,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "activeDurationMs": 688
+    }
+  },
+  {
+    "sessionId": "d631410c-e0d6-434b-9c7b-392ff8243cfa",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+    "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+    "gitBranch": "develop",
+    "createdAt": "2026-03-22T17:18:22.041Z",
+    "updatedAt": "2026-03-27T19:04:21.648Z",
+    "durationMs": 12520914,
+    "turnCount": 0,
+    "messageCount": 0,
+    "toolRunCount": 0,
+    "toolCategories": {
+      "read": 0,
+      "write": 0,
+      "search": 0,
+      "command": 0,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 0,
+      "other": 0
+    },
+    "errorCount": 0,
+    "rejectionCount": 0,
+    "interruptionCount": 0,
+    "subagentCount": 4,
+    "hasPlan": false,
+    "hasThinking": false,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 11198,
+        "outputTokens": 160206
+      }
+    ],
+    "hourOfDay": 18,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [],
+    "providerDigest": {
+      "cacheHitRate": 0.9882515043207376,
+      "activeDurationMs": 12520914
+    }
+  },
+  {
+    "sessionId": "712a70a4-362e-4604-88b4-ae0ec3c683c6",
+    "provider": "claude_code",
+    "projectKey": "-Users-abdallah-Developer-temp-test-clone",
+    "projectPath": "/Users/abdallah/Developer/temp/test-clone",
+    "gitBranch": "HEAD",
+    "createdAt": "2026-03-27T18:49:34.814Z",
+    "updatedAt": "2026-03-27T18:56:22.330Z",
+    "durationMs": 407516,
+    "turnCount": 3,
+    "messageCount": 17,
+    "toolRunCount": 32,
+    "toolCategories": {
+      "read": 13,
+      "write": 1,
+      "search": 0,
+      "command": 13,
+      "agent": 0,
+      "mcp": 0,
+      "plan": 0,
+      "question": 0,
+      "task": 0,
+      "web": 2,
+      "other": 3
+    },
+    "errorCount": 2,
+    "rejectionCount": 2,
+    "interruptionCount": 1,
+    "subagentCount": 0,
+    "hasPlan": false,
+    "hasThinking": true,
+    "models": [
+      {
+        "model": "claude-opus-4-6",
+        "inputTokens": 3254,
+        "outputTokens": 4416
+      }
+    ],
+    "hourOfDay": 19,
+    "mcpServersConfigured": [],
+    "mcpServersUsed": [],
+    "skillsTriggered": [
+      {
+        "name": "clone-website",
+        "invocationCount": 1
+      }
+    ],
+    "providerDigest": {
+      "cacheHitRate": 0.9117021355360805,
+      "activeDurationMs": 407516
+    }
+  }
+]

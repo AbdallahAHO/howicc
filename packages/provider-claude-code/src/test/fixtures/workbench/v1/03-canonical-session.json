@@ -1,0 +1,2237 @@
+{
+  "kind": "canonical_session",
+  "schemaVersion": 1,
+  "parserVersion": "workbench-v1",
+  "provider": "claude_code",
+  "source": {
+    "sessionId": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428",
+    "projectKey": "-Users-abdallah-Developer-personal-howicc",
+    "projectPath": "/Users/abdallah/Developer/personal/howicc",
+    "sourceRevisionHash": "05b8da61f6447361d1842ef74a15ce56a860dca335b3642cd8b04c6ded2399fd:aa4072f2b36a01abd91bfe26a92238cf754d0f561a4e58f2caaf9138df85cd35:5c52a981556de8b759d43d16c13628b429e41351f9f67eb3b03b29c40267b9de:c9de5a28acf95c5106f8ddf3464c9610fc08deeed6431ff89e5f604ae9ee9b10:6a024514ec19a72712ff0b1cdf13e1caf3030fddfc2412334a8aeabcc7f4881f:70ba5a995ff6f028d225c8a973a4cbc61c9f5c6b007a08b91e6655db2849514c:7f1357a7ab5de73945d448ce69e8af4d5f0554242673567b2082155252bdf214:f54123434f4f64e2fe0d529a94c3236c7d07342e8ef1c918c15325d18d227e24:70d59cea6dd59fa7f7a3c60ccff8316f89e96f0f520011d2299b052549314f16:18122ddff1499a27e7fda294cb52b267ece46d406c39915c1684f0c4170f049d:824192a7a9c142ccc27a4c4a148ecb988dfaee4548430e0fecb3572d359aa72e:a24e590d94b970b7c38730c2a1f3da08e2c487e0efad6c6ee2fefa8261640ed2:7f59a57a3b27d837f5b16a88920ee6b8ad0a679a096dcf1e04e6ad06772a83fe:c26de7c6696db5bbe78cb8e2d7381c65b1d3e998885f41531128ad928f8aaff4:bce5745f4a7008515c78c0a99f605f7bcedc644602bfb06378c0062282a61eb2:2d08ddbcc2c84526d59a39c9af38c775a371d169e418aba61ddf3fa455cc7307:b494f24e1346d57dca341cb5d16967f58706576e92db7b07b4b9777a782640c2:b7aeaeadb766c85f84c1a24a7fc5514da892e71116e3fa83335e86ca94a9ddf6",
+    "transcriptSha256": "05b8da61f6447361d1842ef74a15ce56a860dca335b3642cd8b04c6ded2399fd",
+    "importedAt": "2026-04-09T08:07:58.204Z"
+  },
+  "metadata": {
+    "customTitle": "user-profile-aggregation-system",
+    "cwd": "/Users/abdallah/Developer/personal/howicc",
+    "gitBranch": "chore/howicc-revamp-foundation",
+    "createdAt": "2026-04-09T03:59:40.731Z",
+    "updatedAt": "2026-04-09T08:07:57.293Z"
+  },
+  "selection": {
+    "strategy": "latest_leaf",
+    "selectedLeafUuid": "59645c27-5681-41cd-bac3-93b27389ad01",
+    "branchCount": 75
+  },
+  "stats": {
+    "visibleMessageCount": 143,
+    "toolRunCount": 273,
+    "artifactCount": 268,
+    "subagentCount": 8
+  },
+  "providerData": {
+    "claudeCode": {
+      "slug": "squishy-mapping-fog",
+      "cwd": "/Users/abdallah/Developer/personal/howicc",
+      "gitBranch": "chore/howicc-revamp-foundation",
+      "metrics": {
+        "messageCount": 775,
+        "turnCount": 24,
+        "inputTokens": 23778,
+        "outputTokens": 162228,
+        "cacheCreationInputTokens": 1444745,
+        "cacheReadInputTokens": 54685994,
+        "startedAt": "2026-04-09T03:59:40.731Z",
+        "endedAt": "2026-04-09T08:07:57.293Z",
+        "durationMs": 14896562,
+        "modelsUsed": [
+          "claude-opus-4-6"
+        ],
+        "modelTimeline": [
+          {
+            "model": "claude-opus-4-6",
+            "timestamp": "2026-04-09T03:59:45.159Z"
+          }
+        ],
+        "usageTimeline": [
+          {
+            "eventId": "20f99bb9-2398-480a-b836-e21d59efadab",
+            "timestamp": "2026-04-09T03:59:49.217Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 38,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 24593
+          },
+          {
+            "eventId": "6f788433-bf33-4f8d-8524-401d8fb6b593",
+            "timestamp": "2026-04-09T04:02:17.892Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3995,
+            "outputTokens": 440,
+            "cacheReadInputTokens": 24593,
+            "cacheWriteInputTokens": 3382
+          },
+          {
+            "eventId": "fb027d36-382c-4736-9aa4-26f1d950670d",
+            "timestamp": "2026-04-09T04:06:41.093Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 718,
+            "cacheReadInputTokens": 27975,
+            "cacheWriteInputTokens": 4665
+          },
+          {
+            "eventId": "f2c9d096-893d-4d84-bc78-5dd7ce3b8f1b",
+            "timestamp": "2026-04-09T04:09:15.227Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 2582,
+            "outputTokens": 1700,
+            "cacheReadInputTokens": 32640,
+            "cacheWriteInputTokens": 6031
+          },
+          {
+            "eventId": "07a61450-46b6-47df-a601-a7ea45b0b691",
+            "timestamp": "2026-04-09T04:13:08.953Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 549,
+            "cacheReadInputTokens": 38671,
+            "cacheWriteInputTokens": 4338
+          },
+          {
+            "eventId": "9a2f7a16-6447-40df-85e1-5f777fca1210",
+            "timestamp": "2026-04-09T04:16:48.019Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 30,
+            "cacheReadInputTokens": 43009,
+            "cacheWriteInputTokens": 4163
+          },
+          {
+            "eventId": "ddb3c98f-890d-4d05-989b-1ca67bc073b9",
+            "timestamp": "2026-04-09T04:23:30.322Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 470,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 48624
+          },
+          {
+            "eventId": "6787117e-9d73-4cd6-bd00-836f6aa898d5",
+            "timestamp": "2026-04-09T04:26:54.776Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 151,
+            "cacheReadInputTokens": 48624,
+            "cacheWriteInputTokens": 1017
+          },
+          {
+            "eventId": "c4821f29-dda5-467b-b093-4614d6f85e65",
+            "timestamp": "2026-04-09T04:27:06.805Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 821,
+            "outputTokens": 373,
+            "cacheReadInputTokens": 49641,
+            "cacheWriteInputTokens": 255
+          },
+          {
+            "eventId": "50200615-200b-41f7-943d-df6505bb4b3d",
+            "timestamp": "2026-04-09T04:27:24.356Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 253,
+            "outputTokens": 304,
+            "cacheReadInputTokens": 49896,
+            "cacheWriteInputTokens": 4338
+          },
+          {
+            "eventId": "4313029c-b7dc-4663-a889-55cbef2e0992",
+            "timestamp": "2026-04-09T04:29:24.554Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 6811,
+            "outputTokens": 6105,
+            "cacheReadInputTokens": 54234,
+            "cacheWriteInputTokens": 1536
+          },
+          {
+            "eventId": "00dd25c5-ecad-40e7-9f95-8fee88bf289d",
+            "timestamp": "2026-04-09T04:32:17.148Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 26,
+            "cacheReadInputTokens": 55770,
+            "cacheWriteInputTokens": 12982
+          },
+          {
+            "eventId": "63691253-f12f-4233-9a53-ad9c7ed6a538",
+            "timestamp": "2026-04-09T04:34:26.217Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 5728,
+            "cacheReadInputTokens": 68752,
+            "cacheWriteInputTokens": 4740
+          },
+          {
+            "eventId": "6a9b330f-c9f5-43bf-8fa1-3267d726d81d",
+            "timestamp": "2026-04-09T05:01:50.088Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 217,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 78360
+          },
+          {
+            "eventId": "c22f053c-318d-46c8-8940-3e5092171f5f",
+            "timestamp": "2026-04-09T05:01:59.115Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 151,
+            "outputTokens": 230,
+            "cacheReadInputTokens": 78360,
+            "cacheWriteInputTokens": 360
+          },
+          {
+            "eventId": "8e9f4d1a-341e-4bdf-86fc-7adecf3276c4",
+            "timestamp": "2026-04-09T05:02:06.789Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 254,
+            "cacheReadInputTokens": 78720,
+            "cacheWriteInputTokens": 2262
+          },
+          {
+            "eventId": "bc404bef-2798-4cee-aa15-d6043d3cac3a",
+            "timestamp": "2026-04-09T05:04:05.616Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 6546,
+            "cacheReadInputTokens": 80982,
+            "cacheWriteInputTokens": 3446
+          },
+          {
+            "eventId": "51f32ee7-7a8d-4f85-981c-63d716be43b0",
+            "timestamp": "2026-04-09T05:16:24.263Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 1723,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 95891
+          },
+          {
+            "eventId": "bc96818e-dd54-41b8-9b8f-7fed17211966",
+            "timestamp": "2026-04-09T05:19:23.829Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 262,
+            "cacheReadInputTokens": 11771,
+            "cacheWriteInputTokens": 85932
+          },
+          {
+            "eventId": "8bc27c24-e199-4469-b281-1bb058807b7b",
+            "timestamp": "2026-04-09T05:19:32.428Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 76,
+            "outputTokens": 195,
+            "cacheReadInputTokens": 97703,
+            "cacheWriteInputTokens": 346
+          },
+          {
+            "eventId": "376f8ff5-73c7-420f-a27b-bb2be14b47e9",
+            "timestamp": "2026-04-09T05:19:40.714Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 174,
+            "cacheReadInputTokens": 98049,
+            "cacheWriteInputTokens": 3183
+          },
+          {
+            "eventId": "be7ff7db-eca0-4ac6-b2ff-75c78cf39894",
+            "timestamp": "2026-04-09T05:19:48.008Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 79,
+            "cacheReadInputTokens": 101232,
+            "cacheWriteInputTokens": 1100
+          },
+          {
+            "eventId": "aec4da20-2dd0-4ab3-9127-8a056dc653d7",
+            "timestamp": "2026-04-09T05:20:21.431Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 2352,
+            "cacheReadInputTokens": 102332,
+            "cacheWriteInputTokens": 1236
+          },
+          {
+            "eventId": "b21fb838-fe73-4bbb-a827-ea82361a7d34",
+            "timestamp": "2026-04-09T05:20:27.488Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 160,
+            "cacheReadInputTokens": 103568,
+            "cacheWriteInputTokens": 2512
+          },
+          {
+            "eventId": "a4687a32-810a-43da-bf5c-d6dca8274134",
+            "timestamp": "2026-04-09T05:20:31.810Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 161,
+            "cacheReadInputTokens": 106080,
+            "cacheWriteInputTokens": 244
+          },
+          {
+            "eventId": "d745ab60-4c4d-415b-b117-52230b79b60e",
+            "timestamp": "2026-04-09T05:20:37.440Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 132,
+            "cacheReadInputTokens": 106324,
+            "cacheWriteInputTokens": 210
+          },
+          {
+            "eventId": "b269cddd-f7fe-4dbf-9278-b0d301e8ad46",
+            "timestamp": "2026-04-09T05:20:42.927Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 172,
+            "cacheReadInputTokens": 106534,
+            "cacheWriteInputTokens": 168
+          },
+          {
+            "eventId": "d89702cb-b25e-4d38-8078-43c9463409e1",
+            "timestamp": "2026-04-09T05:21:06.624Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1486,
+            "cacheReadInputTokens": 106702,
+            "cacheWriteInputTokens": 6160
+          },
+          {
+            "eventId": "6f845a56-802d-42a4-b485-4c7bed95cfcc",
+            "timestamp": "2026-04-09T05:21:10.963Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 155,
+            "cacheReadInputTokens": 112862,
+            "cacheWriteInputTokens": 1536
+          },
+          {
+            "eventId": "afaca4ac-2dd3-421e-a196-924f2ae1ad50",
+            "timestamp": "2026-04-09T05:21:15.581Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 155,
+            "cacheReadInputTokens": 114398,
+            "cacheWriteInputTokens": 739
+          },
+          {
+            "eventId": "709f7af7-13eb-46fc-b912-bd2d2f50930e",
+            "timestamp": "2026-04-09T05:21:19.788Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 155,
+            "cacheReadInputTokens": 115137,
+            "cacheWriteInputTokens": 225
+          },
+          {
+            "eventId": "37ad2214-302c-4496-a0c4-e20569540e30",
+            "timestamp": "2026-04-09T05:21:25.806Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 161,
+            "cacheReadInputTokens": 115362,
+            "cacheWriteInputTokens": 713
+          },
+          {
+            "eventId": "87ab4566-2314-4493-8d4e-da5a26b6960b",
+            "timestamp": "2026-04-09T05:21:29.832Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 155,
+            "cacheReadInputTokens": 116075,
+            "cacheWriteInputTokens": 342
+          },
+          {
+            "eventId": "00e990ce-e8a9-40db-b613-48bd8117bcd2",
+            "timestamp": "2026-04-09T05:21:38.823Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 527,
+            "cacheReadInputTokens": 116417,
+            "cacheWriteInputTokens": 717
+          },
+          {
+            "eventId": "be7207f3-fc20-468f-9409-cfaca8808cbf",
+            "timestamp": "2026-04-09T05:22:14.623Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 2622,
+            "cacheReadInputTokens": 117134,
+            "cacheWriteInputTokens": 597
+          },
+          {
+            "eventId": "dbfc192c-79af-4028-a5c0-fd4fcd9c6e7d",
+            "timestamp": "2026-04-09T05:22:22.528Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 156,
+            "cacheReadInputTokens": 117731,
+            "cacheWriteInputTokens": 2673
+          },
+          {
+            "eventId": "54855568-6ab3-4aec-a392-87a6c95f1134",
+            "timestamp": "2026-04-09T05:22:28.934Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 193,
+            "cacheReadInputTokens": 120404,
+            "cacheWriteInputTokens": 2386
+          },
+          {
+            "eventId": "01c50e20-d4cd-49f4-96a6-771aced2eaad",
+            "timestamp": "2026-04-09T05:23:11.070Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1292,
+            "cacheReadInputTokens": 122790,
+            "cacheWriteInputTokens": 206
+          },
+          {
+            "eventId": "a1047e79-c6c6-4881-ac2f-4f545eb5f692",
+            "timestamp": "2026-04-09T05:25:35.926Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 978,
+            "cacheReadInputTokens": 122996,
+            "cacheWriteInputTokens": 1344
+          },
+          {
+            "eventId": "63e3329f-71d7-430a-b63e-0cbdd9bbbc85",
+            "timestamp": "2026-04-09T05:27:10.184Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 4881,
+            "cacheReadInputTokens": 124340,
+            "cacheWriteInputTokens": 12519
+          },
+          {
+            "eventId": "8a4658ce-4557-4c91-bd0a-13c359184521",
+            "timestamp": "2026-04-09T05:27:27.037Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 867,
+            "cacheReadInputTokens": 136859,
+            "cacheWriteInputTokens": 5953
+          },
+          {
+            "eventId": "4c9e60a0-890b-4708-a1f8-a4b0c7969d21",
+            "timestamp": "2026-04-09T05:27:57.057Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 43,
+            "cacheReadInputTokens": 142812,
+            "cacheWriteInputTokens": 1843
+          },
+          {
+            "eventId": "1ec465b6-6b82-402b-8171-bcee15022e61",
+            "timestamp": "2026-04-09T05:28:39.102Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1786,
+            "cacheReadInputTokens": 144655,
+            "cacheWriteInputTokens": 2394
+          },
+          {
+            "eventId": "b5731bb1-c167-4343-85ed-c84338d6e33a",
+            "timestamp": "2026-04-09T05:29:33.064Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1655,
+            "cacheReadInputTokens": 147049,
+            "cacheWriteInputTokens": 2395
+          },
+          {
+            "eventId": "9fc8a6e2-ffb5-4964-8069-abb14189a41d",
+            "timestamp": "2026-04-09T05:35:16.584Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 79,
+            "cacheReadInputTokens": 149444,
+            "cacheWriteInputTokens": 1731
+          },
+          {
+            "eventId": "36d33802-cf27-4ad5-98bb-2234341d007c",
+            "timestamp": "2026-04-09T05:35:40.339Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 818,
+            "cacheReadInputTokens": 151175,
+            "cacheWriteInputTokens": 2020
+          },
+          {
+            "eventId": "ed109712-2ce3-4222-bf9d-cddd4a6f42ba",
+            "timestamp": "2026-04-09T05:35:49.388Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 50,
+            "outputTokens": 229,
+            "cacheReadInputTokens": 153195,
+            "cacheWriteInputTokens": 1029
+          },
+          {
+            "eventId": "4ae613d3-12f9-4fdc-bec0-b46820c7c2f8",
+            "timestamp": "2026-04-09T05:35:56.473Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 5223,
+            "outputTokens": 168,
+            "cacheReadInputTokens": 154224,
+            "cacheWriteInputTokens": 315
+          },
+          {
+            "eventId": "1da59333-4de0-4ab7-a44d-7e38f62dbba4",
+            "timestamp": "2026-04-09T05:36:03.316Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 2884,
+            "outputTokens": 165,
+            "cacheReadInputTokens": 154539,
+            "cacheWriteInputTokens": 6830
+          },
+          {
+            "eventId": "a12e3bff-542b-452f-8267-a762244ce737",
+            "timestamp": "2026-04-09T05:36:52.542Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 3690,
+            "cacheReadInputTokens": 161369,
+            "cacheWriteInputTokens": 3900
+          },
+          {
+            "eventId": "f7bb70f8-c5c7-484d-80f0-4c9def3f6199",
+            "timestamp": "2026-04-09T05:36:58.549Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 160,
+            "cacheReadInputTokens": 165269,
+            "cacheWriteInputTokens": 3979
+          },
+          {
+            "eventId": "297dd9e5-a868-4311-b5d2-25e2dd275ddb",
+            "timestamp": "2026-04-09T05:37:05.301Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 150,
+            "cacheReadInputTokens": 169248,
+            "cacheWriteInputTokens": 337
+          },
+          {
+            "eventId": "16cc9f01-c80c-4402-8957-1131a76d11b0",
+            "timestamp": "2026-04-09T05:37:16.757Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 741,
+            "cacheReadInputTokens": 169585,
+            "cacheWriteInputTokens": 223
+          },
+          {
+            "eventId": "4afec86b-99c2-468e-84ad-56068fb79bae",
+            "timestamp": "2026-04-09T05:37:24.477Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 351,
+            "cacheReadInputTokens": 169808,
+            "cacheWriteInputTokens": 789
+          },
+          {
+            "eventId": "7f903482-c968-4058-b530-3ef9f79e39bc",
+            "timestamp": "2026-04-09T05:37:46.352Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1607,
+            "cacheReadInputTokens": 170597,
+            "cacheWriteInputTokens": 400
+          },
+          {
+            "eventId": "82384d44-6945-48b0-9370-af13e4372e46",
+            "timestamp": "2026-04-09T05:38:05.677Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1624,
+            "cacheReadInputTokens": 170997,
+            "cacheWriteInputTokens": 1656
+          },
+          {
+            "eventId": "8c7f7e10-bd3c-4b30-9fca-61806632db1e",
+            "timestamp": "2026-04-09T05:38:17.381Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 649,
+            "cacheReadInputTokens": 172653,
+            "cacheWriteInputTokens": 1673
+          },
+          {
+            "eventId": "8192d112-99b2-4af0-a66c-f73cbfc89e46",
+            "timestamp": "2026-04-09T05:38:22.040Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 121,
+            "cacheReadInputTokens": 174326,
+            "cacheWriteInputTokens": 920
+          },
+          {
+            "eventId": "2b516903-31f2-4cf3-9041-301bd26ca37c",
+            "timestamp": "2026-04-09T05:38:31.140Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 250,
+            "cacheReadInputTokens": 175246,
+            "cacheWriteInputTokens": 385
+          },
+          {
+            "eventId": "10cdf593-be17-49d8-9f69-5c3f98471ca7",
+            "timestamp": "2026-04-09T05:38:42.773Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 97,
+            "outputTokens": 467,
+            "cacheReadInputTokens": 175631,
+            "cacheWriteInputTokens": 287
+          },
+          {
+            "eventId": "8e755c13-a41b-4276-b472-682bbbb16c25",
+            "timestamp": "2026-04-09T05:38:49.758Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 2,
+            "cacheReadInputTokens": 175918,
+            "cacheWriteInputTokens": 611
+          },
+          {
+            "eventId": "65a78233-2214-4833-b3d0-4c007b2beff3",
+            "timestamp": "2026-04-09T05:38:57.840Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 291,
+            "cacheReadInputTokens": 176529,
+            "cacheWriteInputTokens": 326
+          },
+          {
+            "eventId": "a7c0c7df-8a3c-49a1-b1ef-53156703dc5b",
+            "timestamp": "2026-04-09T05:39:05.524Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 270,
+            "cacheReadInputTokens": 176855,
+            "cacheWriteInputTokens": 339
+          },
+          {
+            "eventId": "21cc637b-1f52-4435-8e9e-a3b5c7237f4e",
+            "timestamp": "2026-04-09T05:39:12.485Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 43,
+            "cacheReadInputTokens": 177194,
+            "cacheWriteInputTokens": 322
+          },
+          {
+            "eventId": "c576e45d-8096-4913-8aff-1b8805e8725d",
+            "timestamp": "2026-04-09T05:39:18.563Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 125,
+            "cacheReadInputTokens": 177516,
+            "cacheWriteInputTokens": 379
+          },
+          {
+            "eventId": "683dccb0-4f80-4db4-b79c-7be5968e60eb",
+            "timestamp": "2026-04-09T05:39:23.620Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 37,
+            "outputTokens": 113,
+            "cacheReadInputTokens": 177895,
+            "cacheWriteInputTokens": 162
+          },
+          {
+            "eventId": "8301e24a-10ff-439c-ad2b-1d8ca0c0cc15",
+            "timestamp": "2026-04-09T05:39:34.315Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 221,
+            "cacheReadInputTokens": 178057,
+            "cacheWriteInputTokens": 1273
+          },
+          {
+            "eventId": "eda4dcf7-fcc8-4354-b2b2-1a49dfadc20a",
+            "timestamp": "2026-04-09T05:40:32.259Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 3435,
+            "cacheReadInputTokens": 179330,
+            "cacheWriteInputTokens": 263
+          },
+          {
+            "eventId": "8702376a-ca21-4dea-a101-9b5880abb374",
+            "timestamp": "2026-04-09T05:40:51.758Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 788,
+            "cacheReadInputTokens": 179593,
+            "cacheWriteInputTokens": 3488
+          },
+          {
+            "eventId": "2b619d2e-7566-4df7-821e-ad4c1781fd96",
+            "timestamp": "2026-04-09T05:40:56.586Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 113,
+            "cacheReadInputTokens": 183081,
+            "cacheWriteInputTokens": 841
+          },
+          {
+            "eventId": "808266bf-d0b7-425b-a214-32ffc4153fa9",
+            "timestamp": "2026-04-09T05:41:16.063Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 581,
+            "cacheReadInputTokens": 183922,
+            "cacheWriteInputTokens": 3620
+          },
+          {
+            "eventId": "fc9ecfd7-4f03-4082-9dd6-a0c5d4ed3a83",
+            "timestamp": "2026-04-09T05:41:36.921Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1046,
+            "cacheReadInputTokens": 187542,
+            "cacheWriteInputTokens": 824
+          },
+          {
+            "eventId": "cb703a70-b989-4932-9899-9c7270ab4f20",
+            "timestamp": "2026-04-09T05:43:11.656Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 4489,
+            "cacheReadInputTokens": 188366,
+            "cacheWriteInputTokens": 1110
+          },
+          {
+            "eventId": "b3ba15e4-9964-43f5-9055-2b47cbbb86b2",
+            "timestamp": "2026-04-09T05:43:22.328Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 469,
+            "cacheReadInputTokens": 189476,
+            "cacheWriteInputTokens": 4542
+          },
+          {
+            "eventId": "61fd643d-0f19-4a06-8f5b-350b1e1a9db7",
+            "timestamp": "2026-04-09T05:43:29.001Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 45,
+            "cacheReadInputTokens": 194018,
+            "cacheWriteInputTokens": 522
+          },
+          {
+            "eventId": "03ebfab1-041e-4b14-8e7e-514b3f89a91b",
+            "timestamp": "2026-04-09T05:43:35.709Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 133,
+            "cacheReadInputTokens": 194540,
+            "cacheWriteInputTokens": 312
+          },
+          {
+            "eventId": "0332cd49-f28a-4af5-9fde-eab442a413c0",
+            "timestamp": "2026-04-09T05:44:28.324Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 3812,
+            "cacheReadInputTokens": 194852,
+            "cacheWriteInputTokens": 399
+          },
+          {
+            "eventId": "554c77a4-fc1e-4a68-b08d-07472ac14101",
+            "timestamp": "2026-04-09T05:44:33.977Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 112,
+            "cacheReadInputTokens": 195251,
+            "cacheWriteInputTokens": 4085
+          },
+          {
+            "eventId": "3daee339-ec5f-4357-acc6-254920a5c845",
+            "timestamp": "2026-04-09T05:44:40.949Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 140,
+            "cacheReadInputTokens": 199336,
+            "cacheWriteInputTokens": 378
+          },
+          {
+            "eventId": "77fd91a2-1679-4937-b52b-839637164f24",
+            "timestamp": "2026-04-09T05:44:47.996Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 199714,
+            "cacheWriteInputTokens": 208
+          },
+          {
+            "eventId": "a1ea0fa2-077a-41ec-ad06-5bda1029eab2",
+            "timestamp": "2026-04-09T05:45:11.299Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 623,
+            "cacheReadInputTokens": 199922,
+            "cacheWriteInputTokens": 98
+          },
+          {
+            "eventId": "e15f928e-3f77-4d38-894c-b0fa0237a361",
+            "timestamp": "2026-04-09T05:50:06.084Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 776,
+            "cacheReadInputTokens": 200020,
+            "cacheWriteInputTokens": 712
+          },
+          {
+            "eventId": "2e25aede-364b-4d41-af2f-8a7554b430a1",
+            "timestamp": "2026-04-09T05:50:24.840Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1041,
+            "cacheReadInputTokens": 200732,
+            "cacheWriteInputTokens": 1382
+          },
+          {
+            "eventId": "43240e2d-c49a-4e2c-b602-1605f1178089",
+            "timestamp": "2026-04-09T05:55:28.467Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1047,
+            "cacheReadInputTokens": 203271,
+            "cacheWriteInputTokens": 0
+          },
+          {
+            "eventId": "01e757f4-460d-4841-af80-6fabfba701df",
+            "timestamp": "2026-04-09T05:55:51.738Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 897,
+            "cacheReadInputTokens": 203271,
+            "cacheWriteInputTokens": 1184
+          },
+          {
+            "eventId": "8951144d-1b7f-4bd9-aac6-ef38534604c7",
+            "timestamp": "2026-04-09T05:56:06.489Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 461,
+            "cacheReadInputTokens": 204455,
+            "cacheWriteInputTokens": 1919
+          },
+          {
+            "eventId": "5c65e01e-0d6c-41b0-bfdb-a14aa425a2d4",
+            "timestamp": "2026-04-09T05:56:14.969Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 388,
+            "cacheReadInputTokens": 206374,
+            "cacheWriteInputTokens": 509
+          },
+          {
+            "eventId": "6ba79437-3c3b-433a-886f-b2acd06cc8fe",
+            "timestamp": "2026-04-09T05:56:39.553Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 785,
+            "cacheReadInputTokens": 206883,
+            "cacheWriteInputTokens": 548
+          },
+          {
+            "eventId": "2d28a587-3916-4e68-95b2-531c95c33e9e",
+            "timestamp": "2026-04-09T05:56:44.695Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 127,
+            "cacheReadInputTokens": 207431,
+            "cacheWriteInputTokens": 834
+          },
+          {
+            "eventId": "46a2c4a7-9fd7-445e-b714-29c6811662e7",
+            "timestamp": "2026-04-09T05:56:53.124Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 186,
+            "cacheReadInputTokens": 208265,
+            "cacheWriteInputTokens": 337
+          },
+          {
+            "eventId": "5ab8cb6a-cf8a-4c1b-a917-66e007ff80a9",
+            "timestamp": "2026-04-09T05:57:07.450Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 505,
+            "cacheReadInputTokens": 208602,
+            "cacheWriteInputTokens": 2075
+          },
+          {
+            "eventId": "9b72ecb6-5619-4548-bdb9-b894e48fc0fd",
+            "timestamp": "2026-04-09T05:57:17.710Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 466,
+            "cacheReadInputTokens": 210677,
+            "cacheWriteInputTokens": 558
+          },
+          {
+            "eventId": "3af42180-c298-4cef-afa4-a0c3c17e3152",
+            "timestamp": "2026-04-09T05:57:25.420Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 292,
+            "cacheReadInputTokens": 211235,
+            "cacheWriteInputTokens": 519
+          },
+          {
+            "eventId": "48666f12-4f96-422d-9d9a-c48c64faeeea",
+            "timestamp": "2026-04-09T05:57:35.936Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 382,
+            "cacheReadInputTokens": 211754,
+            "cacheWriteInputTokens": 456
+          },
+          {
+            "eventId": "e6a000d8-6553-4e3c-b299-10a47bc224b6",
+            "timestamp": "2026-04-09T05:58:03.220Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1469,
+            "cacheReadInputTokens": 212210,
+            "cacheWriteInputTokens": 433
+          },
+          {
+            "eventId": "20e00681-39d3-44f4-b47f-2493dbf43c1f",
+            "timestamp": "2026-04-09T05:58:08.845Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 112,
+            "cacheReadInputTokens": 212643,
+            "cacheWriteInputTokens": 1520
+          },
+          {
+            "eventId": "47389705-58ee-46be-98ff-8fa88c0fc889",
+            "timestamp": "2026-04-09T05:58:15.478Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 120,
+            "cacheReadInputTokens": 214163,
+            "cacheWriteInputTokens": 378
+          },
+          {
+            "eventId": "1048a3ff-e468-4bd0-8de3-da93222a5420",
+            "timestamp": "2026-04-09T05:58:24.973Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 157,
+            "cacheReadInputTokens": 214541,
+            "cacheWriteInputTokens": 188
+          },
+          {
+            "eventId": "24099a04-152e-49c8-8590-162e43d81cc0",
+            "timestamp": "2026-04-09T06:00:53.200Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 38,
+            "cacheReadInputTokens": 214729,
+            "cacheWriteInputTokens": 415
+          },
+          {
+            "eventId": "4e9ac4b4-32ac-4982-82f7-4e08b9f0d5da",
+            "timestamp": "2026-04-09T06:00:59.178Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 123,
+            "cacheReadInputTokens": 215144,
+            "cacheWriteInputTokens": 1280
+          },
+          {
+            "eventId": "3bd102fd-ac15-4806-9507-babcd4532ac6",
+            "timestamp": "2026-04-09T06:01:04.678Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 138,
+            "cacheReadInputTokens": 216424,
+            "cacheWriteInputTokens": 1150
+          },
+          {
+            "eventId": "646950e6-891b-4179-bd00-6772b2a1a732",
+            "timestamp": "2026-04-09T06:02:46.455Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 5463,
+            "cacheReadInputTokens": 217574,
+            "cacheWriteInputTokens": 760
+          },
+          {
+            "eventId": "7098a9b9-659c-46ec-b555-13f59607d6e3",
+            "timestamp": "2026-04-09T06:17:33.677Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 6449,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 223861
+          },
+          {
+            "eventId": "30bcacb4-6c36-40d9-ab81-f976c129ecb0",
+            "timestamp": "2026-04-09T06:17:57.302Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 147,
+            "cacheReadInputTokens": 223861,
+            "cacheWriteInputTokens": 6500
+          },
+          {
+            "eventId": "a108d13f-50ca-4d41-b0d5-db88708b307a",
+            "timestamp": "2026-04-09T06:18:08.857Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 133,
+            "cacheReadInputTokens": 230361,
+            "cacheWriteInputTokens": 2703
+          },
+          {
+            "eventId": "26756ef8-aa00-45d6-bc37-3fb858c7be46",
+            "timestamp": "2026-04-09T06:18:36.143Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 628,
+            "cacheReadInputTokens": 233064,
+            "cacheWriteInputTokens": 151
+          },
+          {
+            "eventId": "40b9b320-35d7-48e9-aea7-843dca480938",
+            "timestamp": "2026-04-09T06:20:48.308Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 804,
+            "cacheReadInputTokens": 233215,
+            "cacheWriteInputTokens": 2128
+          },
+          {
+            "eventId": "55da183e-eb69-4a3e-8236-107f4c47cfdf",
+            "timestamp": "2026-04-09T06:22:53.515Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 1467,
+            "cacheReadInputTokens": 235343,
+            "cacheWriteInputTokens": 859
+          },
+          {
+            "eventId": "52a9486d-3e8e-46dd-bd0b-68d56f495c4b",
+            "timestamp": "2026-04-09T06:23:18.759Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1301,
+            "cacheReadInputTokens": 236202,
+            "cacheWriteInputTokens": 1855
+          },
+          {
+            "eventId": "c6f36442-81d3-4f34-9d77-486a9bbd67c6",
+            "timestamp": "2026-04-09T06:23:40.575Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1113,
+            "cacheReadInputTokens": 238057,
+            "cacheWriteInputTokens": 2300
+          },
+          {
+            "eventId": "05ed018e-f121-41c3-a864-f5d90dc27144",
+            "timestamp": "2026-04-09T06:24:16.540Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 115,
+            "cacheReadInputTokens": 240357,
+            "cacheWriteInputTokens": 1209
+          },
+          {
+            "eventId": "88a3fdf0-5f7d-4eed-b63e-04ce971a94f6",
+            "timestamp": "2026-04-09T06:24:20.766Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 147,
+            "cacheReadInputTokens": 241566,
+            "cacheWriteInputTokens": 157
+          },
+          {
+            "eventId": "4a196ea8-affc-49d0-9f9a-008ed8410490",
+            "timestamp": "2026-04-09T06:24:38.133Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1150,
+            "cacheReadInputTokens": 241723,
+            "cacheWriteInputTokens": 165
+          },
+          {
+            "eventId": "d6a25e67-2e99-497b-9e01-6b5cca5860ec",
+            "timestamp": "2026-04-09T06:25:07.448Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1143,
+            "cacheReadInputTokens": 241888,
+            "cacheWriteInputTokens": 1375
+          },
+          {
+            "eventId": "4cab2847-ce52-48b4-aadb-3344ff6a0eb7",
+            "timestamp": "2026-04-09T06:29:28.818Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 1647,
+            "cacheReadInputTokens": 243263,
+            "cacheWriteInputTokens": 1208
+          },
+          {
+            "eventId": "1a057576-6f81-4b7c-8650-41c5adcfb9ef",
+            "timestamp": "2026-04-09T06:29:56.036Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 864,
+            "cacheReadInputTokens": 244471,
+            "cacheWriteInputTokens": 3886
+          },
+          {
+            "eventId": "61f381c3-c95d-43bd-9bfe-419b0134eb3f",
+            "timestamp": "2026-04-09T06:31:26.162Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 448,
+            "cacheReadInputTokens": 248357,
+            "cacheWriteInputTokens": 1022
+          },
+          {
+            "eventId": "6261972c-3afe-420a-b670-4fd4661ac197",
+            "timestamp": "2026-04-09T06:31:34.370Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 215,
+            "cacheReadInputTokens": 249379,
+            "cacheWriteInputTokens": 1554
+          },
+          {
+            "eventId": "334aeb07-9837-47cd-a7bd-d2837c6ed751",
+            "timestamp": "2026-04-09T06:31:39.613Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 105,
+            "cacheReadInputTokens": 250933,
+            "cacheWriteInputTokens": 1102
+          },
+          {
+            "eventId": "951d57ba-67a0-4e39-b49d-90e3ea8e28d2",
+            "timestamp": "2026-04-09T06:31:42.881Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 38,
+            "cacheReadInputTokens": 252035,
+            "cacheWriteInputTokens": 1345
+          },
+          {
+            "eventId": "a26ab9be-1133-4c8f-99b5-aa6e9957aa66",
+            "timestamp": "2026-04-09T06:31:55.365Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 364,
+            "cacheReadInputTokens": 253380,
+            "cacheWriteInputTokens": 1374
+          },
+          {
+            "eventId": "1becad48-24a9-4e81-85bf-c8b4358dc3d6",
+            "timestamp": "2026-04-09T06:34:19.645Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1817,
+            "cacheReadInputTokens": 254754,
+            "cacheWriteInputTokens": 4214
+          },
+          {
+            "eventId": "22b8d433-6594-4120-b8e0-3026c23bcbc4",
+            "timestamp": "2026-04-09T06:40:17.740Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 268063
+          },
+          {
+            "eventId": "01731e61-6b64-408a-acbe-cfed4d4173de",
+            "timestamp": "2026-04-09T06:40:22.559Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 139,
+            "cacheReadInputTokens": 268063,
+            "cacheWriteInputTokens": 316
+          },
+          {
+            "eventId": "a0e7334b-b744-4c0f-9873-d0d36ec9d3f6",
+            "timestamp": "2026-04-09T06:40:26.614Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 126,
+            "outputTokens": 80,
+            "cacheReadInputTokens": 268379,
+            "cacheWriteInputTokens": 704
+          },
+          {
+            "eventId": "832a5b6b-a9fb-401c-b3e3-c25ab5b64942",
+            "timestamp": "2026-04-09T06:41:22.460Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 2271,
+            "cacheReadInputTokens": 269083,
+            "cacheWriteInputTokens": 2974
+          },
+          {
+            "eventId": "714f63b5-adf1-46c6-9185-b8707de3982d",
+            "timestamp": "2026-04-09T06:41:27.808Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 78,
+            "cacheReadInputTokens": 272057,
+            "cacheWriteInputTokens": 2308
+          },
+          {
+            "eventId": "02cc9f97-90a5-4f7f-88a1-db36e8d419ad",
+            "timestamp": "2026-04-09T06:41:33.058Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 125,
+            "cacheReadInputTokens": 274365,
+            "cacheWriteInputTokens": 738
+          },
+          {
+            "eventId": "2fa591b6-0619-4ff2-bf62-8f684cb52297",
+            "timestamp": "2026-04-09T06:43:29.517Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 700,
+            "cacheReadInputTokens": 275103,
+            "cacheWriteInputTokens": 2468
+          },
+          {
+            "eventId": "27823d65-4647-4a95-a633-2e361df05174",
+            "timestamp": "2026-04-09T06:43:34.664Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 140,
+            "outputTokens": 48,
+            "cacheReadInputTokens": 277571,
+            "cacheWriteInputTokens": 861
+          },
+          {
+            "eventId": "7d7dde3b-e665-4aa9-a1b4-651df57f8745",
+            "timestamp": "2026-04-09T06:43:50.893Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 852,
+            "cacheReadInputTokens": 278432,
+            "cacheWriteInputTokens": 229
+          },
+          {
+            "eventId": "e5b28864-73f0-46c8-9324-c3edee87836b",
+            "timestamp": "2026-04-09T06:44:08.605Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 423,
+            "cacheReadInputTokens": 278661,
+            "cacheWriteInputTokens": 895
+          },
+          {
+            "eventId": "9eb66ea4-e0f5-442a-836a-7a3bda8bcdd8",
+            "timestamp": "2026-04-09T06:44:21.145Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 740,
+            "cacheReadInputTokens": 279556,
+            "cacheWriteInputTokens": 464
+          },
+          {
+            "eventId": "8bc08fdd-1cd6-4230-b0a1-c8ce5357ab29",
+            "timestamp": "2026-04-09T06:44:27.723Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 240,
+            "cacheReadInputTokens": 280020,
+            "cacheWriteInputTokens": 781
+          },
+          {
+            "eventId": "2edab999-2bf6-48a7-b596-0bbff53ec592",
+            "timestamp": "2026-04-09T06:44:33.284Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 107,
+            "cacheReadInputTokens": 280801,
+            "cacheWriteInputTokens": 282
+          },
+          {
+            "eventId": "1d152376-22d9-4380-b5d1-f0cebb13f903",
+            "timestamp": "2026-04-09T06:44:39.032Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 125,
+            "cacheReadInputTokens": 281083,
+            "cacheWriteInputTokens": 167
+          },
+          {
+            "eventId": "4258663f-d081-415a-acef-d4130c6d75e5",
+            "timestamp": "2026-04-09T06:44:45.964Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 37,
+            "outputTokens": 180,
+            "cacheReadInputTokens": 281250,
+            "cacheWriteInputTokens": 162
+          },
+          {
+            "eventId": "e878ae85-0215-4d6f-b435-ef4ded49d3fe",
+            "timestamp": "2026-04-09T06:44:50.562Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 104,
+            "cacheReadInputTokens": 281412,
+            "cacheWriteInputTokens": 645
+          },
+          {
+            "eventId": "69f671d5-231a-4f9d-ae1d-33e29f9cc6e0",
+            "timestamp": "2026-04-09T06:44:56.806Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 351,
+            "cacheReadInputTokens": 282057,
+            "cacheWriteInputTokens": 119
+          },
+          {
+            "eventId": "efa701ba-bd50-422b-8e5b-1163924ccf9a",
+            "timestamp": "2026-04-09T06:45:03.332Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 152,
+            "cacheReadInputTokens": 282176,
+            "cacheWriteInputTokens": 390
+          },
+          {
+            "eventId": "cc10bce6-fe74-4d27-b450-f679d28fbf8f",
+            "timestamp": "2026-04-09T06:45:30.535Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1629,
+            "cacheReadInputTokens": 282566,
+            "cacheWriteInputTokens": 192
+          },
+          {
+            "eventId": "7e478d55-ace5-42e1-a7a9-c75a173fd330",
+            "timestamp": "2026-04-09T06:46:18.063Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 3685,
+            "cacheReadInputTokens": 282758,
+            "cacheWriteInputTokens": 1670
+          },
+          {
+            "eventId": "73639a25-ce50-4f66-a023-38c79e3f4e7d",
+            "timestamp": "2026-04-09T06:46:23.241Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 115,
+            "cacheReadInputTokens": 284428,
+            "cacheWriteInputTokens": 3726
+          },
+          {
+            "eventId": "5639d880-4b6f-412c-bcd2-20c5bbc29661",
+            "timestamp": "2026-04-09T06:46:32.071Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 103,
+            "cacheReadInputTokens": 288154,
+            "cacheWriteInputTokens": 156
+          },
+          {
+            "eventId": "1fff67f6-b377-4391-b7b3-9e38decbbd94",
+            "timestamp": "2026-04-09T06:46:39.904Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 107,
+            "cacheReadInputTokens": 288310,
+            "cacheWriteInputTokens": 388
+          },
+          {
+            "eventId": "4dad8701-1a48-4e83-8998-a3c88444a5f0",
+            "timestamp": "2026-04-09T06:46:47.717Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 110,
+            "cacheReadInputTokens": 288698,
+            "cacheWriteInputTokens": 283
+          },
+          {
+            "eventId": "53ad637a-c21e-4274-9601-d4d12eb096a9",
+            "timestamp": "2026-04-09T06:47:00.369Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 162,
+            "cacheReadInputTokens": 288981,
+            "cacheWriteInputTokens": 275
+          },
+          {
+            "eventId": "46d3473b-49a1-4971-91ab-555bdb2fc652",
+            "timestamp": "2026-04-09T06:47:04.808Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 107,
+            "cacheReadInputTokens": 289256,
+            "cacheWriteInputTokens": 204
+          },
+          {
+            "eventId": "7be75f07-3be2-4cbf-a585-19b524607d9c",
+            "timestamp": "2026-04-09T06:47:13.964Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 125,
+            "cacheReadInputTokens": 289460,
+            "cacheWriteInputTokens": 167
+          },
+          {
+            "eventId": "83e5d36f-eee0-4a14-9755-723d0f5da891",
+            "timestamp": "2026-04-09T06:47:19.579Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 37,
+            "outputTokens": 108,
+            "cacheReadInputTokens": 289627,
+            "cacheWriteInputTokens": 162
+          },
+          {
+            "eventId": "c2fd3887-b97c-41d6-9921-8a461d883373",
+            "timestamp": "2026-04-09T06:47:27.755Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 462,
+            "cacheReadInputTokens": 289789,
+            "cacheWriteInputTokens": 1853
+          },
+          {
+            "eventId": "f7e34efa-53dc-48f3-9361-2d80d186cb19",
+            "timestamp": "2026-04-09T06:47:35.315Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 293,
+            "cacheReadInputTokens": 291642,
+            "cacheWriteInputTokens": 514
+          },
+          {
+            "eventId": "0871c280-1c69-4309-9ade-4c6491be6c52",
+            "timestamp": "2026-04-09T06:47:54.241Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 991,
+            "cacheReadInputTokens": 292156,
+            "cacheWriteInputTokens": 345
+          },
+          {
+            "eventId": "a6d22a2d-59c0-4264-bf15-f905a3ec8649",
+            "timestamp": "2026-04-09T06:47:59.935Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 114,
+            "cacheReadInputTokens": 292501,
+            "cacheWriteInputTokens": 1040
+          },
+          {
+            "eventId": "21013d02-f5d7-4ded-9d3f-f642f681cb77",
+            "timestamp": "2026-04-09T06:48:07.562Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 116,
+            "cacheReadInputTokens": 293541,
+            "cacheWriteInputTokens": 182
+          },
+          {
+            "eventId": "5f890400-ba37-4405-afe5-3a38dbc3f67c",
+            "timestamp": "2026-04-09T06:48:19.396Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 279,
+            "cacheReadInputTokens": 293723,
+            "cacheWriteInputTokens": 2307
+          },
+          {
+            "eventId": "25410964-b560-4a1d-9ba3-64ad23f8fc82",
+            "timestamp": "2026-04-09T06:48:25.837Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 206,
+            "cacheReadInputTokens": 296030,
+            "cacheWriteInputTokens": 598
+          },
+          {
+            "eventId": "fefa3a0c-502e-416b-b4d4-fdb4b2ddbc8f",
+            "timestamp": "2026-04-09T06:48:31.158Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 180,
+            "cacheReadInputTokens": 296628,
+            "cacheWriteInputTokens": 259
+          },
+          {
+            "eventId": "8ebe8ad5-204c-42e3-8282-cca03191b042",
+            "timestamp": "2026-04-09T06:48:38.596Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 253,
+            "cacheReadInputTokens": 296887,
+            "cacheWriteInputTokens": 233
+          },
+          {
+            "eventId": "0d655af1-fac7-4d06-8bd4-470eefce1cc8",
+            "timestamp": "2026-04-09T06:48:43.581Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 114,
+            "cacheReadInputTokens": 297120,
+            "cacheWriteInputTokens": 306
+          },
+          {
+            "eventId": "b3dfcd16-caa1-4518-a8d4-0de376359a65",
+            "timestamp": "2026-04-09T06:48:52.359Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 237,
+            "cacheReadInputTokens": 297426,
+            "cacheWriteInputTokens": 1439
+          },
+          {
+            "eventId": "8cd09ba9-7a8d-4da4-bda7-20f36f1ff6e5",
+            "timestamp": "2026-04-09T06:48:57.636Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 110,
+            "cacheReadInputTokens": 298865,
+            "cacheWriteInputTokens": 290
+          },
+          {
+            "eventId": "33642f74-f1c8-4dbd-98fd-cfea3113563a",
+            "timestamp": "2026-04-09T06:49:08.502Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 288,
+            "cacheReadInputTokens": 299155,
+            "cacheWriteInputTokens": 1410
+          },
+          {
+            "eventId": "9c00d1d0-e1c3-4d96-a08c-b54c3ee81106",
+            "timestamp": "2026-04-09T06:49:13.475Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 111,
+            "cacheReadInputTokens": 300565,
+            "cacheWriteInputTokens": 341
+          },
+          {
+            "eventId": "b2cd4857-592f-42a2-8d5b-8cce3649962d",
+            "timestamp": "2026-04-09T06:49:25.245Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 166,
+            "cacheReadInputTokens": 300906,
+            "cacheWriteInputTokens": 643
+          },
+          {
+            "eventId": "41e01381-c0f4-49b7-a692-be8fc2927d8f",
+            "timestamp": "2026-04-09T06:49:34.321Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 453,
+            "cacheReadInputTokens": 301549,
+            "cacheWriteInputTokens": 239
+          },
+          {
+            "eventId": "0001aa0d-f331-4a39-888e-44ed2bc3a9a1",
+            "timestamp": "2026-04-09T06:49:41.145Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 119,
+            "cacheReadInputTokens": 301788,
+            "cacheWriteInputTokens": 506
+          },
+          {
+            "eventId": "c55f5cab-98b0-471c-bcc3-ff4d5b6570cd",
+            "timestamp": "2026-04-09T06:50:05.947Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1388,
+            "cacheReadInputTokens": 302294,
+            "cacheWriteInputTokens": 1117
+          },
+          {
+            "eventId": "06a2126f-1287-4a88-8991-d8f5d24274f0",
+            "timestamp": "2026-04-09T06:50:15.702Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 95,
+            "cacheReadInputTokens": 303411,
+            "cacheWriteInputTokens": 1441
+          },
+          {
+            "eventId": "62fae970-e878-40a0-8329-38ad82bdf550",
+            "timestamp": "2026-04-09T06:50:21.297Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 255,
+            "cacheReadInputTokens": 304852,
+            "cacheWriteInputTokens": 137
+          },
+          {
+            "eventId": "bea81f8f-9eed-43ac-946b-57523cadc04d",
+            "timestamp": "2026-04-09T06:50:25.403Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 101,
+            "cacheReadInputTokens": 304989,
+            "cacheWriteInputTokens": 299
+          },
+          {
+            "eventId": "666a16c6-fd10-49c4-a53c-4bc85e71e03a",
+            "timestamp": "2026-04-09T06:50:34.427Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 46,
+            "cacheReadInputTokens": 305288,
+            "cacheWriteInputTokens": 121
+          },
+          {
+            "eventId": "58458d5f-ac89-4c4f-bbb6-39e05c8f4a35",
+            "timestamp": "2026-04-09T06:50:42.944Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 175,
+            "cacheReadInputTokens": 305409,
+            "cacheWriteInputTokens": 577
+          },
+          {
+            "eventId": "de9ba57f-be77-42ce-b80c-4131e923b69c",
+            "timestamp": "2026-04-09T06:51:01.291Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 305986,
+            "cacheWriteInputTokens": 542
+          },
+          {
+            "eventId": "b786fd98-1c49-4958-bb1a-808e51eb44d2",
+            "timestamp": "2026-04-09T06:51:20.189Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 306528,
+            "cacheWriteInputTokens": 99
+          },
+          {
+            "eventId": "15dcc908-1b82-496a-ab97-167dd62b037d",
+            "timestamp": "2026-04-09T07:32:23.757Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 49,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 307243
+          },
+          {
+            "eventId": "e89e1f48-d346-49eb-9327-9c0022ac667a",
+            "timestamp": "2026-04-09T07:32:29.533Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 201,
+            "cacheReadInputTokens": 307243,
+            "cacheWriteInputTokens": 93
+          },
+          {
+            "eventId": "e3fde2a5-1cc3-4f29-8a03-9364542211a7",
+            "timestamp": "2026-04-09T07:32:35.107Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 60,
+            "outputTokens": 53,
+            "cacheReadInputTokens": 307336,
+            "cacheWriteInputTokens": 470
+          },
+          {
+            "eventId": "7144d33a-c19c-4706-ab1e-3214d47357aa",
+            "timestamp": "2026-04-09T07:32:40.617Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 88,
+            "outputTokens": 138,
+            "cacheReadInputTokens": 307806,
+            "cacheWriteInputTokens": 200
+          },
+          {
+            "eventId": "86f60cd3-7554-4e44-b140-c2248eee19d1",
+            "timestamp": "2026-04-09T07:32:47.159Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 308006,
+            "cacheWriteInputTokens": 1652
+          },
+          {
+            "eventId": "959348cb-ac27-4f5e-a8c0-205fea27be92",
+            "timestamp": "2026-04-09T07:32:53.955Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 437,
+            "cacheReadInputTokens": 308006,
+            "cacheWriteInputTokens": 1652
+          },
+          {
+            "eventId": "b33c07bd-2ebf-45b1-8965-48e4f4777e99",
+            "timestamp": "2026-04-09T07:33:00.992Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 285,
+            "cacheReadInputTokens": 309658,
+            "cacheWriteInputTokens": 557
+          },
+          {
+            "eventId": "14d85a9f-a736-4790-aacf-a3528121b55b",
+            "timestamp": "2026-04-09T07:33:08.751Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 299,
+            "cacheReadInputTokens": 310215,
+            "cacheWriteInputTokens": 595
+          },
+          {
+            "eventId": "e0d7256f-c89c-4e2d-b34d-c1cd2665fdaa",
+            "timestamp": "2026-04-09T07:33:14.967Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 301,
+            "cacheReadInputTokens": 310810,
+            "cacheWriteInputTokens": 341
+          },
+          {
+            "eventId": "372c3a2a-b09e-40c6-a14b-74ecdf60da27",
+            "timestamp": "2026-04-09T07:33:25.263Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 301,
+            "cacheReadInputTokens": 311151,
+            "cacheWriteInputTokens": 343
+          },
+          {
+            "eventId": "251cb9af-9214-4e53-87f9-ef471fbe1876",
+            "timestamp": "2026-04-09T07:33:30.413Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 107,
+            "cacheReadInputTokens": 311494,
+            "cacheWriteInputTokens": 350
+          },
+          {
+            "eventId": "c697e600-8b29-47e5-ad8a-7bbf7c06535c",
+            "timestamp": "2026-04-09T07:33:41.226Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 311844,
+            "cacheWriteInputTokens": 1069
+          },
+          {
+            "eventId": "440adfee-ca10-4e53-9d12-0d897cefcc8a",
+            "timestamp": "2026-04-09T07:33:50.846Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 638,
+            "cacheReadInputTokens": 312913,
+            "cacheWriteInputTokens": 757
+          },
+          {
+            "eventId": "0ab223c2-41ea-45b5-8e85-1ce1858dcdf5",
+            "timestamp": "2026-04-09T07:33:56.072Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 108,
+            "cacheReadInputTokens": 313670,
+            "cacheWriteInputTokens": 683
+          },
+          {
+            "eventId": "7c069541-a1c7-402d-9e1b-6cf783015f3e",
+            "timestamp": "2026-04-09T07:34:02.815Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 163,
+            "cacheReadInputTokens": 314353,
+            "cacheWriteInputTokens": 433
+          },
+          {
+            "eventId": "c115ad4e-dfbe-4e02-9ffd-62dd258f255e",
+            "timestamp": "2026-04-09T07:34:07.882Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 140,
+            "cacheReadInputTokens": 314786,
+            "cacheWriteInputTokens": 363
+          },
+          {
+            "eventId": "1956623e-33d1-415c-a729-f2bc567ea1a4",
+            "timestamp": "2026-04-09T07:34:13.333Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 129,
+            "cacheReadInputTokens": 315149,
+            "cacheWriteInputTokens": 562
+          },
+          {
+            "eventId": "71638c9e-4eea-47d9-bb20-aaa15721cdd4",
+            "timestamp": "2026-04-09T07:34:19.572Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 153,
+            "cacheReadInputTokens": 315711,
+            "cacheWriteInputTokens": 551
+          },
+          {
+            "eventId": "4ac845f9-5d3d-428c-8f94-aa7097de14ce",
+            "timestamp": "2026-04-09T07:34:29.072Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 150,
+            "cacheReadInputTokens": 316262,
+            "cacheWriteInputTokens": 2151
+          },
+          {
+            "eventId": "972f1b7e-2289-4065-b30f-03667a391a6d",
+            "timestamp": "2026-04-09T07:34:34.138Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 37,
+            "outputTokens": 82,
+            "cacheReadInputTokens": 318413,
+            "cacheWriteInputTokens": 187
+          },
+          {
+            "eventId": "91e6ad7e-0bf4-40e8-a68e-2d357c344179",
+            "timestamp": "2026-04-09T07:34:44.202Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 135,
+            "cacheReadInputTokens": 318600,
+            "cacheWriteInputTokens": 319
+          },
+          {
+            "eventId": "4d7588bc-73ee-49f2-b2af-6857b718ac8b",
+            "timestamp": "2026-04-09T07:34:48.594Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 78,
+            "cacheReadInputTokens": 318919,
+            "cacheWriteInputTokens": 869
+          },
+          {
+            "eventId": "e31e489f-65e0-4031-88f1-cd8e190fa130",
+            "timestamp": "2026-04-09T07:35:09.124Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1330,
+            "cacheReadInputTokens": 319788,
+            "cacheWriteInputTokens": 1010
+          },
+          {
+            "eventId": "5fce7587-a43c-4b01-aca6-087c5884c36a",
+            "timestamp": "2026-04-09T07:35:38.524Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1046,
+            "cacheReadInputTokens": 320798,
+            "cacheWriteInputTokens": 1375
+          },
+          {
+            "eventId": "6bc550ae-a2da-4291-aeb4-d08f0177f909",
+            "timestamp": "2026-04-09T07:35:51.241Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 599,
+            "cacheReadInputTokens": 322173,
+            "cacheWriteInputTokens": 1089
+          },
+          {
+            "eventId": "aef90d3e-f491-4306-a6cd-22caec348f91",
+            "timestamp": "2026-04-09T07:35:55.546Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 92,
+            "cacheReadInputTokens": 323262,
+            "cacheWriteInputTokens": 907
+          },
+          {
+            "eventId": "8ef94de8-6f4e-4b6b-9baa-b60fa5f5eb46",
+            "timestamp": "2026-04-09T07:36:01.974Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 299,
+            "cacheReadInputTokens": 324169,
+            "cacheWriteInputTokens": 709
+          },
+          {
+            "eventId": "f8b01f90-ed12-40f2-a5ca-ffb002a24946",
+            "timestamp": "2026-04-09T07:36:10.240Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 101,
+            "cacheReadInputTokens": 324878,
+            "cacheWriteInputTokens": 339
+          },
+          {
+            "eventId": "c61caab9-d406-4ee7-9195-6056a19c6d73",
+            "timestamp": "2026-04-09T07:36:17.415Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 109,
+            "cacheReadInputTokens": 325217,
+            "cacheWriteInputTokens": 121
+          },
+          {
+            "eventId": "4ce9dbb0-805e-4a9f-a75f-3f9f364d834f",
+            "timestamp": "2026-04-09T07:36:33.761Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 919,
+            "cacheReadInputTokens": 325338,
+            "cacheWriteInputTokens": 513
+          },
+          {
+            "eventId": "cb3a0e38-34f0-4e59-85f5-345c695a9790",
+            "timestamp": "2026-04-09T07:36:40.850Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 299,
+            "cacheReadInputTokens": 325851,
+            "cacheWriteInputTokens": 963
+          },
+          {
+            "eventId": "6db050a0-bfec-4a5b-b03d-d32b3c3df64f",
+            "timestamp": "2026-04-09T07:36:46.082Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 106,
+            "cacheReadInputTokens": 326814,
+            "cacheWriteInputTokens": 343
+          },
+          {
+            "eventId": "318b5133-3102-4825-9244-2c7f9ebd412b",
+            "timestamp": "2026-04-09T07:36:55.247Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 220,
+            "cacheReadInputTokens": 327157,
+            "cacheWriteInputTokens": 431
+          },
+          {
+            "eventId": "4e18b291-8dec-4cb2-88c7-e6f5d8439068",
+            "timestamp": "2026-04-09T07:37:04.967Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 155,
+            "cacheReadInputTokens": 327588,
+            "cacheWriteInputTokens": 1025
+          },
+          {
+            "eventId": "b487d9ac-bd66-4761-8e37-e524c35e9661",
+            "timestamp": "2026-04-09T07:37:18.942Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 208,
+            "cacheReadInputTokens": 328613,
+            "cacheWriteInputTokens": 173
+          },
+          {
+            "eventId": "db060940-acb3-445f-a8b2-7f955239070d",
+            "timestamp": "2026-04-09T07:37:50.596Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 719,
+            "cacheReadInputTokens": 328786,
+            "cacheWriteInputTokens": 675
+          },
+          {
+            "eventId": "00ecdfea-ea67-4f66-878e-e979b1d09648",
+            "timestamp": "2026-04-09T07:42:05.505Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 1144,
+            "cacheReadInputTokens": 329461,
+            "cacheWriteInputTokens": 783
+          },
+          {
+            "eventId": "1a615059-8943-4f41-a8b6-8024fef7ba06",
+            "timestamp": "2026-04-09T07:46:24.698Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 94,
+            "cacheReadInputTokens": 330244,
+            "cacheWriteInputTokens": 1243
+          },
+          {
+            "eventId": "29f78be7-d677-46fc-a4eb-1d03ccec3052",
+            "timestamp": "2026-04-09T07:46:31.393Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 354,
+            "cacheReadInputTokens": 331487,
+            "cacheWriteInputTokens": 292
+          },
+          {
+            "eventId": "2d947638-f3a9-43a3-8797-84bfa8de9436",
+            "timestamp": "2026-04-09T07:46:37.954Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 119,
+            "cacheReadInputTokens": 331779,
+            "cacheWriteInputTokens": 396
+          },
+          {
+            "eventId": "201f1071-b0aa-46d1-ad6d-47995601c764",
+            "timestamp": "2026-04-09T07:46:43.511Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 240,
+            "cacheReadInputTokens": 332175,
+            "cacheWriteInputTokens": 391
+          },
+          {
+            "eventId": "0577261d-0595-4f5d-88e1-fe5242a1c111",
+            "timestamp": "2026-04-09T07:46:52.161Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 298,
+            "cacheReadInputTokens": 332566,
+            "cacheWriteInputTokens": 282
+          },
+          {
+            "eventId": "09e6fb2e-a3f3-4ed0-8b0b-5b08998183b5",
+            "timestamp": "2026-04-09T07:46:56.607Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 123,
+            "cacheReadInputTokens": 332848,
+            "cacheWriteInputTokens": 451
+          },
+          {
+            "eventId": "4e9fe2d6-5107-429b-9a2d-be9d0d6d2390",
+            "timestamp": "2026-04-09T07:47:03.634Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 110,
+            "cacheReadInputTokens": 333299,
+            "cacheWriteInputTokens": 527
+          },
+          {
+            "eventId": "43d09f2f-ed88-4f6d-9efb-8eb7962f6d02",
+            "timestamp": "2026-04-09T07:47:08.838Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 110,
+            "cacheReadInputTokens": 333826,
+            "cacheWriteInputTokens": 565
+          },
+          {
+            "eventId": "a931ab60-db2e-4a86-9f59-b7bf1d92f237",
+            "timestamp": "2026-04-09T07:47:15.864Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 269,
+            "cacheReadInputTokens": 334391,
+            "cacheWriteInputTokens": 392
+          },
+          {
+            "eventId": "482648e2-7b2e-4ddf-bace-e00cb68130d1",
+            "timestamp": "2026-04-09T07:47:21.770Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 155,
+            "cacheReadInputTokens": 334783,
+            "cacheWriteInputTokens": 311
+          },
+          {
+            "eventId": "9f49130c-a26e-4f05-bff9-5e6cad52749f",
+            "timestamp": "2026-04-09T07:47:34.122Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 72,
+            "cacheReadInputTokens": 335094,
+            "cacheWriteInputTokens": 452
+          },
+          {
+            "eventId": "e31ff0db-ce7a-4493-a89e-ffb9be89103f",
+            "timestamp": "2026-04-09T07:48:12.842Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 88,
+            "cacheReadInputTokens": 335546,
+            "cacheWriteInputTokens": 149
+          },
+          {
+            "eventId": "d3d7a6a6-6c1f-4f2c-a4aa-80d1c447bdb2",
+            "timestamp": "2026-04-09T07:48:19.830Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 158,
+            "cacheReadInputTokens": 335695,
+            "cacheWriteInputTokens": 8160
+          },
+          {
+            "eventId": "afb10a47-fec7-4308-80c2-3dcc37ea4bef",
+            "timestamp": "2026-04-09T07:48:33.653Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 510,
+            "cacheReadInputTokens": 343855,
+            "cacheWriteInputTokens": 1668
+          },
+          {
+            "eventId": "1192673a-eb07-47f8-be2c-b5a35fc4bcb3",
+            "timestamp": "2026-04-09T07:51:06.434Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 10857,
+            "cacheReadInputTokens": 345523,
+            "cacheWriteInputTokens": 563
+          },
+          {
+            "eventId": "530a1e91-832f-4f78-a7e4-79380591bc83",
+            "timestamp": "2026-04-09T07:51:14.724Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 113,
+            "cacheReadInputTokens": 346086,
+            "cacheWriteInputTokens": 10910
+          },
+          {
+            "eventId": "5edf5bf5-fb41-4a46-972a-eba17b1876c9",
+            "timestamp": "2026-04-09T07:51:27.124Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 409,
+            "cacheReadInputTokens": 356996,
+            "cacheWriteInputTokens": 2005
+          },
+          {
+            "eventId": "bd2f77f7-e113-425b-908e-2bb338654cd6",
+            "timestamp": "2026-04-09T07:51:33.398Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 271,
+            "cacheReadInputTokens": 359001,
+            "cacheWriteInputTokens": 462
+          },
+          {
+            "eventId": "d36b230b-08ed-4a1b-8f02-8988a1b970b6",
+            "timestamp": "2026-04-09T07:51:40.987Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 43,
+            "cacheReadInputTokens": 359463,
+            "cacheWriteInputTokens": 324
+          },
+          {
+            "eventId": "ada430ed-34af-45fe-b506-de31a0d53e58",
+            "timestamp": "2026-04-09T07:51:49.956Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 122,
+            "cacheReadInputTokens": 359787,
+            "cacheWriteInputTokens": 314
+          },
+          {
+            "eventId": "5b9d0c2a-fccc-4350-a8bd-ab7bcefaaf5a",
+            "timestamp": "2026-04-09T07:52:15.979Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 525,
+            "cacheReadInputTokens": 360101,
+            "cacheWriteInputTokens": 502
+          },
+          {
+            "eventId": "85dad30c-095f-46a8-8c4c-db9df618a8d5",
+            "timestamp": "2026-04-09T07:52:53.503Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 445,
+            "cacheReadInputTokens": 360603,
+            "cacheWriteInputTokens": 631
+          },
+          {
+            "eventId": "68bd9eb0-7849-4f18-a8f7-fe033ed96232",
+            "timestamp": "2026-04-09T07:55:42.553Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1597,
+            "cacheReadInputTokens": 361234,
+            "cacheWriteInputTokens": 3459
+          },
+          {
+            "eventId": "f0b27bdd-9c61-4777-a7ff-465da228f97b",
+            "timestamp": "2026-04-09T08:06:52.422Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 105,
+            "cacheReadInputTokens": 364693,
+            "cacheWriteInputTokens": 1916
+          },
+          {
+            "eventId": "530ea650-6cf7-4209-a3b8-f7f3a491fd6a",
+            "timestamp": "2026-04-09T08:07:50.545Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 4328,
+            "cacheReadInputTokens": 366609,
+            "cacheWriteInputTokens": 125
+          },
+          {
+            "eventId": "59645c27-5681-41cd-bac3-93b27389ad01",
+            "timestamp": "2026-04-09T08:07:57.293Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 152,
+            "cacheReadInputTokens": 366734,
+            "cacheWriteInputTokens": 4375
+          }
+        ],
+        "permissionModeTimeline": [
+          {
+            "mode": "bypassPermissions"
+          }
+        ],
+        "sessionModeTimeline": [
+          {
+            "mode": "plan",
+            "event": "enter",
+            "timestamp": "2026-04-09T06:31:42.919Z",
+            "source": "tool_event"
+          },
+          {
+            "mode": "plan",
+            "event": "exit",
+            "timestamp": "2026-04-09T06:41:33.058Z",
+            "source": "tool_event"
+          }
+        ],
+        "costReliability": "not_available"
+      },
+      "digestHints": {
+        "mcpServersConfigured": [
+          "claude-in-chrome",
+          "claude.ai DocFork",
+          "claude.ai Figma",
+          "claude.ai Really",
+          "pencil"
+        ],
+        "cacheHitRate": 0.9738485329684164,
+        "activeDurationMs": 10088569
+      }
+    }
+  },
+  "agentCount": 8,
+  "assetCount": 18,
+  "searchTextLength": 547503
+}

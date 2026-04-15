@@ -1,2 +1,0 @@
-{"type":"user","uuid":"user-3","sessionId":"session-3","timestamp":"2024-01-01T12:00:00.000Z","message":{"role":"user","content":"Add new feature"},"cwd":"/Users/test/project"}
-{"type":"assistant","uuid":"assistant-3","sessionId":"session-3","timestamp":"2024-01-01T12:00:01.000Z","parentUuid":"user-3","message":{"role":"assistant","content":[{"type":"text","text":"Feature added."}]}}

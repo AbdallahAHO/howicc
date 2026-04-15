@@ -5,11 +5,20 @@ node_modules/
 # Build outputs
 dist/
 .astro/
+.turbo/
+.wrangler/
 
 # Environment variables
 .env
+.env.*
 .env.local
 .env.production
+.dev.vars
+.dev.vars.*
+!.env.example
+!**/.env.example
+!.dev.vars.example
+!**/.dev.vars.example
 
 # Logs
 npm-debug.log*

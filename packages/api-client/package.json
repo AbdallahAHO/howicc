@@ -1,0 +1,51 @@
+{
+  "name": "@howicc/api-client",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Type-safe API client for the HowiCC platform",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./generated": "./src/generated/openapi.ts",
+    "./query": "./src/query.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "generate": "pnpm run generate:openapi && pnpm run generate:types",
+    "generate:check": "pnpm run generate && git diff --exit-code -- openapi/howicc-openapi.json src/generated/openapi.ts",
+    "generate:openapi": "pnpm exec tsx scripts/export-openapi.ts",
+    "generate:types": "pnpm exec openapi-typescript ./openapi/howicc-openapi.json -o ./src/generated/openapi.ts --alphabetize --enum --enum-values --make-paths-enum --path-params-as-types --read-write-markers",
+    "test": "vitest run --passWithNoTests",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@howicc/contracts": "workspace:*",
+    "openapi-fetch": "^0.17.0",
+    "openapi-react-query": "^0.5.4"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.99.0",
+    "react": "^19.2.5"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@howicc/typescript-config": "workspace:*",
+    "@tanstack/react-query": "^5.99.0",
+    "@types/react": "^19.2.14",
+    "openapi-typescript": "^7.13.0",
+    "react": "^19.2.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

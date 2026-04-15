@@ -1,0 +1,80 @@
+{
+  "sessionId": "9c76e9a0-49aa-47e8-b5dd-4ddca51b0512",
+  "provider": "claude_code",
+  "agentVersion": "2.1.92",
+  "projectKey": "-workspace-howicc",
+  "projectPath": "/workspace/howicc",
+  "gitBranch": "chore/howicc-revamp-foundation",
+  "title": "[WARNING]: Console output during zsh initialization detected.  When using Powerlevel10k with instant prompt, console ...",
+  "createdAt": "2026-04-10T05:12:54.469Z",
+  "updatedAt": "2026-04-10T05:13:21.365Z",
+  "durationMs": 26896,
+  "dayOfWeek": 5,
+  "turnCount": 1,
+  "messageCount": 4,
+  "toolRunCount": 3,
+  "toolCategories": {
+    "read": 1,
+    "write": 1,
+    "search": 1,
+    "command": 0,
+    "agent": 0,
+    "mcp": 0,
+    "plan": 0,
+    "question": 0,
+    "task": 0,
+    "web": 0,
+    "other": 0
+  },
+  "errorCount": 0,
+  "apiErrorCount": 0,
+  "apiErrorTypes": {},
+  "rejectionCount": 0,
+  "interruptionCount": 0,
+  "compactionCount": 0,
+  "subagentCount": 0,
+  "hasPlan": false,
+  "hasThinking": false,
+  "models": [
+    {
+      "model": "claude-opus-4-6",
+      "inputTokens": 6,
+      "outputTokens": 676
+    }
+  ],
+  "estimatedCostUsd": 0.24909825000000002,
+  "hourOfDay": 7,
+  "sessionType": "investigating",
+  "filesChanged": [
+    "/home/demo/.zshrc"
+  ],
+  "filesRead": [
+    "/home/demo/.zshrc"
+  ],
+  "languages": {
+    "zshrc": 1
+  },
+  "fileIterationDepth": 1,
+  "gitCommits": 0,
+  "gitPushes": 0,
+  "repository": {
+    "owner": "personal",
+    "name": "howicc",
+    "fullName": "personal/howicc",
+    "source": "cwd_derived"
+  },
+  "prLinks": [],
+  "mcpServersConfigured": [
+    "claude-in-chrome",
+    "claude_ai_DocFork",
+    "claude_ai_Figma",
+    "claude_ai_Really",
+    "pencil"
+  ],
+  "mcpServersUsed": [],
+  "skillsTriggered": [],
+  "providerDigest": {
+    "cacheHitRate": 0.7321260686576868,
+    "activeDurationMs": 26896
+  }
+}

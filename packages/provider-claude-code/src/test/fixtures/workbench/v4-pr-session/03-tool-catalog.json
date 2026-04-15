@@ -1,0 +1,103 @@
+[
+  {
+    "toolName": "Read",
+    "displayName": "Read",
+    "source": "native",
+    "callCount": 11,
+    "inputKeys": [
+      "file_path",
+      "limit"
+    ],
+    "sampleLabels": [
+      "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/server.ts",
+      "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/property.ts",
+      "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/discovery.ts"
+    ],
+    "sampleInputs": [
+      {
+        "file_path": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/server.ts"
+      },
+      {
+        "file_path": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/property.ts",
+        "limit": 80
+      }
+    ]
+  },
+  {
+    "toolName": "Bash",
+    "displayName": "Bash",
+    "source": "native",
+    "callCount": 6,
+    "inputKeys": [
+      "command",
+      "description"
+    ],
+    "sampleLabels": [
+      "List MCP tool files",
+      "Show working tree status",
+      "Check diff of the guide file"
+    ],
+    "sampleInputs": [
+      {
+        "command": "ls /Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/",
+        "description": "List MCP tool files"
+      },
+      {
+        "command": "git status",
+        "description": "Show working tree status"
+      }
+    ]
+  },
+  {
+    "toolName": "Write",
+    "displayName": "Write",
+    "source": "native",
+    "callCount": 3,
+    "inputKeys": [
+      "file_path",
+      "content"
+    ],
+    "sampleLabels": [
+      "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md"
+    ],
+    "sampleInputs": [
+      {
+        "file_path": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md",
+        "content": "# REL-217: BE Allie Chat Agent — Pairing Guide\n\n> **Branch:** `feature/rel-217-chat` | **Status:** In Progress | **Date:** 2026-04-06\n\n## What We're Building\n\nReplace the current **dumb proxy** (`POST..."
+      },
+      {
+        "file_path": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md",
+        "content": "# REL-217: BE Allie Chat Agent — Pairing Guide\n\n> **Branch:** `feature/rel-217-chat` | **Status:** In Progress | **Date:** 2026-04-06\n\n## What We're Building\n\nReplace the current **dumb proxy** (`POST..."
+      }
+    ]
+  },
+  {
+    "toolName": "Grep",
+    "displayName": "Grep",
+    "source": "native",
+    "callCount": 2,
+    "inputKeys": [
+      "pattern",
+      "path",
+      "output_mode",
+      "-A"
+    ],
+    "sampleLabels": [
+      "registerTool\\(\\s*\" in /Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools",
+      "AUTHENTICATED_CAPABILITIES in /Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/m"
+    ],
+    "sampleInputs": [
+      {
+        "pattern": "registerTool\\(\\s*\"",
+        "path": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools",
+        "output_mode": "content"
+      },
+      {
+        "pattern": "AUTHENTICATED_CAPABILITIES",
+        "path": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/apps/api/src/modules/mcp/tools/sign-in.ts",
+        "output_mode": "content",
+        "-A": 30
+      }
+    ]
+  }
+]

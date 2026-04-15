@@ -1,0 +1,64 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - 'cli-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish @howicc/cli
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify CLI tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          node <<'EOF'
+          const packageJson = require('./apps/cli/package.json')
+          const expectedTag = `cli-v${packageJson.version}`
+          const actualTag = process.env.GITHUB_REF_NAME
+
+          if (actualTag !== expectedTag) {
+            throw new Error(`Expected tag ${expectedTag} but received ${actualTag}`)
+          }
+          EOF
+
+      - name: Test CLI
+        run: pnpm --filter @howicc/cli test
+
+      - name: Type-check CLI
+        run: pnpm --filter @howicc/cli type-check
+
+      - name: Build CLI
+        run: pnpm --filter @howicc/cli build
+
+      - name: Publish CLI package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: pnpm --filter @howicc/cli publish --access public --no-git-checks

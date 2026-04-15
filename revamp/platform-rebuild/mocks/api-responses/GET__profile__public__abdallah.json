@@ -1,0 +1,141 @@
+{
+  "success": true,
+  "user": {
+    "username": "abdallah",
+    "displayName": "Abdallah Othman",
+    "avatarUrl": null,
+    "githubUrl": "https://github.com/abdallah",
+    "websiteUrl": null
+  },
+  "publicSettings": {
+    "showActivityHeatmap": true,
+    "showCost": false,
+    "showRepositories": true,
+    "showSessionTypes": true,
+    "showToolsLanguages": true,
+    "showBadges": true
+  },
+  "stats": {
+    "sessionCount": 9,
+    "totalHours": 12.08,
+    "currentStreak": 2,
+    "longestStreak": 2,
+    "firstSessionAt": "2026-04-09T00:55:47.929Z",
+    "lastSessionAt": "2026-04-10T05:13:21.365Z"
+  },
+  "badges": [
+    {
+      "id": "polymath",
+      "label": "Polymath",
+      "description": "77% mixed sessions"
+    }
+  ],
+  "activity": {
+    "dailyActivity": [
+      {
+        "date": "2026-04-09",
+        "sessionCount": 8,
+        "totalDurationMs": 43452064
+      },
+      {
+        "date": "2026-04-10",
+        "sessionCount": 1,
+        "totalDurationMs": 26896
+      }
+    ],
+    "hourlyDistribution": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "weekdayDistribution": [
+      0,
+      0,
+      0,
+      0,
+      8,
+      1,
+      0
+    ]
+  },
+  "sessionTypes": {
+    "mixed": 9
+  },
+  "languages": {},
+  "topTools": [],
+  "publicSessions": [
+    {
+      "conversationId": "conv_4bbf3eb3",
+      "slug": "user-profile-aggregation-system",
+      "title": "user-profile-aggregation-system",
+      "repository": {
+        "fullName": {
+          "owner": "personal",
+          "name": "howicc",
+          "fullName": "personal/howicc",
+          "source": "cwd_derived"
+        }
+      },
+      "sessionType": "mixed",
+      "messageCount": 376,
+      "durationMs": 22722552,
+      "firstMessageExcerpt": "",
+      "viewCount": 0,
+      "createdAt": "2026-04-10T08:16:45.671000Z"
+    },
+    {
+      "conversationId": "conv_aa7e1ba3",
+      "slug": "as-per-the-current-implmentation-now-including-uncommited-change",
+      "title": "as per the current implmentation now (including uncommited changes) let me know what's missing from /home/demo/....",
+      "repository": {
+        "fullName": {
+          "owner": "feature",
+          "name": "rel-217-chat",
+          "fullName": "feature/rel-217-chat",
+          "source": "cwd_derived"
+        }
+      },
+      "sessionType": "mixed",
+      "messageCount": 72,
+      "durationMs": 2148920,
+      "firstMessageExcerpt": "",
+      "viewCount": 0,
+      "createdAt": "2026-04-10T08:16:46.041000Z"
+    }
+  ],
+  "publicRepos": [
+    {
+      "fullName": "feature/rel-217-chat",
+      "sessionCount": 4
+    },
+    {
+      "fullName": "axetay/really-app",
+      "sessionCount": 2
+    },
+    {
+      "fullName": "personal/howicc",
+      "sessionCount": 2
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "sessionId": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428",
+  "provider": "claude_code",
+  "projectKey": "-Users-abdallah-Developer-personal-howicc",
+  "projectPath": "/Users/abdallah/Developer/personal/howicc",
+  "gitBranch": "chore/howicc-revamp-foundation",
+  "createdAt": "2026-04-09T03:59:40.731Z",
+  "updatedAt": "2026-04-09T08:07:57.293Z",
+  "durationMs": 10088569,
+  "turnCount": 24,
+  "messageCount": 143,
+  "toolRunCount": 273,
+  "toolCategories": {
+    "read": 67,
+    "write": 74,
+    "search": 16,
+    "command": 76,
+    "agent": 8,
+    "mcp": 0,
+    "plan": 2,
+    "question": 0,
+    "task": 30,
+    "web": 0,
+    "other": 0
+  },
+  "errorCount": 16,
+  "rejectionCount": 16,
+  "interruptionCount": 1,
+  "subagentCount": 8,
+  "hasPlan": true,
+  "hasThinking": false,
+  "models": [
+    {
+      "model": "claude-opus-4-6",
+      "inputTokens": 23778,
+      "outputTokens": 162228
+    }
+  ],
+  "hourOfDay": 5,
+  "mcpServersConfigured": [
+    "claude-in-chrome",
+    "claude.ai DocFork",
+    "claude.ai Figma",
+    "claude.ai Really",
+    "pencil"
+  ],
+  "mcpServersUsed": [],
+  "skillsTriggered": [],
+  "providerDigest": {
+    "cacheHitRate": 0.9738485329684164,
+    "activeDurationMs": 10088569
+  }
+}

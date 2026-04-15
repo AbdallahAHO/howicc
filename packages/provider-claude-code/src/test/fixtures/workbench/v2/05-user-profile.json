@@ -1,0 +1,453 @@
+{
+  "userId": "workbench-user",
+  "generatedAt": "2026-04-09T08:18:05.158Z",
+  "digestCount": 119,
+  "activity": {
+    "totalSessions": 119,
+    "totalDurationMs": 341463183,
+    "activeDays": 16,
+    "currentStreak": 2,
+    "longestStreak": 11,
+    "averageSessionDurationMs": 2869438.512605042,
+    "averageTurnsPerSession": 7.983193277310924,
+    "hourlyDistribution": [
+      7,
+      0,
+      2,
+      0,
+      0,
+      3,
+      5,
+      0,
+      3,
+      3,
+      4,
+      3,
+      3,
+      5,
+      1,
+      4,
+      2,
+      4,
+      6,
+      4,
+      9,
+      7,
+      22,
+      22
+    ],
+    "dailyActivity": [
+      {
+        "date": "2026-03-21",
+        "sessionCount": 1,
+        "totalDurationMs": 9475953
+      },
+      {
+        "date": "2026-03-22",
+        "sessionCount": 1,
+        "totalDurationMs": 12520914
+      },
+      {
+        "date": "2026-03-23",
+        "sessionCount": 2,
+        "totalDurationMs": 30128292
+      },
+      {
+        "date": "2026-03-27",
+        "sessionCount": 5,
+        "totalDurationMs": 43800417
+      },
+      {
+        "date": "2026-03-28",
+        "sessionCount": 1,
+        "totalDurationMs": 20940636
+      },
+      {
+        "date": "2026-03-29",
+        "sessionCount": 6,
+        "totalDurationMs": 13197431
+      },
+      {
+        "date": "2026-03-30",
+        "sessionCount": 10,
+        "totalDurationMs": 43875276
+      },
+      {
+        "date": "2026-03-31",
+        "sessionCount": 11,
+        "totalDurationMs": 6959530
+      },
+      {
+        "date": "2026-04-01",
+        "sessionCount": 4,
+        "totalDurationMs": 6051519
+      },
+      {
+        "date": "2026-04-02",
+        "sessionCount": 16,
+        "totalDurationMs": 28434335
+      },
+      {
+        "date": "2026-04-03",
+        "sessionCount": 9,
+        "totalDurationMs": 33386011
+      },
+      {
+        "date": "2026-04-04",
+        "sessionCount": 16,
+        "totalDurationMs": 31606953
+      },
+      {
+        "date": "2026-04-05",
+        "sessionCount": 18,
+        "totalDurationMs": 27709145
+      },
+      {
+        "date": "2026-04-06",
+        "sessionCount": 2,
+        "totalDurationMs": 2421702
+      },
+      {
+        "date": "2026-04-08",
+        "sessionCount": 9,
+        "totalDurationMs": 15381092
+      },
+      {
+        "date": "2026-04-09",
+        "sessionCount": 8,
+        "totalDurationMs": 15573977
+      }
+    ],
+    "firstSessionAt": "2026-03-21T19:26:40.706Z",
+    "lastSessionAt": "2026-04-09T08:16:27.383Z"
+  },
+  "projects": [
+    {
+      "projectKey": "-Users-abdallah-Developer-work-axetay-really-app",
+      "projectPath": "/Users/abdallah/Developer/work/axetay/really-app",
+      "sessionCount": 47,
+      "totalDurationMs": 136278757,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-05T20:08:42.642Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-playground-claude-code",
+      "projectPath": "/Users/abdallah/Developer/playground/claude-code",
+      "sessionCount": 11,
+      "totalDurationMs": 5325419,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-02T07:26:28.993Z"
+    },
+    {
+      "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-wave0",
+      "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/wave0",
+      "sessionCount": 10,
+      "totalDurationMs": 10329828,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-09T01:52:32.631Z"
+    },
+    {
+      "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+      "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+      "sessionCount": 10,
+      "totalDurationMs": 13222273,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-09T08:16:27.383Z"
+    },
+    {
+      "projectKey": "-Users-abdallah",
+      "projectPath": "/Users/abdallah",
+      "sessionCount": 9,
+      "totalDurationMs": 22019040,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-09T04:50:28.604Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work-axetay",
+      "projectPath": "/Users/abdallah/Developer/work/axetay",
+      "sessionCount": 7,
+      "totalDurationMs": 15767901,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-05T20:06:35.029Z"
+    },
+    {
+      "projectKey": "-Users-abdallah--superset-worktrees-really-app-feat-single-property-page",
+      "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feat/single-property-page",
+      "sessionCount": 2,
+      "totalDurationMs": 30128292,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-23T15:44:29.421Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-temp-test-clone",
+      "projectPath": "/Users/abdallah/Developer/temp/test-clone",
+      "sessionCount": 2,
+      "totalDurationMs": 3698573,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-27T19:51:18.086Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-temp-claude-code",
+      "projectPath": "/Users/abdallah/Developer/temp/claude-code",
+      "sessionCount": 2,
+      "totalDurationMs": 1725431,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-31T20:52:03.301Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work-axetay-really-packages-search-cdk",
+      "projectPath": "/Users/abdallah/Developer/work/axetay/really/packages/search/cdk",
+      "sessionCount": 2,
+      "totalDurationMs": 2092773,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-04T21:51:33.205Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-personal-job-hunter",
+      "projectPath": "/Users/abdallah/Developer/personal/job-hunter",
+      "sessionCount": 2,
+      "totalDurationMs": 13049005,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-03T20:45:21.831Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Library-CloudStorage-GoogleDrive-abdallah-ali-hassan-gmail-com-My-Drive-JD-20-29-Family---memories-22-Family-22-04-Anas-Job-Hunt",
+      "projectPath": "/Users/abdallah/Library/CloudStorage/GoogleDrive-abdallah.ali.hassan@gmail.com/My Drive/JD/20-29 Family & memories/22 Family/22.04 Anas Job Hunt",
+      "sessionCount": 2,
+      "totalDurationMs": 2637689,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-03T19:49:03.278Z"
+    },
+    {
+      "projectKey": "-",
+      "projectPath": "/",
+      "sessionCount": 2,
+      "totalDurationMs": 1363030,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-03T16:39:17.044Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer",
+      "projectPath": "/Users/abdallah/Developer",
+      "sessionCount": 2,
+      "totalDurationMs": 59787,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-09T03:34:36.111Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-personal-howicc",
+      "projectPath": "/Users/abdallah/Developer/personal/howicc",
+      "sessionCount": 2,
+      "totalDurationMs": 10753845,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-09T08:18:02.755Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work-axetay-really-area-editorial",
+      "projectPath": "/Users/abdallah/Developer/work/axetay/really-area-editorial",
+      "sessionCount": 1,
+      "totalDurationMs": 9475953,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-22T15:48:15.954Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-temp",
+      "projectPath": "/Users/abdallah/Developer/temp",
+      "sessionCount": 1,
+      "totalDurationMs": 1482591,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-27T20:17:29.837Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-personal-nubian",
+      "projectPath": "/Users/abdallah/Developer/personal/nubian",
+      "sessionCount": 1,
+      "totalDurationMs": 38618565,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-29T09:26:07.578Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work-escalay-escalay-log",
+      "projectPath": "/Users/abdallah/Developer/work/escalay/escalay-log",
+      "sessionCount": 1,
+      "totalDurationMs": 20940636,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-29T10:24:44.416Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work-escalay",
+      "projectPath": "/Users/abdallah/Developer/work/escalay",
+      "sessionCount": 1,
+      "totalDurationMs": 2434323,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-03-30T09:35:54.209Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work",
+      "projectPath": "/Users/abdallah/Developer/work",
+      "sessionCount": 1,
+      "totalDurationMs": 59472,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-02T18:01:57.571Z"
+    },
+    {
+      "projectKey": "-Users-abdallah-Developer-work-axetay-really-branding-system",
+      "sessionCount": 1,
+      "totalDurationMs": 0,
+      "estimatedCostUsd": 0,
+      "lastActiveAt": "2026-04-04T21:05:18.087Z"
+    }
+  ],
+  "toolcraft": {
+    "totalToolRuns": 10489,
+    "categoryBreakdown": {
+      "read": 1853,
+      "write": 1801,
+      "search": 612,
+      "command": 4944,
+      "agent": 207,
+      "mcp": 331,
+      "plan": 56,
+      "question": 18,
+      "task": 378,
+      "web": 126,
+      "other": 163
+    },
+    "errorRate": 0.049099056154066165,
+    "rejectionRate": 0.049099056154066165,
+    "interruptionRate": 1.1680672268907564,
+    "planUsageRate": 0.20168067226890757,
+    "agentUsageRate": 0.47058823529411764,
+    "thinkingVisibleRate": 0.2184873949579832
+  },
+  "models": [
+    {
+      "model": "claude-opus-4-6",
+      "sessionCount": 97,
+      "inputTokens": 539563,
+      "outputTokens": 4855895,
+      "estimatedCostUsd": 0
+    },
+    {
+      "model": "claude-sonnet-4-6",
+      "sessionCount": 12,
+      "inputTokens": 10581,
+      "outputTokens": 122549,
+      "estimatedCostUsd": 0
+    }
+  ],
+  "cost": {
+    "totalUsd": 0,
+    "averagePerSessionUsd": 0,
+    "byMonth": [
+      {
+        "month": "2026-03",
+        "totalUsd": 0,
+        "sessionCount": 37
+      },
+      {
+        "month": "2026-04",
+        "totalUsd": 0,
+        "sessionCount": 82
+      }
+    ]
+  },
+  "integrations": {
+    "mcpServers": [
+      {
+        "server": "claude_ai_DocFork",
+        "configuredCount": 52,
+        "usedCount": 5,
+        "totalToolCalls": 36
+      },
+      {
+        "server": "pencil",
+        "configuredCount": 53,
+        "usedCount": 4,
+        "totalToolCalls": 47
+      },
+      {
+        "server": "claude_ai_Figma",
+        "configuredCount": 51,
+        "usedCount": 0,
+        "totalToolCalls": 0
+      },
+      {
+        "server": "claude_ai_Really",
+        "configuredCount": 17,
+        "usedCount": 0,
+        "totalToolCalls": 0
+      },
+      {
+        "server": "claude-in-chrome",
+        "configuredCount": 10,
+        "usedCount": 3,
+        "totalToolCalls": 114
+      },
+      {
+        "server": "chrome-devtools",
+        "configuredCount": 0,
+        "usedCount": 10,
+        "totalToolCalls": 133
+      },
+      {
+        "server": "claude_ai_Google_Calendar",
+        "configuredCount": 0,
+        "usedCount": 1,
+        "totalToolCalls": 1
+      }
+    ],
+    "skills": [
+      {
+        "name": "commit",
+        "sessionCount": 4,
+        "totalInvocations": 4
+      },
+      {
+        "name": "clerk-backend-api",
+        "sessionCount": 4,
+        "totalInvocations": 4
+      },
+      {
+        "name": "jira",
+        "sessionCount": 4,
+        "totalInvocations": 4
+      },
+      {
+        "name": "clone-website",
+        "sessionCount": 3,
+        "totalInvocations": 3
+      },
+      {
+        "name": "chrome-devtools",
+        "sessionCount": 1,
+        "totalInvocations": 1
+      },
+      {
+        "name": "gws-calendar",
+        "sessionCount": 1,
+        "totalInvocations": 1
+      },
+      {
+        "name": "jira-cli",
+        "sessionCount": 1,
+        "totalInvocations": 1
+      }
+    ]
+  },
+  "providers": [
+    {
+      "provider": "claude_code",
+      "sessionCount": 119,
+      "totalDurationMs": 341463183,
+      "estimatedCostUsd": 0
+    }
+  ],
+  "providerProfiles": {
+    "claudeCode": {
+      "cacheHitRate": 0.818886866033521,
+      "thinkingVisibleRate": 0.2184873949579832,
+      "avgTurnsPerSession": 7.983193277310924
+    }
+  }
+}

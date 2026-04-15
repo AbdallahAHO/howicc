@@ -1,0 +1,3250 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HowiCC API",
+    "version": "0.0.1",
+    "description": "Contract-first API for syncing, storing, profiling, and rendering agent conversations. Browser integrations use Better Auth session cookies, while the CLI uses bearer tokens issued through the CLI auth exchange flow."
+  },
+  "servers": [
+    {
+      "url": "http://localhost",
+      "description": "Current environment"
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "Operational endpoints for health and readiness checks."
+    },
+    {
+      "name": "CLI Auth",
+      "description": "Browser-to-CLI authentication flows that mint bearer tokens for the CLI."
+    },
+    {
+      "name": "Uploads",
+      "description": "Draft upload, asset transfer, and revision finalization endpoints used during sync."
+    },
+    {
+      "name": "Conversations",
+      "description": "Authenticated read APIs for conversation summaries and render documents."
+    },
+    {
+      "name": "Artifacts",
+      "description": "Artifact preview endpoints for the current conversation revision."
+    },
+    {
+      "name": "Profiles",
+      "description": "Personal analytics and materialized session profile endpoints."
+    },
+    {
+      "name": "Repositories",
+      "description": "Public aggregate analytics for repositories with shared sessions."
+    },
+    {
+      "name": "Viewer",
+      "description": "Cookie-authenticated browser helper and smoke-test endpoints."
+    },
+    {
+      "name": "Pricing",
+      "description": "Normalized model pricing catalog endpoints."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque",
+        "description": "CLI bearer token issued by the `/cli-auth/exchange` flow."
+      },
+      "BrowserSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Secure-howicc.session_token",
+        "description": "Better Auth browser session cookie. Local HTTP development uses `howicc.session_token` without the `__Secure-` prefix."
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "status"
+        ]
+      },
+      "CliAuthAuthorizeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "redirectUrl",
+          "expiresAt"
+        ]
+      },
+      "ApiErrorCode": {
+        "type": "string",
+        "enum": [
+          "validation_failed",
+          "browser_session_required",
+          "auth_required",
+          "cli_token_invalid",
+          "cli_callback_invalid",
+          "cli_auth_grant_invalid",
+          "cli_auth_user_missing",
+          "repo_identifier_invalid",
+          "conversation_not_found",
+          "artifact_not_found",
+          "upload_request_invalid",
+          "upload_asset_target_missing",
+          "upload_session_not_found",
+          "upload_conflict",
+          "upload_expired",
+          "pricing_catalog_unavailable",
+          "internal_error"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "code": {
+            "$ref": "#/components/schemas/ApiErrorCode"
+          },
+          "error": {
+            "type": "string",
+            "example": "Authentication required."
+          }
+        },
+        "required": [
+          "success",
+          "code",
+          "error"
+        ]
+      },
+      "CliAuthAuthorizeBody": {
+        "type": "object",
+        "properties": {
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "codeChallenge": {
+            "type": "string",
+            "minLength": 16
+          },
+          "state": {
+            "type": "string",
+            "minLength": 8
+          }
+        },
+        "required": [
+          "callbackUrl",
+          "codeChallenge",
+          "state"
+        ]
+      },
+      "CliAuthUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name"
+        ]
+      },
+      "CliAuthExchangeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/CliAuthUser"
+          }
+        },
+        "required": [
+          "success",
+          "token",
+          "user"
+        ]
+      },
+      "CliAuthExchangeBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 8
+          },
+          "codeVerifier": {
+            "type": "string",
+            "minLength": 16
+          }
+        },
+        "required": [
+          "code",
+          "codeVerifier"
+        ]
+      },
+      "CliAuthWhoamiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "user": {
+            "$ref": "#/components/schemas/CliAuthUser"
+          }
+        },
+        "required": [
+          "success",
+          "user"
+        ]
+      },
+      "UploadAssetKind": {
+        "type": "string",
+        "enum": [
+          "source_bundle",
+          "canonical_json",
+          "render_json"
+        ]
+      },
+      "UploadAsset": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/UploadAssetKind"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "bytes",
+          "sha256"
+        ]
+      },
+      "ConversationVisibility": {
+        "type": "string",
+        "enum": [
+          "private",
+          "unlisted",
+          "public"
+        ]
+      },
+      "ConversationSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "visibility",
+          "updatedAt"
+        ]
+      },
+      "RenderSessionStats": {
+        "type": "object",
+        "properties": {
+          "messageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "toolRunCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activityGroupCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "messageCount",
+          "toolRunCount",
+          "activityGroupCount"
+        ]
+      },
+      "RenderDocumentSession": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "gitBranch": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/RenderSessionStats"
+          }
+        },
+        "required": [
+          "sessionId",
+          "title",
+          "provider",
+          "createdAt",
+          "updatedAt",
+          "stats"
+        ]
+      },
+      "RenderDocumentContext": {
+        "type": "object",
+        "properties": {
+          "currentPlan": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "file",
+                  "transcript_recovered"
+                ]
+              },
+              "filePath": {
+                "type": "string"
+              },
+              "artifactId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "body",
+              "source"
+            ]
+          }
+        }
+      },
+      "RenderMessageBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "message"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ]
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "role",
+          "text"
+        ]
+      },
+      "RenderQuestionOption": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "preview": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "description"
+        ]
+      },
+      "RenderQuestionItem": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "header": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderQuestionOption"
+            }
+          },
+          "answer": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "selectedPreview": {
+            "type": "string"
+          },
+          "multiSelect": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "question",
+          "header",
+          "options",
+          "multiSelect"
+        ]
+      },
+      "RenderQuestionBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "question"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderQuestionItem"
+            }
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "answered",
+              "declined",
+              "redirected",
+              "finished_plan_interview"
+            ]
+          },
+          "feedbackText": {
+            "type": "string"
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "questions",
+          "outcome",
+          "defaultCollapsed"
+        ]
+      },
+      "RenderToolRunActivity": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "tool_run"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "toolUseId": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "native",
+              "mcp"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "inputPreview": {
+            "type": "string"
+          },
+          "outputPreview": {
+            "type": "string"
+          },
+          "artifactId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "error",
+              "partial"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "toolUseId",
+          "toolName",
+          "source",
+          "title",
+          "status"
+        ]
+      },
+      "RenderHookActivity": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "hook_event"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "tone"
+        ]
+      },
+      "RenderActivityGroupBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "activity_group"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RenderToolRunActivity"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderHookActivity"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "label",
+          "defaultCollapsed",
+          "items"
+        ]
+      },
+      "RenderCalloutBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "callout"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "tone",
+          "title"
+        ]
+      },
+      "RenderTodoItem": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "status"
+        ]
+      },
+      "RenderTodoSnapshotBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "todo_snapshot"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderTodoItem"
+            }
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "items",
+          "defaultCollapsed"
+        ]
+      },
+      "RenderTaskTimelineEntry": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "deltaSummary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "taskId",
+          "status",
+          "description"
+        ]
+      },
+      "RenderTaskTimelineBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "task_timeline"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderTaskTimelineEntry"
+            }
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "entries",
+          "defaultCollapsed"
+        ]
+      },
+      "RenderResourceBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "resource"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "server": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "previewText": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": "string"
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "defaultCollapsed"
+        ]
+      },
+      "RenderStructuredDataBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "structured_data"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "data": {
+            "nullable": true
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "defaultCollapsed"
+        ]
+      },
+      "RenderBriefDeliveryAttachment": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": "string"
+          },
+          "fileUuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label"
+        ]
+      },
+      "RenderBriefDeliveryBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "brief_delivery"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderBriefDeliveryAttachment"
+            }
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "message",
+          "attachments",
+          "defaultCollapsed"
+        ]
+      },
+      "RenderSubagentThreadBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "subagent_thread"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "nullable": true
+            },
+            "description": "Nested render blocks for the delegated subagent thread. The outer document carries the full discriminated block schema."
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "title",
+          "defaultCollapsed",
+          "blocks"
+        ]
+      },
+      "RenderCompactBoundaryBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "compact_boundary"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "text"
+        ]
+      },
+      "RenderDocument": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "render_document"
+            ]
+          },
+          "schemaVersion": {
+            "type": "number",
+            "enum": [
+              1
+            ]
+          },
+          "session": {
+            "$ref": "#/components/schemas/RenderDocumentSession"
+          },
+          "context": {
+            "$ref": "#/components/schemas/RenderDocumentContext"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RenderMessageBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderQuestionBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderActivityGroupBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderCalloutBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderTodoSnapshotBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderTaskTimelineBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderResourceBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderStructuredDataBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderBriefDeliveryBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderSubagentThreadBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderCompactBoundaryBlock"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "schemaVersion",
+          "session",
+          "blocks"
+        ]
+      },
+      "UserProfileDailyActivity": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-14"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "date",
+          "sessionCount",
+          "totalDurationMs"
+        ]
+      },
+      "UserProfileActivity": {
+        "type": "object",
+        "properties": {
+          "totalSessions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activeDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "longestStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "averageSessionDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "averageTurnsPerSession": {
+            "type": "number",
+            "minimum": 0
+          },
+          "hourlyDistribution": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "weekdayDistribution": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "dailyActivity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileDailyActivity"
+            }
+          },
+          "firstSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "lastSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "totalSessions",
+          "totalDurationMs",
+          "activeDays",
+          "currentStreak",
+          "longestStreak",
+          "averageSessionDurationMs",
+          "averageTurnsPerSession",
+          "hourlyDistribution",
+          "weekdayDistribution",
+          "dailyActivity"
+        ]
+      },
+      "ProfileRepositorySummary": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "openai/openai-node"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "git_remote",
+              "pr_link",
+              "cwd_derived"
+            ]
+          }
+        },
+        "required": [
+          "fullName",
+          "source"
+        ]
+      },
+      "ProfileLanguageBreakdown": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "UserProfileProject": {
+        "type": "object",
+        "properties": {
+          "projectKey": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/ProfileRepositorySummary"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "lastActiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "languages": {
+            "$ref": "#/components/schemas/ProfileLanguageBreakdown"
+          },
+          "branches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "projectKey",
+          "displayName",
+          "sessionCount",
+          "totalDurationMs",
+          "estimatedCostUsd",
+          "lastActiveAt",
+          "languages",
+          "branches"
+        ]
+      },
+      "UserProfilePrRepository": {
+        "type": "object",
+        "properties": {
+          "repository": {
+            "type": "string"
+          },
+          "prCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "repository",
+          "prCount"
+        ]
+      },
+      "UserProfileTopLanguage": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "fileCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "language",
+          "fileCount"
+        ]
+      },
+      "UserProfileTopEditedFile": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "file",
+          "sessionCount"
+        ]
+      },
+      "SessionTypeDistribution": {
+        "type": "object",
+        "properties": {
+          "building": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "debugging": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "exploring": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "investigating": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mixed": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "building",
+          "debugging",
+          "exploring",
+          "investigating",
+          "mixed"
+        ]
+      },
+      "UserProfileProductivity": {
+        "type": "object",
+        "properties": {
+          "totalFilesChanged": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalFilesRead": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueFilesChanged": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueFilesRead": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalGitCommits": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalGitPushes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalPrLinks": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "prRepositories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfilePrRepository"
+            }
+          },
+          "languages": {
+            "$ref": "#/components/schemas/ProfileLanguageBreakdown"
+          },
+          "topLanguages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileTopLanguage"
+            }
+          },
+          "topEditedFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileTopEditedFile"
+            }
+          },
+          "averageFilesChangedPerSession": {
+            "type": "number",
+            "minimum": 0
+          },
+          "averageFileIterationDepth": {
+            "type": "number",
+            "minimum": 0
+          },
+          "averageTimeToFirstEditMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sessionTypeDistribution": {
+            "$ref": "#/components/schemas/SessionTypeDistribution"
+          }
+        },
+        "required": [
+          "totalFilesChanged",
+          "totalFilesRead",
+          "uniqueFilesChanged",
+          "uniqueFilesRead",
+          "totalGitCommits",
+          "totalGitPushes",
+          "totalPrLinks",
+          "prRepositories",
+          "languages",
+          "topLanguages",
+          "topEditedFiles",
+          "averageFilesChangedPerSession",
+          "averageFileIterationDepth",
+          "sessionTypeDistribution"
+        ]
+      },
+      "ToolCategoryBreakdown": {
+        "type": "object",
+        "properties": {
+          "read": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "write": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "search": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "command": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "agent": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mcp": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "plan": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "question": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "task": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "web": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "other": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "read",
+          "write",
+          "search",
+          "command",
+          "agent",
+          "mcp",
+          "plan",
+          "question",
+          "task",
+          "web",
+          "other"
+        ]
+      },
+      "UserProfileToolcraft": {
+        "type": "object",
+        "properties": {
+          "totalToolRuns": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "categoryBreakdown": {
+            "$ref": "#/components/schemas/ToolCategoryBreakdown"
+          },
+          "errorRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "apiErrorCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "apiErrorTypes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "rejectionRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "interruptionRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "compactionRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "planUsageRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "agentUsageRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "thinkingVisibleRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "totalToolRuns",
+          "categoryBreakdown",
+          "errorRate",
+          "apiErrorCount",
+          "apiErrorTypes",
+          "rejectionRate",
+          "interruptionRate",
+          "compactionRate",
+          "planUsageRate",
+          "agentUsageRate",
+          "thinkingVisibleRate"
+        ]
+      },
+      "UserProfileModel": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "inputTokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "outputTokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "model",
+          "sessionCount",
+          "inputTokens",
+          "outputTokens",
+          "estimatedCostUsd"
+        ]
+      },
+      "UserProfileMonthlyCost": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}$"
+          },
+          "totalUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "month",
+          "totalUsd",
+          "sessionCount"
+        ]
+      },
+      "UserProfileCost": {
+        "type": "object",
+        "properties": {
+          "totalUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "averagePerSessionUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "byMonth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileMonthlyCost"
+            }
+          }
+        },
+        "required": [
+          "totalUsd",
+          "averagePerSessionUsd",
+          "byMonth"
+        ]
+      },
+      "UserProfileMcpServer": {
+        "type": "object",
+        "properties": {
+          "server": {
+            "type": "string"
+          },
+          "configuredCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "usedCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalToolCalls": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "server",
+          "configuredCount",
+          "usedCount",
+          "totalToolCalls"
+        ]
+      },
+      "UserProfileSkill": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalInvocations": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "name",
+          "sessionCount",
+          "totalInvocations"
+        ]
+      },
+      "UserProfileIntegrations": {
+        "type": "object",
+        "properties": {
+          "mcpServers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileMcpServer"
+            }
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileSkill"
+            }
+          }
+        },
+        "required": [
+          "mcpServers",
+          "skills"
+        ]
+      },
+      "ProviderId": {
+        "type": "string",
+        "enum": [
+          "claude_code",
+          "openai_codex",
+          "custom"
+        ]
+      },
+      "UserProfileProviderVersion": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "version",
+          "sessionCount"
+        ]
+      },
+      "UserProfileProvider": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileProviderVersion"
+            }
+          }
+        },
+        "required": [
+          "provider",
+          "sessionCount",
+          "totalDurationMs",
+          "estimatedCostUsd",
+          "versions"
+        ]
+      },
+      "ClaudeCodeProviderProfile": {
+        "type": "object",
+        "properties": {
+          "cacheHitRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "thinkingVisibleRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "avgTurnsPerSession": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "thinkingVisibleRate",
+          "avgTurnsPerSession"
+        ]
+      },
+      "UserProfile": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activity": {
+            "$ref": "#/components/schemas/UserProfileActivity"
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileProject"
+            }
+          },
+          "productivity": {
+            "$ref": "#/components/schemas/UserProfileProductivity"
+          },
+          "toolcraft": {
+            "$ref": "#/components/schemas/UserProfileToolcraft"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileModel"
+            }
+          },
+          "cost": {
+            "$ref": "#/components/schemas/UserProfileCost"
+          },
+          "integrations": {
+            "$ref": "#/components/schemas/UserProfileIntegrations"
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileProvider"
+            }
+          },
+          "providerProfiles": {
+            "type": "object",
+            "properties": {
+              "claudeCode": {
+                "$ref": "#/components/schemas/ClaudeCodeProviderProfile"
+              }
+            }
+          }
+        },
+        "required": [
+          "userId",
+          "generatedAt",
+          "digestCount",
+          "activity",
+          "projects",
+          "productivity",
+          "toolcraft",
+          "models",
+          "cost",
+          "integrations",
+          "providers"
+        ]
+      },
+      "ProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfile"
+          },
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "profile",
+          "digestCount"
+        ]
+      },
+      "ProfileRecomputeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfile"
+          },
+          "recomputed": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "profile",
+          "recomputed"
+        ]
+      },
+      "RepoProfileContributor": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "userId",
+          "sessionCount"
+        ]
+      },
+      "RepoProfile": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UserProfile"
+          },
+          {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "repository": {
+                "type": "string",
+                "example": "openai/openai-node"
+              },
+              "contributorCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "contributors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/RepoProfileContributor"
+                }
+              }
+            },
+            "required": [
+              "repository",
+              "contributorCount",
+              "contributors"
+            ]
+          }
+        ]
+      },
+      "RepoProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "repository": {
+            "type": "string",
+            "example": "openai/openai-node"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/RepoProfile"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "repository",
+          "profile",
+          "sessionCount"
+        ]
+      },
+      "ViewerSession": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "createdAt",
+          "updatedAt",
+          "expiresAt"
+        ]
+      },
+      "ViewerUser": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "isAnonymous": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name"
+        ]
+      },
+      "ViewerSessionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "authenticated": {
+            "type": "boolean"
+          },
+          "session": {
+            "$ref": "#/components/schemas/ViewerSession"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ViewerUser"
+          }
+        },
+        "required": [
+          "success",
+          "authenticated",
+          "session",
+          "user"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health check",
+        "description": "Reports whether the API worker is reachable and ready to serve requests.",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cli-auth/authorize": {
+      "post": {
+        "tags": [
+          "CLI Auth"
+        ],
+        "summary": "Create a one-time browser-authenticated CLI login grant",
+        "description": "Creates a short-lived authorization grant for the local CLI login flow. The caller must already have a valid Better Auth browser session cookie.",
+        "operationId": "authorizeCliSession",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CliAuthAuthorizeBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CLI auth grant created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CliAuthAuthorizeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid callback or request payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Browser session is not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cli-auth/exchange": {
+      "post": {
+        "tags": [
+          "CLI Auth"
+        ],
+        "summary": "Exchange a one-time CLI auth code for an API token",
+        "description": "Consumes a previously issued one-time CLI grant and returns a bearer token for subsequent CLI API calls.",
+        "operationId": "exchangeCliGrant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CliAuthExchangeBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CLI token issued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CliAuthExchangeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Grant is invalid or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cli-auth/whoami": {
+      "get": {
+        "tags": [
+          "CLI Auth"
+        ],
+        "summary": "Resolve the current CLI token to the owning user",
+        "description": "Validates the bearer token presented by the CLI and returns the owning user record.",
+        "operationId": "getCliTokenOwner",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CLI token user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CliAuthWhoamiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid CLI token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/sessions": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "Create an upload session for a new revision",
+        "description": "Starts a draft upload session for a conversation revision. The response includes the storage targets that the CLI should upload next.",
+        "operationId": "createUploadSession",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceRevisionHash": {
+                    "type": "string"
+                  },
+                  "assets": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/UploadAsset"
+                    }
+                  }
+                },
+                "required": [
+                  "sourceRevisionHash",
+                  "assets"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "uploadId": {
+                      "type": "string"
+                    },
+                    "assetTargets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "$ref": "#/components/schemas/UploadAssetKind"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "uploadPath": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "key",
+                          "uploadPath"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "uploadId",
+                    "assetTargets"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/{uploadId}/assets/{kind}": {
+      "put": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "Upload asset bytes for a draft revision session",
+        "description": "Uploads a single asset body for an existing draft upload session. Each asset kind must match a target announced by the initial session creation response.",
+        "operationId": "uploadRevisionAsset",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "uploadId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/UploadAssetKind"
+            },
+            "required": true,
+            "name": "kind",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Asset bytes stored for the draft upload session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "uploadId": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "$ref": "#/components/schemas/UploadAssetKind"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "sha256": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "uploadId",
+                    "kind",
+                    "key",
+                    "bytes",
+                    "sha256"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Upload session or draft asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Upload session state conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Upload session expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/finalize": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "Finalize a conversation revision upload",
+        "description": "Validates the uploaded assets, stores the new revision, and updates the conversation to point at the latest current revision.",
+        "operationId": "finalizeUploadRevision",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uploadId": {
+                    "type": "string"
+                  },
+                  "sourceRevisionHash": {
+                    "type": "string"
+                  },
+                  "conversationId": {
+                    "type": "string"
+                  },
+                  "sourceApp": {
+                    "type": "string"
+                  },
+                  "sourceSessionId": {
+                    "type": "string"
+                  },
+                  "sourceProjectKey": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "assets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "$ref": "#/components/schemas/UploadAssetKind"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "sha256": {
+                          "type": "string"
+                        },
+                        "bytes": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "key",
+                        "sha256",
+                        "bytes"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "uploadId",
+                  "sourceRevisionHash",
+                  "sourceApp",
+                  "sourceSessionId",
+                  "sourceProjectKey",
+                  "title",
+                  "assets"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Revision finalized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "conversationId": {
+                      "type": "string"
+                    },
+                    "revisionId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "conversationId",
+                    "revisionId"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Upload session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Upload session state conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Upload session expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "List conversations for the current user",
+        "description": "Returns the current user's accessible conversations as lightweight list items for navigation and conversation selection.",
+        "operationId": "listConversations",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation summaries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "conversations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ConversationSummary"
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "conversations"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/render": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Get the current render document for a conversation",
+        "description": "Returns the normalized render document for the conversation's current revision. The render document powers the viewer UI and downstream presentation layers.",
+        "operationId": "getConversationRenderDocument",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Render document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenderDocument"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/artifacts/{artifactId}": {
+      "get": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Fetch an artifact payload for a conversation revision",
+        "description": "Returns a text preview for a stored artifact associated with the current conversation revision.",
+        "operationId": "getConversationArtifact",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "artifactId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artifact metadata and content preview",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "artifactId": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "artifactId",
+                    "content"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Artifact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pricing/models": {
+      "get": {
+        "tags": [
+          "Pricing"
+        ],
+        "summary": "Proxy the OpenRouter model catalog",
+        "description": "Returns the latest normalized OpenRouter public pricing catalog snapshot cached by the API.",
+        "operationId": "listPricingModels",
+        "responses": {
+          "200": {
+            "description": "OpenRouter model catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "openrouter_public_catalog"
+                      ]
+                    },
+                    "fetchedAt": {
+                      "type": "string"
+                    },
+                    "models": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "openrouter_public_catalog"
+                            ]
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "canonicalSlug": {
+                            "type": "string"
+                          },
+                          "displayName": {
+                            "type": "string"
+                          },
+                          "contextLength": {
+                            "type": "integer"
+                          },
+                          "promptUsdPerToken": {
+                            "type": "number"
+                          },
+                          "completionUsdPerToken": {
+                            "type": "number"
+                          },
+                          "inputCacheReadUsdPerToken": {
+                            "type": "number"
+                          },
+                          "inputCacheWriteUsdPerToken": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "source",
+                          "id",
+                          "displayName",
+                          "promptUsdPerToken",
+                          "completionUsdPerToken"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "source",
+                    "fetchedAt",
+                    "models"
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream fetch failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Get the authenticated user profile",
+        "description": "Returns the materialized cross-session profile for the current user. The endpoint accepts either a CLI bearer token or a Better Auth browser session cookie. If the user has not synced any digests yet, the API returns `profile: null` with `digestCount: 0` instead of a 404.",
+        "operationId": "getProfile",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile or an empty state when no synced sessions exist yet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated with either bearer token or browser session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Profile resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/recompute": {
+      "post": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Recompute the authenticated user profile",
+        "description": "Forces a fresh profile aggregation from the current conversation digests for the authenticated user. This is useful after a sync or when debugging stale profile materializations.",
+        "operationId": "recomputeProfile",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile was recomputed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileRecomputeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated with either bearer token or browser session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Profile recomputation failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/{owner}/{name}": {
+      "get": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Get the public aggregate profile for a repository",
+        "description": "Aggregates the current public conversation digests for the requested repository across all users. Only conversations whose current revision is publicly visible are included in the result.",
+        "operationId": "getRepoProfile",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Repository owner or organization slug.",
+              "example": "openai"
+            },
+            "required": true,
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Repository name.",
+              "example": "openai-node"
+            },
+            "required": true,
+            "name": "name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Repository profile or an empty state when no public sessions exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepoProfileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The repository owner or name contains unsupported characters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Repository profile aggregation failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viewer/session": {
+      "get": {
+        "tags": [
+          "Viewer"
+        ],
+        "summary": "Get the current browser viewer session",
+        "description": "Returns a safe summary of the current Better Auth browser session. This endpoint is intended for SSR helpers, auth debugging, and browser-only integrations that need to confirm whether a session cookie is active.",
+        "operationId": "getViewerSession",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current viewer session summary or an unauthenticated empty state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerSessionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Session lookup failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viewer/protected": {
+      "get": {
+        "tags": [
+          "Viewer"
+        ],
+        "summary": "Load the protected viewer smoke-test page",
+        "description": "Returns a simple HTML page when the current browser session is authenticated. This route exists to smoke-test cookie-based auth from the web app and local environments.",
+        "operationId": "getViewerProtected",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Protected HTML content rendered for an authenticated browser session",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<h2>Protected Content - You're In!</h2>"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The browser session is missing or invalid",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<h2>Protected Content - You're In!</h2>"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Viewer protected page failed unexpectedly",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "<h2>Protected Content - You're In!</h2>"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

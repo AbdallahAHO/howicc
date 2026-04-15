@@ -1,0 +1,197 @@
+{
+  "kind": "agent_source_bundle",
+  "version": 1,
+  "provider": "claude_code",
+  "sessionId": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428",
+  "projectKey": "-Users-abdallah-Developer-personal-howicc",
+  "projectPath": "/Users/abdallah/Developer/personal/howicc",
+  "capturedAt": "2026-04-09T08:18:03.130Z",
+  "fileCount": 18,
+  "files": [
+    {
+      "id": "f13900cd301ac4fb",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428.jsonl",
+      "kind": "transcript",
+      "sha256": "c5df9b7b51215b56",
+      "bytes": 5225945
+    },
+    {
+      "id": "233f362f3d04301c",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a075d55c9ba8b0653.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "aa4072f2b36a01ab",
+      "bytes": 232994
+    },
+    {
+      "id": "9db6e83ba6915abd",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a075d55c9ba8b0653.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "5c52a981556de8b7",
+      "bytes": 76
+    },
+    {
+      "id": "2667ad90d6ff939c",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a09b44af95d1bf5bf.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "c9de5a28acf95c51",
+      "bytes": 207324
+    },
+    {
+      "id": "a2e66b47c2eb87e0",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a09b44af95d1bf5bf.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "6a024514ec19a727",
+      "bytes": 67
+    },
+    {
+      "id": "1e2cb885203a50ee",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a5eff8fc9137bb306.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "70ba5a995ff6f028",
+      "bytes": 403134
+    },
+    {
+      "id": "16b9e5a8db7f0d43",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a5eff8fc9137bb306.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "7f1357a7ab5de739",
+      "bytes": 64
+    },
+    {
+      "id": "efc30f6474d9a13d",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a7898d5f90ce75795.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "f54123434f4f64e2",
+      "bytes": 214825
+    },
+    {
+      "id": "4a0763e1746e42dd",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a7898d5f90ce75795.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "70d59cea6dd59fa7",
+      "bytes": 69
+    },
+    {
+      "id": "c42a3643f7b59a09",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a88873bba9000afc2.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "18122ddff1499a27",
+      "bytes": 216434
+    },
+    {
+      "id": "13ee3a56ccceb7ad",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a88873bba9000afc2.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "824192a7a9c142cc",
+      "bytes": 67
+    },
+    {
+      "id": "3923939514fbedd7",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a98270a49f74505e0.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "a24e590d94b970b7",
+      "bytes": 209516
+    },
+    {
+      "id": "6a99eaa8c3ae1497",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-a98270a49f74505e0.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "7f59a57a3b27d837",
+      "bytes": 72
+    },
+    {
+      "id": "c0b1438978441b19",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-aa98cce373418ed8b.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "c26de7c6696db5bb",
+      "bytes": 296433
+    },
+    {
+      "id": "b09796e32adb7eaf",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-aa98cce373418ed8b.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "bce5745f4a700851",
+      "bytes": 67
+    },
+    {
+      "id": "fdd71d1422741f95",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-af129e829f7d99864.jsonl",
+      "kind": "subagent_transcript",
+      "sha256": "2d08ddbcc2c84526",
+      "bytes": 192654
+    },
+    {
+      "id": "a668fbb19e3bcb3d",
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428/subagents/agent-af129e829f7d99864.meta.json",
+      "kind": "subagent_meta",
+      "sha256": "b494f24e1346d57d",
+      "bytes": 75
+    },
+    {
+      "id": "6b59c636419e81ee",
+      "relPath": "plans/squishy-mapping-fog.md",
+      "kind": "plan_file",
+      "sha256": "b7aeaeadb766c85f",
+      "bytes": 7668
+    }
+  ],
+  "manifest": {
+    "transcript": {
+      "relPath": "f40fecf9-e6c8-4c57-ac3a-2eacd12cd428.jsonl",
+      "absolutePath": "/Users/abdallah/.claude/projects/-Users-abdallah-Developer-personal-howicc/f40fecf9-e6c8-4c57-ac3a-2eacd12cd428.jsonl"
+    },
+    "slug": "squishy-mapping-fog",
+    "cwd": "/Users/abdallah/Developer/personal/howicc",
+    "gitBranch": "chore/howicc-revamp-foundation",
+    "subagents": [
+      {
+        "agentId": "a075d55c9ba8b0653",
+        "agentType": "Explore",
+        "description": "Explore provider-claude-code package"
+      },
+      {
+        "agentId": "a09b44af95d1bf5bf",
+        "agentType": "Explore",
+        "description": "Explore CC session metadata"
+      },
+      {
+        "agentId": "a5eff8fc9137bb306",
+        "agentType": "Plan",
+        "description": "Design profile architecture"
+      },
+      {
+        "agentId": "a7898d5f90ce75795",
+        "agentType": "Explore",
+        "description": "Explore howicc app and schema"
+      },
+      {
+        "agentId": "a88873bba9000afc2",
+        "agentType": "Explore",
+        "description": "Explore claude-code project"
+      },
+      {
+        "agentId": "a98270a49f74505e0",
+        "agentType": "Explore",
+        "description": "Deep explore CC tool definitions"
+      },
+      {
+        "agentId": "aa98cce373418ed8b",
+        "agentType": "Explore",
+        "description": "Explore CC local disk files"
+      },
+      {
+        "agentId": "af129e829f7d99864",
+        "agentType": "Explore",
+        "description": "Explore canonical and session types"
+      }
+    ],
+    "planFiles": [
+      {
+        "relPath": "plans/squishy-mapping-fog.md",
+        "absolutePath": "/Users/abdallah/.claude/plans/squishy-mapping-fog.md"
+      }
+    ],
+    "toolResultCount": 0,
+    "warnings": []
+  }
+}

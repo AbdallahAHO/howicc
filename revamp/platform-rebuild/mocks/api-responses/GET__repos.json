@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "repos": [
+    {
+      "fullName": "feature/rel-217-chat",
+      "provider": "github",
+      "sessionCount": 4,
+      "lastActiveAt": "2026-04-10T08:16:46.066000Z"
+    },
+    {
+      "fullName": "axetay/really-app",
+      "provider": "github",
+      "sessionCount": 2,
+      "lastActiveAt": "2026-04-10T08:16:45.186000Z"
+    },
+    {
+      "fullName": "personal/howicc",
+      "provider": "github",
+      "sessionCount": 2,
+      "lastActiveAt": "2026-04-10T08:16:45.739000Z"
+    },
+    {
+      "fullName": "Users/abdallah",
+      "provider": "github",
+      "sessionCount": 1,
+      "lastActiveAt": "2026-04-10T08:16:46.178000Z"
+    }
+  ]
+}

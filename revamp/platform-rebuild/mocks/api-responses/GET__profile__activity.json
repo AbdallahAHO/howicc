@@ -1,0 +1,188 @@
+{
+  "success": true,
+  "sessions": [
+    {
+      "id": "conv_f36c94f9",
+      "slug": "can-you-check-their-gh-issue-for-any-similar-reports",
+      "title": "can you check their Gh issue for any similar reports",
+      "visibility": "private",
+      "status": "ready",
+      "repository": {
+        "owner": "Users",
+        "name": "abdallah",
+        "fullName": "Users/abdallah",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "HEAD",
+      "sessionType": "mixed",
+      "messageCount": 24,
+      "toolRunCount": 21,
+      "durationMs": 835413,
+      "estimatedCostUsd": 0.804283,
+      "updatedAt": "2026-04-10T08:16:46.176000Z",
+      "createdAt": "2026-04-10T08:16:46.160000Z",
+      "conversationId": "conv_f36c94f9"
+    },
+    {
+      "id": "conv_aa7e1ba3",
+      "slug": "as-per-the-current-implmentation-now-including-uncommited-change",
+      "title": "as per the current implmentation now (including uncommited changes) let me know what's missing from /home/demo/....",
+      "visibility": "public",
+      "status": "ready",
+      "repository": {
+        "owner": "feature",
+        "name": "rel-217-chat",
+        "fullName": "feature/rel-217-chat",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "feature/rel-217-chat",
+      "sessionType": "mixed",
+      "messageCount": 72,
+      "toolRunCount": 118,
+      "durationMs": 2148920,
+      "estimatedCostUsd": 14.901636,
+      "updatedAt": "2026-04-10T08:16:46.064000Z",
+      "createdAt": "2026-04-10T08:16:46.041000Z",
+      "conversationId": "conv_aa7e1ba3"
+    },
+    {
+      "id": "conv_eecb0717",
+      "slug": "b3b51e5a-1a9a-40fc-93f0-2e51fcc7dd24",
+      "title": "b3b51e5a-1a9a-40fc-93f0-2e51fcc7dd24",
+      "visibility": "private",
+      "status": "ready",
+      "repository": {
+        "owner": "feature",
+        "name": "rel-217-chat",
+        "fullName": "feature/rel-217-chat",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "feature/rel-217-chat",
+      "sessionType": "mixed",
+      "messageCount": 29,
+      "toolRunCount": 31,
+      "durationMs": 634510,
+      "estimatedCostUsd": 5.795136749999999,
+      "updatedAt": "2026-04-10T08:16:45.898000Z",
+      "createdAt": "2026-04-10T08:16:45.884000Z",
+      "conversationId": "conv_eecb0717"
+    },
+    {
+      "id": "conv_86356266",
+      "slug": "8d80b3a4-d445-4280-b533-b37822ed6641",
+      "title": "8d80b3a4-d445-4280-b533-b37822ed6641",
+      "visibility": "private",
+      "status": "ready",
+      "repository": {
+        "owner": "feature",
+        "name": "rel-217-chat",
+        "fullName": "feature/rel-217-chat",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "feature/rel-217-chat",
+      "sessionType": "mixed",
+      "messageCount": 2,
+      "toolRunCount": 0,
+      "durationMs": 166,
+      "estimatedCostUsd": null,
+      "updatedAt": "2026-04-10T08:16:45.824000Z",
+      "createdAt": "2026-04-10T08:16:45.818000Z",
+      "conversationId": "conv_86356266"
+    },
+    {
+      "id": "conv_42efb95b",
+      "slug": "app-dev-cache-bypass-force-executing-f9b9619f048e5bc9-cache-bypa",
+      "title": "┌─ app#dev > cache bypass, force executing f9b9619f048e5bc9 cache bypass, force executing f9b9619f048e5bc9  > app@0.0...",
+      "visibility": "private",
+      "status": "ready",
+      "repository": {
+        "owner": "feature",
+        "name": "rel-217-chat",
+        "fullName": "feature/rel-217-chat",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "feature/rel-217-chat",
+      "sessionType": "exploring",
+      "messageCount": 2,
+      "toolRunCount": 2,
+      "durationMs": 130345,
+      "estimatedCostUsd": 0.75711375,
+      "updatedAt": "2026-04-10T08:16:45.786000Z",
+      "createdAt": "2026-04-10T08:16:45.778000Z",
+      "conversationId": "conv_42efb95b"
+    },
+    {
+      "id": "conv_4bbf3eb3",
+      "slug": "user-profile-aggregation-system",
+      "title": "user-profile-aggregation-system",
+      "visibility": "public",
+      "status": "ready",
+      "repository": {
+        "owner": "personal",
+        "name": "howicc",
+        "fullName": "personal/howicc",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "chore/howicc-revamp-foundation",
+      "sessionType": "mixed",
+      "messageCount": 376,
+      "toolRunCount": 594,
+      "durationMs": 22722552,
+      "estimatedCostUsd": 196.02349299999997,
+      "updatedAt": "2026-04-10T08:16:45.736000Z",
+      "createdAt": "2026-04-10T08:16:45.671000Z",
+      "conversationId": "conv_4bbf3eb3"
+    },
+    {
+      "id": "conv_66b51f9e",
+      "slug": "warning-console-output-during-zsh-initialization-detected-when-u",
+      "title": "[WARNING]: Console output during zsh initialization detected.  When using Powerlevel10k with instant prompt, console ...",
+      "visibility": "private",
+      "status": "ready",
+      "repository": {
+        "owner": "personal",
+        "name": "howicc",
+        "fullName": "personal/howicc",
+        "source": "cwd_derived"
+      },
+      "gitBranch": "chore/howicc-revamp-foundation",
+      "sessionType": "investigating",
+      "messageCount": 4,
+      "toolRunCount": 3,
+      "durationMs": 26896,
+      "estimatedCostUsd": 0.24909825000000002,
+      "updatedAt": "2026-04-10T08:16:45.230000Z",
+      "createdAt": "2026-04-10T08:16:45.223000Z",
+      "conversationId": "conv_66b51f9e"
+    },
+    {
+      "id": "conv_d9bddda1",
+      "slug": "306181e0-e1c7-4b80-9cc4-13544f02093e",
+      "title": "306181e0-e1c7-4b80-9cc4-13544f02093e",
+      "visibility": "private",
+      "status": "ready",
+      "repository": {
+        "owner": "axetay",
+        "name": "really-app",
+        "fullName": "axetay/really-app",
+        "source": "git_remote"
+      },
+      "gitBranch": "chore/howicc-revamp-foundation",
+      "sessionType": "mixed",
+      "messageCount": 144,
+      "toolRunCount": 263,
+      "durationMs": 8493715,
+      "estimatedCostUsd": 51.033976499999994,
+      "updatedAt": "2026-04-10T08:16:45.184000Z",
+      "createdAt": "2026-04-10T08:16:37.711000Z",
+      "conversationId": "conv_d9bddda1"
+    }
+  ],
+  "total": 8,
+  "totalDuration": 34992517,
+  "totalCost": 269.56473724999995,
+  "page": 1,
+  "pageSize": 20,
+  "hasMore": false,
+  "nextCursor": null
+}

@@ -1,0 +1,52 @@
+---
+import type { WebLocals } from '../../lib/auth/types'
+
+const callbackUrl = Astro.url.searchParams.get('callbackUrl') ?? ''
+const codeChallenge = Astro.url.searchParams.get('codeChallenge') ?? ''
+const state = Astro.url.searchParams.get('state') ?? ''
+const locals = Astro.locals as WebLocals
+const authApiUrl = locals.authApiUrl
+
+if (!locals.auth.user) {
+  return Astro.redirect(
+    `/login?returnTo=${encodeURIComponent(`${Astro.url.pathname}${Astro.url.search}`)}`,
+  )
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Authorize CLI Login</title>
+  </head>
+  <body>
+    <main style="max-width: 640px; margin: 4rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.6; padding: 0 1rem;">
+      <h1>Authorize CLI Login</h1>
+      <p>
+        You are signed in as <strong>{locals.auth.user.email}</strong>.
+      </p>
+      <p>
+        Continue to hand a one-time code back to the local HowiCC CLI process running on your machine.
+      </p>
+
+      <button
+        id="continue-cli-login"
+        data-api-url={authApiUrl}
+        data-callback-url={callbackUrl}
+        data-code-challenge={codeChallenge}
+        data-state={state}
+        style="margin-top: 1.25rem; display: inline-flex; align-items: center; justify-content: center; padding: 0.85rem 1.15rem; background: #111827; color: white; border-radius: 999px; border: none; font: inherit; cursor: pointer; font-weight: 600;"
+      >
+        Continue in CLI
+      </button>
+      <p id="cli-auth-status" style="margin-top: 1rem; color: #6b7280;">Waiting to continue...</p>
+    </main>
+
+    <script>
+      import { wireCliLoginPage } from '../../lib/auth/browser/cli-login-page'
+
+      wireCliLoginPage()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,336 @@
+{
+  "kind": "canonical_session",
+  "schemaVersion": 1,
+  "parserVersion": "workbench-v1",
+  "provider": "claude_code",
+  "source": {
+    "sessionId": "fb48afb4-b791-4ad2-8cb4-d9551d154e17",
+    "projectKey": "-Users-abdallah--superset-worktrees-really-app-feature-rel-217-chat",
+    "projectPath": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "sourceRevisionHash": "1d12176918fb51b7d8721f27766258d020243555204ce63395edc3522dea5cea:d9066488ed72c582e578c1f2431448bb251142fdfbd3fc0ac9dd1dee98146a93:8ac54a62baee581eeeb8c82693cc0cd97b32e9cf6d7a5d2d9a83419bf5804095:a1176de873c287ee9bb8adcd17b3d07cfdeab73803938a8769b052ec815d7e29:208b870873c8e4b91e44e336362bc5b43eb876ad6cda8bdb4ddcda761e84d69f:68fa0e2b2dc13fa59d0afc8e2e9e0fa28b34e3a6f920479e4067747b2459e330",
+    "transcriptSha256": "1d12176918fb51b7d8721f27766258d020243555204ce63395edc3522dea5cea",
+    "importedAt": "2026-04-09T09:19:34.455Z"
+  },
+  "metadata": {
+    "title": "commit this and push a branch and open draft PR with nice description and task list",
+    "cwd": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+    "gitBranch": "feature/rel-217-chat",
+    "createdAt": "2026-04-06T13:00:32.124Z",
+    "updatedAt": "2026-04-06T19:36:54.853Z"
+  },
+  "selection": {
+    "strategy": "latest_leaf",
+    "selectedLeafUuid": "ac42a8c2-e5be-4138-9e57-754187602dae",
+    "branchCount": 24
+  },
+  "stats": {
+    "visibleMessageCount": 14,
+    "toolRunCount": 22,
+    "artifactCount": 18,
+    "subagentCount": 2
+  },
+  "providerData": {
+    "claudeCode": {
+      "slug": "crispy-splashing-frost",
+      "cwd": "/Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat",
+      "gitBranch": "feature/rel-217-chat",
+      "metrics": {
+        "messageCount": 126,
+        "turnCount": 5,
+        "inputTokens": 10205,
+        "outputTokens": 36819,
+        "cacheCreationInputTokens": 474157,
+        "cacheReadInputTokens": 3856835,
+        "startedAt": "2026-04-06T13:00:32.124Z",
+        "endedAt": "2026-04-06T19:36:54.853Z",
+        "durationMs": 23782729,
+        "modelsUsed": [
+          "claude-opus-4-6"
+        ],
+        "modelTimeline": [
+          {
+            "model": "claude-opus-4-6",
+            "timestamp": "2026-04-06T13:00:44.741Z"
+          }
+        ],
+        "usageTimeline": [
+          {
+            "eventId": "452f81df-410b-4aa1-be0a-c5dee52604ff",
+            "timestamp": "2026-04-06T13:00:57.517Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 1007,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 34109
+          },
+          {
+            "eventId": "e11939ff-edba-49c3-9209-fc7cf82a4b8f",
+            "timestamp": "2026-04-06T13:05:32.452Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 33,
+            "cacheReadInputTokens": 11872,
+            "cacheWriteInputTokens": 34053
+          },
+          {
+            "eventId": "5b7d9d85-d42e-43ba-8351-55169d8e263b",
+            "timestamp": "2026-04-06T13:05:34.522Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 198,
+            "cacheReadInputTokens": 11872,
+            "cacheWriteInputTokens": 34053
+          },
+          {
+            "eventId": "00a64b98-2ff3-4f97-84e7-efc98ef8c9c8",
+            "timestamp": "2026-04-06T13:05:50.481Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 613,
+            "cacheReadInputTokens": 45925,
+            "cacheWriteInputTokens": 89273
+          },
+          {
+            "eventId": "e5d17ee7-59ad-4ba6-a025-75e518a08abc",
+            "timestamp": "2026-04-06T13:05:59.978Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1120,
+            "outputTokens": 24,
+            "cacheReadInputTokens": 135198,
+            "cacheWriteInputTokens": 1586
+          },
+          {
+            "eventId": "f34f5c1a-60fa-4caf-b88f-70a19dde527a",
+            "timestamp": "2026-04-06T13:06:07.336Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 276,
+            "cacheReadInputTokens": 136784,
+            "cacheWriteInputTokens": 1678
+          },
+          {
+            "eventId": "8ae51f12-4af3-4958-89c3-928b9bb2119e",
+            "timestamp": "2026-04-06T13:07:36.458Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 34,
+            "outputTokens": 4270,
+            "cacheReadInputTokens": 138462,
+            "cacheWriteInputTokens": 6260
+          },
+          {
+            "eventId": "436eb361-2da7-4fa7-97b3-7efd15fc57f9",
+            "timestamp": "2026-04-06T13:07:47.392Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 384,
+            "cacheReadInputTokens": 144722,
+            "cacheWriteInputTokens": 4359
+          },
+          {
+            "eventId": "8c7c9fe1-f038-4ecd-b74a-5efd7a0ab433",
+            "timestamp": "2026-04-06T13:10:07.286Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 373,
+            "cacheReadInputTokens": 149081,
+            "cacheWriteInputTokens": 1709
+          },
+          {
+            "eventId": "52bf2316-b442-4aae-8034-6cb72081bda7",
+            "timestamp": "2026-04-06T13:10:18.062Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 2027,
+            "outputTokens": 1,
+            "cacheReadInputTokens": 150790,
+            "cacheWriteInputTokens": 497
+          },
+          {
+            "eventId": "a538e51c-330f-4491-b7fd-9dc1770b3585",
+            "timestamp": "2026-04-06T13:10:28.286Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 5324,
+            "outputTokens": 470,
+            "cacheReadInputTokens": 151287,
+            "cacheWriteInputTokens": 3433
+          },
+          {
+            "eventId": "ea1c5448-92a0-4c67-9c38-69342cfc5b34",
+            "timestamp": "2026-04-06T13:10:44.720Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 630,
+            "cacheReadInputTokens": 154720,
+            "cacheWriteInputTokens": 11265
+          },
+          {
+            "eventId": "2226dea4-fbf7-4b5f-8b91-36d4e1dce3a1",
+            "timestamp": "2026-04-06T13:10:49.384Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1371,
+            "outputTokens": 153,
+            "cacheReadInputTokens": 165985,
+            "cacheWriteInputTokens": 664
+          },
+          {
+            "eventId": "4974bc23-eebc-4966-9d02-72e0cfb38a1b",
+            "timestamp": "2026-04-06T13:11:04.722Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 646,
+            "cacheReadInputTokens": 166649,
+            "cacheWriteInputTokens": 2132
+          },
+          {
+            "eventId": "9317016b-740a-4301-a09d-40d912fc1bac",
+            "timestamp": "2026-04-06T13:12:27.574Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 5148,
+            "cacheReadInputTokens": 168781,
+            "cacheWriteInputTokens": 5203
+          },
+          {
+            "eventId": "9ada6be3-d511-4bd7-8105-11bea0c80103",
+            "timestamp": "2026-04-06T13:12:38.651Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 309,
+            "cacheReadInputTokens": 173984,
+            "cacheWriteInputTokens": 5205
+          },
+          {
+            "eventId": "d9d8188b-e947-4a9c-b9aa-42902826192d",
+            "timestamp": "2026-04-06T13:18:38.197Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 3948,
+            "cacheReadInputTokens": 179189,
+            "cacheWriteInputTokens": 703
+          },
+          {
+            "eventId": "fb85424c-4495-4a68-b876-b849ae025856",
+            "timestamp": "2026-04-06T13:20:49.501Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 6615,
+            "cacheReadInputTokens": 179892,
+            "cacheWriteInputTokens": 3974
+          },
+          {
+            "eventId": "19d04053-6300-4a69-b4ad-edb69e2093b5",
+            "timestamp": "2026-04-06T13:21:00.763Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 323,
+            "cacheReadInputTokens": 183866,
+            "cacheWriteInputTokens": 6785
+          },
+          {
+            "eventId": "416db0b0-f7e5-4991-9818-4adc33196cf4",
+            "timestamp": "2026-04-06T13:21:38.214Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 92,
+            "cacheReadInputTokens": 190651,
+            "cacheWriteInputTokens": 351
+          },
+          {
+            "eventId": "3d1bb864-6ec9-4a6a-b7fd-f6ee19e47805",
+            "timestamp": "2026-04-06T13:24:16.014Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 8811,
+            "cacheReadInputTokens": 191002,
+            "cacheWriteInputTokens": 6664
+          },
+          {
+            "eventId": "615b921e-1519-4c3b-974d-7dec639c8298",
+            "timestamp": "2026-04-06T13:24:29.487Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 282,
+            "cacheReadInputTokens": 197666,
+            "cacheWriteInputTokens": 8868
+          },
+          {
+            "eventId": "f94b442b-7e00-4d06-b8d9-ee063120aa7d",
+            "timestamp": "2026-04-06T13:26:05.584Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 3,
+            "outputTokens": 293,
+            "cacheReadInputTokens": 206534,
+            "cacheWriteInputTokens": 299
+          },
+          {
+            "eventId": "e1d7285d-81ea-44ad-84c1-0dc76a31fcc9",
+            "timestamp": "2026-04-06T13:26:13.480Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 292,
+            "outputTokens": 214,
+            "cacheReadInputTokens": 206833,
+            "cacheWriteInputTokens": 279
+          },
+          {
+            "eventId": "c8d4bac5-f551-46d9-bc1d-f18f67473e3b",
+            "timestamp": "2026-04-06T13:26:21.412Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 64,
+            "cacheReadInputTokens": 207112,
+            "cacheWriteInputTokens": 866
+          },
+          {
+            "eventId": "d76a38ef-c5f8-4a04-80c6-bd29988ddc29",
+            "timestamp": "2026-04-06T13:26:55.138Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 1558,
+            "cacheReadInputTokens": 207978,
+            "cacheWriteInputTokens": 107
+          },
+          {
+            "eventId": "33d54f32-0cea-4a8f-874e-8c7135b22b2b",
+            "timestamp": "2026-04-06T14:27:02.687Z",
+            "model": "claude-opus-4-6",
+            "inputTokens": 1,
+            "outputTokens": 84,
+            "cacheReadInputTokens": 0,
+            "cacheWriteInputTokens": 209782
+          }
+        ],
+        "permissionModeTimeline": [
+          {
+            "mode": "bypassPermissions"
+          }
+        ],
+        "sessionModeTimeline": [],
+        "costReliability": "not_available"
+      },
+      "digestHints": {
+        "mcpServersConfigured": [
+          "claude_ai_DocFork",
+          "claude_ai_Figma",
+          "pencil"
+        ],
+        "prLinks": [
+          {
+            "url": "https://github.com/axetay/really-app/pull/138",
+            "number": 138,
+            "repository": "axetay/really-app"
+          }
+        ],
+        "repository": {
+          "owner": "axetay",
+          "name": "really-app",
+          "fullName": "axetay/really-app",
+          "source": "pr_link"
+        },
+        "cacheHitRate": 0.8884266251911627,
+        "activeDurationMs": 2190844
+      }
+    }
+  },
+  "agentCount": 2,
+  "assetCount": 6,
+  "searchTextLength": 70963
+}

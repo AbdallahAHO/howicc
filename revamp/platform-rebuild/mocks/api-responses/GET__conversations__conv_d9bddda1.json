@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "id": "conv_d9bddda1",
+  "slug": "306181e0-e1c7-4b80-9cc4-13544f02093e",
+  "title": "306181e0-e1c7-4b80-9cc4-13544f02093e",
+  "visibility": "private",
+  "status": "ready",
+  "sourceApp": "claude_code",
+  "sourceSessionId": "306181e0-e1c7-4b80-9cc4-13544f02093e",
+  "sourceProjectKey": "-workspace-howicc",
+  "currentRevisionId": "rev_0416a792",
+  "createdAt": "2026-04-10T08:16:37.711000Z",
+  "updatedAt": "2026-04-10T08:16:45.184000Z",
+  "repository": {
+    "owner": "axetay",
+    "name": "really-app",
+    "fullName": "axetay/really-app",
+    "source": "git_remote"
+  },
+  "currentRevision": {
+    "id": "rev_0416a792",
+    "sourceRevisionHash": "3ce58de10cdbed4fed2c36122da0135dfd8e940f8eed92478c72093123400323:2da60af781485bb9ee179b15adb7f26feef4487faa5cbe185d38ba17add58810:3d67fab37678a1c56bef527d9770f4967793f302b115f19fdafa4c4df539e2ec:66287c7f0f0bc6b3c53f28bdc182552fc587052b332664d22442d289536ef234:a6bfb1073ed83b14de5df4476a00eec5f23326d727e5f3b2d08dacee8302e4f4:e96efa74e8583ecbe3f259dc9b5e5ec3b048ef580fd3ab9325f0f39d3c2dd8fc:ef0361d651b05ec5a00e0d71affcc788d17089b851508ba2e69420f9a5a7c4b5:7243fc9c536637b1e54ca36d07bfd0e0ce7cc370e7ef6d3b7ac5dc2a8ac7ab1a:3779e2f7b82b9e5a89c2bd45683e47127aaba4f6e2466b8ed296a477d731ff9b:f19e07c041226cdc26817dd6b53198d6725520ff9ff3ec9c2ff185dffa480b4e:02d906171cff1127c171c67c2d42a55ef21597272889f55edd585b4aece11fa0:31e65d74687aa15c255d5f6fadeaa8fee1c647d8b95c9dbea64dccf4e4e60f74:c4205a21cb3817dd1c6e8790555f3567b238f201d26f171cd993c5fbec3a6ced",
+    "parserVersion": "claude-code-adapter-v0",
+    "canonicalSchemaVersion": 1,
+    "renderSchemaVersion": 1,
+    "summary": null,
+    "createdAt": "2026-04-10T08:16:45.137000Z"
+  }
+}

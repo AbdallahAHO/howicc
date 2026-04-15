@@ -1,0 +1,326 @@
+[
+  {
+    "id": "tool-output:toolu_01Fz83fPGYREWrYNUdHVtPdX",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "58:assistant:tool:0",
+        "61:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01Fz83fPGYREWrYNUdHVtPdX"
+      ]
+    },
+    "toolName": "Bash",
+    "status": "ok",
+    "previewText": "alerts.ts  9.5K\nallie.ts  5.1K\ncollections.ts  10.7K\ncompare.ts  5.0K\ndiscovery.ts  7.5K\ngeo.ts  2.0K\npreferences.ts  9.8K\nproperty.ts  27.7K\nsaved.ts  7.4K\nsign-in.ts  3.4K",
+    "createdAt": "2026-04-06T13:10:07.427Z"
+  },
+  {
+    "id": "tool-output:toolu_011fKRWNXpzGY2urnrwhediz",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "63:assistant:tool:0",
+        "70:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_011fKRWNXpzGY2urnrwhediz"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t/**\n2\t * Property & Neighbourhood MCP Tools\n3\t *\n4\t * Property detail (with neighbourhood data) and standalone neighbourhood lookup.\n5\t */\n6\t\n7\timport { completable } from \"@modelcontextprotocol/sdk/server/completable.js\";\n8\timport type { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\n9\timport { database } from \"@repo/database/node\";\n10\timport { createLocationProvider } from \"@repo/geo\";\n11\timport { log } from \"@repo/observability/node\";\n12\timport { z } from \"zod\";\n13\timport {\n14\t  getAllNeighbourhoodData,\n15\t  type RliNeighbourhoodData,\n16\t} from \"@/lib/rli/client\";\n17\timport { getPropertyPageData } from \"@/modules/discovery/handlers/properties/get-page-data\";\n18\timport {\n19\t  WIDGETS,\n20\t  widgetResponseMeta,\n21\t  widgetToolMeta,\n22\t} from \"../lib/widget-meta\";\n23\timport type { McpContext } from \"../server\";\n24\t\n25\t// ─── UK Postcode Validation ────────────────────────────────────────────────\n26\t\n27\t// Tolerant UK postcode pattern — matches both spaced and unspaced forms.\n28\t// Based on ONS/Royal Mail standard, case-insensitive.\n29\tconst UK_POSTCODE_REGEX = /^[A-Z]{1,2}\\d[A-Z\\d]?\\s*\\d[A-Z]{2}$/i;\n30\t\n31\t/** Normalise UK postcode to uppercase with a single space bef",
+    "createdAt": "2026-04-06T13:10:19.439Z"
+  },
+  {
+    "id": "tool-output:toolu_01TfazTQk8QE77PD17mjLLhT",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "71:assistant:tool:0",
+        "76:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01TfazTQk8QE77PD17mjLLhT"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t/**\n2\t * Saved Properties MCP Tools\n3\t *\n4\t * List, save, and react to properties.\n5\t * Schemas imported from @repo/api-contract to match route-level validation.\n6\t */\n7\t\n8\timport type { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\n9\timport {\n10\t  SavePropertyRequestSchema,\n11\t  SetReactionRequestSchema,\n12\t} from \"@repo/api-contract\";\n13\timport { z } from \"zod\";\n14\timport { listSavedProperties } from \"@/modules/discovery/handlers/saved-properties/list\";\n15\timport { saveProperty } from \"@/modules/discovery/handlers/saved-properties/save\";\n16\timport { setReaction } from \"@/modules/discovery/handlers/saved-properties/set-reaction\";\n17\timport { validateOrError } from \"../lib/validate\";\n18\timport type { AuthenticatedMcpContext } from \"../server\";\n19\t\n20\tfunction getAmount(value: unknown): number | null {\n21\t  if (typeof value !== \"object\" || value === null) {\n22\t    return null;\n23\t  }\n24\t  const amount = (value as { amount?: unknown }).amount;\n25\t  return typeof amount === \"number\" && Number.isFinite(amount) ? amount : null;\n26\t}\n27\t\n28\texport function registerSavedTools(\n29\t  server: McpServer,\n30\t  ctx: AuthenticatedMcpContext\n31\t): void {\n32\t  // ─── List ─────────",
+    "createdAt": "2026-04-06T13:10:28.368Z"
+  },
+  {
+    "id": "tool-output:toolu_01VdUsVaNHEoSttvXPfn3Mt9",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "72:assistant:tool:0",
+        "77:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01VdUsVaNHEoSttvXPfn3Mt9"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t/**\n2\t * Preferences MCP Tools\n3\t *\n4\t * View and update property preferences used for Allie scoring.\n5\t */\n6\t\n7\timport type { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\n8\timport {\n9\t  CreateStatedPreferenceRequestSchema,\n10\t  UpdateStatedPreferenceRequestSchema,\n11\t} from \"@repo/api-contract\";\n12\timport { z } from \"zod\";\n13\timport { createStatedPreference } from \"@/modules/personalization/handlers/preferences/create-stated\";\n14\timport { deleteStatedPreference } from \"@/modules/personalization/handlers/preferences/delete-stated\";\n15\timport { getStatedPreferences } from \"@/modules/personalization/handlers/preferences/get-stated\";\n16\timport { updateStatedPreference } from \"@/modules/personalization/handlers/preferences/update-stated\";\n17\timport { validateOrError } from \"../lib/validate\";\n18\timport type { AuthenticatedMcpContext } from \"../server\";\n19\t\n20\texport function registerPreferenceTools(\n21\t  server: McpServer,\n22\t  ctx: AuthenticatedMcpContext\n23\t) {\n24\t  // ─── Get ─────────────────────────────────────────────────────────────\n25\t\n26\t  server.registerTool(\n27\t    \"get_preferences\",\n28\t    {\n29\t      title: \"Get your preferences\",\n30\t      description:\n31\t  ",
+    "createdAt": "2026-04-06T13:10:28.369Z"
+  },
+  {
+    "id": "tool-output:toolu_01Qz8jwuKvPNF4DEFjvNQEQT",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "73:assistant:tool:0",
+        "79:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01Qz8jwuKvPNF4DEFjvNQEQT"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t/**\n2\t * Search Alerts MCP Tools\n3\t *\n4\t * Create, list, update, and delete search alerts.\n5\t * Alerts notify the user when new properties match their saved criteria.\n6\t */\n7\t\n8\timport type { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\n9\timport {\n10\t  CreateSearchAlertRequestSchema,\n11\t  UpdateSearchAlertRequestSchema,\n12\t} from \"@repo/api-contract\";\n13\timport { z } from \"zod\";\n14\timport { createSearchAlert } from \"@/modules/discovery/handlers/search-alerts/create\";\n15\timport { deleteSearchAlert } from \"@/modules/discovery/handlers/search-alerts/delete\";\n16\timport { listSearchAlerts } from \"@/modules/discovery/handlers/search-alerts/list\";\n17\timport { updateSearchAlert } from \"@/modules/discovery/handlers/search-alerts/update\";\n18\timport { validateOrError } from \"../lib/validate\";\n19\timport type { AuthenticatedMcpContext } from \"../server\";\n20\t\n21\texport function registerAlertTools(\n22\t  server: McpServer,\n23\t  ctx: AuthenticatedMcpContext\n24\t) {\n25\t  // ─── List ────────────────────────────────────────────────────────────\n26\t\n27\t  server.registerTool(\n28\t    \"list_search_alerts\",\n29\t    {\n30\t      title: \"List search alerts\",\n31\t      description:\n32\t        \"Lis",
+    "createdAt": "2026-04-06T13:10:28.368Z"
+  },
+  {
+    "id": "tool-output:toolu_01UbDd11wLaDWgtCXA9Db1zd",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "74:assistant:tool:0",
+        "78:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01UbDd11wLaDWgtCXA9Db1zd"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t/**\n2\t * Collections MCP Tools\n3\t *\n4\t * Organize saved properties into named collections (e.g. \"Dream Homes\", \"Zone 2 Flats\").\n5\t */\n6\t\n7\timport type { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\n8\timport {\n9\t  AddToCollectionRequestSchema,\n10\t  CreateCollectionRequestSchema,\n11\t} from \"@repo/api-contract\";\n12\timport { z } from \"zod\";\n13\timport { addToCollection } from \"@/modules/discovery/handlers/collections/add-item\";\n14\timport { createCollection } from \"@/modules/discovery/handlers/collections/create\";\n15\timport { deleteCollection } from \"@/modules/discovery/handlers/collections/delete\";\n16\timport { getCollection } from \"@/modules/discovery/handlers/collections/get\";\n17\timport { listCollections } from \"@/modules/discovery/handlers/collections/list\";\n18\timport { removeFromCollection } from \"@/modules/discovery/handlers/collections/remove-item\";\n19\timport { validateOrError } from \"../lib/validate\";\n20\timport type { AuthenticatedMcpContext } from \"../server\";\n21\t\n22\texport function registerCollectionTools(\n23\t  server: McpServer,\n24\t  ctx: AuthenticatedMcpContext\n25\t) {\n26\t  // ─── List ────────────────────────────────────────────────────────────\n27\t\n28\t  server",
+    "createdAt": "2026-04-06T13:10:28.369Z"
+  },
+  {
+    "id": "tool-output:toolu_01QhTC8dwVCe8JvqCGJN2b3i",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "75:assistant:tool:0",
+        "80:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01QhTC8dwVCe8JvqCGJN2b3i"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t/**\n2\t * Compare Properties MCP Tool\n3\t *\n4\t * Side-by-side comparison of 2-4 properties with specs, prices, and scores.\n5\t */\n6\t\n7\timport type { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\n8\timport {\n9\t  type ComparePropertiesResponse,\n10\t  ComparePropertiesSchema,\n11\t} from \"@repo/api-contract\";\n12\timport { log } from \"@repo/observability/node\";\n13\timport { z } from \"zod\";\n14\timport { CompareProperties } from \"@/modules/discovery/handlers/compare/compare\";\n15\timport { validateOrError } from \"../lib/validate\";\n16\timport type { AuthenticatedMcpContext } from \"../server\";\n17\t\n18\t/**\n19\t * Escape a cell value for markdown tables. Characters like `|` or newlines\n20\t * break GFM table rendering, and upstream property data (addresses, labels)\n21\t * can legitimately contain both.\n22\t */\n23\tfunction escapeMarkdownCell(value: unknown): string {\n24\t  if (value == null) {\n25\t    return \"?\";\n26\t  }\n27\t  return String(value).replaceAll(\"|\", \"\\\\|\").replaceAll(/\\r?\\n/g, \" \").trim();\n28\t}\n29\t\n30\texport function registerCompareTools(\n31\t  server: McpServer,\n32\t  ctx: AuthenticatedMcpContext\n33\t) {\n34\t  server.registerTool(\n35\t    \"compare_properties\",\n36\t    {\n37\t      title: \"Co",
+    "createdAt": "2026-04-06T13:10:28.369Z"
+  },
+  {
+    "id": "tool-output:toolu_01LM6UJ6jZwq5y8pZZKrWQmW",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "83:assistant:tool:0",
+        "86:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01LM6UJ6jZwq5y8pZZKrWQmW"
+      ]
+    },
+    "toolName": "Grep",
+    "status": "ok",
+    "previewText": "No matches found",
+    "createdAt": "2026-04-06T13:10:44.744Z"
+  },
+  {
+    "id": "tool-output:toolu_019gCjipvcXpzzB6f9jBEug8",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "87:assistant:tool:0",
+        "88:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_019gCjipvcXpzzB6f9jBEug8"
+      ]
+    },
+    "toolName": "Grep",
+    "status": "ok",
+    "previewText": "24:export const AUTHENTICATED_CAPABILITIES = [\n25-  \"get_profile\",\n26-  \"save_property\",\n27-  \"get_saved_properties\",\n28-  \"set_reaction\",\n29-  \"get_allie_score\",\n30-  \"list_collections\",\n31-  \"get_collection\",\n32-  \"create_collection\",\n33-  \"add_to_collection\",\n34-  \"remove_from_collection\",\n35-  \"delete_collection\",\n36-  \"list_search_alerts\",\n37-  \"create_search_alert\",\n38-  \"update_search_alert\",\n39-  \"delete_search_alert\",\n40-  \"compare_properties\",\n41-  \"get_preferences\",\n42-  \"set_preference\",\n43-  \"update_preference\",\n44-  \"delete_preference\",\n45-] as const;\n46-\n47-export function registerSignInTool(server: McpServer, ctx: McpContext) {\n48-  const alreadySignedIn = ctx.user !== null;\n49-\n50-  server.registerTool(\n51-    \"sign_in\",\n52-    {\n53-      title: \"Sign in to unlock personal tools\",\n54-      description:\n--\n83:      const capabilities = AUTHENTICATED_CAPABILITIES.join(\", \");\n84-      return {\n85-        structuredContent: {\n86-          signedIn: false,\n87-          appUrl: env.APP_URL,\n88:          lockedCapabilities: AUTHENTICATED_CAPABILITIES,\n89-          nextStep:\n90-            \"Reconnect the Really integration in your MCP client's settings.\",\n91-        },\n92-",
+    "createdAt": "2026-04-06T13:10:49.428Z"
+  },
+  {
+    "id": "tool-output:toolu_01ArwtJ8AfehGHcvhY4snRSN",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "91:assistant:tool:0",
+        "92:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01ArwtJ8AfehGHcvhY4snRSN"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t# REL-217: BE Allie Chat Agent — Pairing Guide\n2\t\n3\t> **Branch:** `feature/rel-217-chat` | **Status:** In Progress | **Date:** 2026-04-06\n4\t\n5\t## What We're Building\n6\t\n7\tReplace the current **dumb proxy** (`POST /allie/chat` → RLI API) with a **real agentic chat endpoint** that runs locally in our Hono API. The agent uses Vercel AI SDK's `ToolLoopAgent` + `createUIMessageStream` to stream responses, call tools against our own APIs, and persist conversations to PostgreSQL.\n8\t\n9\tThe FE (`@repo/allie-chat`) is already done (REL-218) — the `useAllieChat()` hook calls `POST /allie/chat` with `{ messages, context, conversationId }` and expects an AI SDK-compatible SSE stream back. **We just need to replace what's behind that endpoint.**\n10\t\n11\t---\n12\t\n13\t## Current State vs Target\n14\t\n15\t| Layer | Current (Proxy) | Target (REL-217) |\n16\t|-------|----------------|-------------------|\n17\t| **Endpoint** | Forwards to `RLI_API_URL/api/chat` | Local `ToolLoopAgent` streaming |\n18\t| **Tools** | None (RLI has its own SQL tools) | 27 tools across 6 groups (B2C APIs) |\n19\t| **Model** | RLI decides | OpenRouter (deepseek or configurable) |\n20\t| **Persistence** | None | `allie_conversations` + `",
+    "createdAt": "2026-04-06T13:11:04.811Z"
+  },
+  {
+    "id": "tool-output:toolu_018V7hE85t6Tb6p598681xeS",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "93:assistant:tool:0",
+        "94:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_018V7hE85t6Tb6p598681xeS"
+      ]
+    },
+    "toolName": "Write",
+    "status": "ok",
+    "previewText": "The file /Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md has been updated successfully.",
+    "createdAt": "2026-04-06T13:12:27.691Z"
+  },
+  {
+    "id": "tool-output:toolu_01XaPebjotMtrK8bBjErCP9i",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "112:assistant:tool:0",
+        "113:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01XaPebjotMtrK8bBjErCP9i"
+      ]
+    },
+    "toolName": "Write",
+    "status": "ok",
+    "previewText": "The file /Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md has been updated successfully.",
+    "createdAt": "2026-04-06T13:20:49.542Z"
+  },
+  {
+    "id": "tool-output:toolu_01Y1orKqUmzmbJuHg9mK2ezz",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "119:assistant:tool:0",
+        "120:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01Y1orKqUmzmbJuHg9mK2ezz"
+      ]
+    },
+    "toolName": "Read",
+    "status": "ok",
+    "previewText": "1\t# REL-217: BE Allie Chat Agent — Pairing Guide\n2\t\n3\t> **Branch:** `feature/rel-217-chat` | **Status:** In Progress | **Date:** 2026-04-06\n4\t\n5\t## What We're Building\n6\t\n7\tReplace the current **dumb proxy** (`POST /allie/chat` → RLI API) with a **real agentic chat endpoint** running locally in our Hono API. The agent uses Vercel AI SDK's `ToolLoopAgent` + `createUIMessageStream` to stream responses, call tools, control the app UI, and persist conversations to PostgreSQL.\n8\t\n9\tThe FE (`@repo/allie-chat`) is already done (REL-218) — `useAllieChat()` calls `POST /allie/chat` with `{ messages, context, conversationId }` and expects an AI SDK SSE stream back. **We just need to replace what's behind that endpoint.**\n10\t\n11\t---\n12\t\n13\t## Architecture: Three Adapters Over Shared Handlers\n14\t\n15\tMCP tools, Chat tools, and REST routes are all **adapters** over the same domain handlers. They share business logic but serve different audiences:\n16\t\n17\t```\n18\t                          ┌──────────────────────┐\n19\t                          │   Domain Handlers     │  ← shared business logic\n20\t                          │   (already built)     │\n21\t                          └──────────┬───────────┘",
+    "createdAt": "2026-04-06T13:21:38.247Z"
+  },
+  {
+    "id": "tool-output:toolu_01Q5roaEUryPGEb7vjbA1mku",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "122:assistant:tool:0",
+        "123:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01Q5roaEUryPGEb7vjbA1mku"
+      ]
+    },
+    "toolName": "Write",
+    "status": "ok",
+    "previewText": "The file /Users/abdallah/.superset/worktrees/really-app/feature/rel-217-chat/REL-217-PAIRING-GUIDE.md has been updated successfully.",
+    "createdAt": "2026-04-06T13:24:16.068Z"
+  },
+  {
+    "id": "tool-output:toolu_014QN4Tj5udhovdMkJaxHFQt",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "129:assistant:tool:0",
+        "134:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_014QN4Tj5udhovdMkJaxHFQt"
+      ]
+    },
+    "toolName": "Bash",
+    "status": "ok",
+    "previewText": "* feature/rel-217-chat\n? Untracked: 1 files\n   REL-217-PAIRING-GUIDE.md",
+    "createdAt": "2026-04-06T13:26:05.769Z"
+  },
+  {
+    "id": "tool-output:toolu_01X8Z9uJd7a1KMKMtfB5Sk4q",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "135:assistant:tool:0",
+        "136:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01X8Z9uJd7a1KMKMtfB5Sk4q"
+      ]
+    },
+    "toolName": "Bash",
+    "status": "ok",
+    "previewText": "\u001b[1m┌─────────────────────────────────────────────────────────────┐\u001b[0m\n\u001b[1m│  🔍 PRE-COMMIT CHECKS                                       │\u001b[0m\n\u001b[1m│  Checking 1 staged file(s)                              │\u001b[0m\n\u001b[1m└─────────────────────────────────────────────────────────────┘\u001b[0m\n\n\u001b[0;34m[1/2]\u001b[0m Running lint-staged (format + lint)...\n      \u001b[0;32m✓ Formatting and linting passed\u001b[0m\n\u001b[0;34m[2/2]\u001b[0m Checking TypeScript types...\n      \u001b[0;32m✓ No type errors\u001b[0m\n\n\u001b[0;32m┌─────────────────────────────────────────────────────────────┐\u001b[0m\n\u001b[0;32m│  ✅ ALL CHECKS PASSED                                       │\u001b[0m\n\u001b[0;32m│  Completed in 2s                                            │\u001b[0m\n\u001b[0;32m└─────────────────────────────────────────────────────────────┘\u001b[0m\n\n[feature/rel-217-chat 92b3d5e0] docs(allie): add REL-217 pairing guide — BE chat agent architecture\n 1 file changed, 715 insertions(+)\n create mode 100644 REL-217-PAIRING-GUIDE.md",
+    "createdAt": "2026-04-06T13:26:16.628Z"
+  },
+  {
+    "id": "tool-output:toolu_01PxoWacUtts6s3XVbpTVQE3",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "137:assistant:tool:0",
+        "138:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01PxoWacUtts6s3XVbpTVQE3"
+      ]
+    },
+    "toolName": "Bash",
+    "status": "ok",
+    "previewText": "ok feature/rel-217-chat",
+    "createdAt": "2026-04-06T13:26:22.638Z"
+  },
+  {
+    "id": "tool-output:toolu_01PJNsyDHfoGifh1Nog2P1v2",
+    "artifactType": "tool_output",
+    "provider": "claude_code",
+    "source": {
+      "eventIds": [
+        "139:assistant:tool:0",
+        "141:user:tool_result:0"
+      ],
+      "toolUseIds": [
+        "toolu_01PJNsyDHfoGifh1Nog2P1v2"
+      ]
+    },
+    "toolName": "Bash",
+    "status": "ok",
+    "previewText": "https://github.com/axetay/really-app/pull/138",
+    "createdAt": "2026-04-06T14:26:54.994Z"
+  }
+]

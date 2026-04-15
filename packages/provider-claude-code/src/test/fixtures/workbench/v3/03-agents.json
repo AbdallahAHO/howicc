@@ -1,0 +1,130 @@
+[
+  {
+    "agentId": "a075d55c9ba8b0653",
+    "title": "Explore provider-claude-code package",
+    "role": "subagent",
+    "eventCount": 106,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Explore provider-claude-code package"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 8,
+      "tool_call": 52,
+      "tool_result": 45
+    }
+  },
+  {
+    "agentId": "a09b44af95d1bf5bf",
+    "title": "Explore CC session metadata",
+    "role": "subagent",
+    "eventCount": 85,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Explore CC session metadata"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 22,
+      "tool_call": 31,
+      "tool_result": 31
+    }
+  },
+  {
+    "agentId": "a5eff8fc9137bb306",
+    "title": "Design profile architecture",
+    "role": "subagent",
+    "eventCount": 188,
+    "metadata": {
+      "agentType": "Plan",
+      "description": "Design profile architecture"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 22,
+      "tool_call": 94,
+      "tool_result": 71
+    }
+  },
+  {
+    "agentId": "a7898d5f90ce75795",
+    "title": "Explore howicc app and schema",
+    "role": "subagent",
+    "eventCount": 122,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Explore howicc app and schema"
+    },
+    "eventTypes": {
+      "user_message": 2,
+      "assistant_message": 19,
+      "tool_call": 54,
+      "tool_result": 47
+    }
+  },
+  {
+    "agentId": "a88873bba9000afc2",
+    "title": "Explore claude-code project",
+    "role": "subagent",
+    "eventCount": 106,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Explore claude-code project"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 24,
+      "tool_call": 41,
+      "tool_result": 40
+    }
+  },
+  {
+    "agentId": "a98270a49f74505e0",
+    "title": "Deep explore CC tool definitions",
+    "role": "subagent",
+    "eventCount": 94,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Deep explore CC tool definitions"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 31,
+      "tool_call": 31,
+      "tool_result": 31
+    }
+  },
+  {
+    "agentId": "aa98cce373418ed8b",
+    "title": "Explore CC local disk files",
+    "role": "subagent",
+    "eventCount": 88,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Explore CC local disk files"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 25,
+      "tool_call": 31,
+      "tool_result": 31
+    }
+  },
+  {
+    "agentId": "af129e829f7d99864",
+    "title": "Explore canonical and session types",
+    "role": "subagent",
+    "eventCount": 83,
+    "metadata": {
+      "agentType": "Explore",
+      "description": "Explore canonical and session types"
+    },
+    "eventTypes": {
+      "user_message": 1,
+      "assistant_message": 9,
+      "tool_call": 43,
+      "tool_result": 30
+    }
+  }
+]

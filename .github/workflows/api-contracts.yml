@@ -1,0 +1,68 @@
+name: API Contracts
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/api-contracts.yml'
+      - 'apps/api/**'
+      - 'packages/api-client/**'
+      - 'packages/contracts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '.github/workflows/api-contracts.yml'
+      - 'apps/api/**'
+      - 'packages/api-client/**'
+      - 'packages/contracts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+
+jobs:
+  verify:
+    name: Verify OpenAPI Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check contracts
+        run: pnpm --filter @howicc/contracts type-check
+
+      - name: Test API worker
+        run: pnpm --filter @howicc/api test
+
+      - name: Type-check API worker
+        run: pnpm --filter @howicc/api type-check
+
+      - name: Verify generated API client is up to date
+        run: pnpm --filter @howicc/api-client run generate:check
+
+      - name: Test generated API client
+        run: pnpm --filter @howicc/api-client test
+
+      - name: Type-check generated API client
+        run: pnpm --filter @howicc/api-client type-check

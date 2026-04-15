@@ -1,0 +1,61 @@
+{
+  "eventTypeCounts": {
+    "assistant_message": 10,
+    "tool_call": 22,
+    "tool_result": 18,
+    "hook": 5,
+    "system_notice": 5,
+    "user_message": 4
+  },
+  "toolNameCounts": {
+    "Read": 11,
+    "Bash": 6,
+    "Write": 3,
+    "Grep": 2
+  },
+  "toolsBySource": {
+    "native": [
+      "Bash",
+      "Read",
+      "Grep",
+      "Write"
+    ],
+    "mcp": [],
+    "repl_virtual": []
+  },
+  "toolLabelCoverage": {
+    "Read": {
+      "total": 11,
+      "withLabel": 11,
+      "coverage": "100%"
+    },
+    "Bash": {
+      "total": 6,
+      "withLabel": 6,
+      "coverage": "100%"
+    },
+    "Write": {
+      "total": 3,
+      "withLabel": 3,
+      "coverage": "100%"
+    },
+    "Grep": {
+      "total": 2,
+      "withLabel": 2,
+      "coverage": "100%"
+    }
+  },
+  "resultStatusCounts": {
+    "ok": 18
+  },
+  "messageStats": {
+    "userMessages": 4,
+    "userMessagesWithMeta": 0,
+    "assistantMessages": 10,
+    "thinkingMessages": 0,
+    "regularAssistantMessages": 10
+  },
+  "artifactTypes": {
+    "tool_output": 18
+  }
+}
