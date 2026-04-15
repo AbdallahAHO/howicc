@@ -24,7 +24,7 @@
     "type-check": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.45.2",
     "drizzle-zod": "^0.5.1",
     "envin": "^1.2.0",
     "postgres": "^3.4.5",

@@ -24,7 +24,7 @@
     "@hono/node-server": "^1.13.7",
     "@hono/zod-openapi": "^0.18.3",
     "@scalar/hono-api-reference": "^0.5.160",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.45.2",
     "envin": "^1.2.0",
     "hono": "^4.6.16",
     "zod": "^3.24.1"
