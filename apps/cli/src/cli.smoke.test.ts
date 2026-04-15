@@ -73,6 +73,7 @@ type FakeApiState = {
   pendingUploadAssetFailures: Record<string, PendingUploadAssetFailure>
 }
 
+const longSmokeTestTimeoutMs = 15_000
 const tempDirectories: string[] = []
 const activeServers = new Set<Server>()
 
@@ -127,143 +128,154 @@ describe.sequential('CLI smoke', () => {
     expect(harness.apiState.finalizeBodies).toHaveLength(0)
   })
 
-  it('syncs a real discovered session, preserves conversation continuity, and skips unchanged revisions', async () => {
-    const harness = await createCliSmokeHarness()
-    const sessionId = '123e4567-e89b-42d3-a456-426614174010'
+  it(
+    'syncs a real discovered session, preserves conversation continuity, and skips unchanged revisions',
+    async () => {
+      const harness = await createCliSmokeHarness()
+      const sessionId = '123e4567-e89b-42d3-a456-426614174010'
 
-    await seedAuthToken(harness)
-    await writeSessionTranscript(harness, {
-      sessionId,
-      turns: [
-        {
-          user: 'Map the current CLI sync behavior',
-          assistant: 'I inspected the sync pipeline and summarized the current behavior.',
-        },
-      ],
-    })
+      await seedAuthToken(harness)
+      await writeSessionTranscript(harness, {
+        sessionId,
+        turns: [
+          {
+            user: 'Map the current CLI sync behavior',
+            assistant: 'I inspected the sync pipeline and summarized the current behavior.',
+          },
+        ],
+      })
 
-    const firstSync = await runCli(harness, ['sync', '--all', '--yes'])
+      const firstSync = await runCli(harness, ['sync', '--all', '--yes'])
 
-    expect(firstSync.code).toBe(0)
-    expectNoCliFailure(firstSync)
-    expect(firstSync.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
-    expect(firstSync.stdout).not.toContain('skipped because the revision hash is unchanged')
-    expect(harness.apiState.createSessionBodies).toHaveLength(1)
-    expect(harness.apiState.uploadBodies).toHaveLength(3)
-    expect(harness.apiState.finalizeBodies).toHaveLength(1)
-    expect(harness.apiState.finalizeBodies[0]).toMatchObject({
-      sourceSessionId: sessionId,
-    })
-    expect(harness.apiState.finalizeBodies[0]).not.toHaveProperty('conversationId')
-    expect(
-      getAssetKinds(harness.apiState.createSessionBodies[0]?.assets),
-    ).toEqual(['source_bundle', 'canonical_json', 'render_json'])
+      expect(firstSync.code).toBe(0)
+      expectNoCliFailure(firstSync)
+      expect(firstSync.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
+      expect(firstSync.stdout).not.toContain('skipped because the revision hash is unchanged')
+      expect(harness.apiState.createSessionBodies).toHaveLength(1)
+      expect(harness.apiState.uploadBodies).toHaveLength(3)
+      expect(harness.apiState.finalizeBodies).toHaveLength(1)
+      expect(harness.apiState.finalizeBodies[0]).toMatchObject({
+        sourceSessionId: sessionId,
+      })
+      expect(harness.apiState.finalizeBodies[0]).not.toHaveProperty('conversationId')
+      expect(
+        getAssetKinds(harness.apiState.createSessionBodies[0]?.assets),
+      ).toEqual(['source_bundle', 'canonical_json', 'render_json'])
 
-    const syncedAfterFirstRun = await readSyncedRevisions(harness)
-    expect(Object.values(syncedAfterFirstRun)).toHaveLength(1)
+      const syncedAfterFirstRun = await readSyncedRevisions(harness)
+      expect(Object.values(syncedAfterFirstRun)).toHaveLength(1)
 
-    const unchangedSync = await runCli(harness, ['sync', '--all', '--yes'])
+      const unchangedSync = await runCli(harness, ['sync', '--all', '--yes'])
 
-    expect(unchangedSync.code).toBe(0)
-    expectNoCliFailure(unchangedSync)
-    expect(unchangedSync.stdout).toContain('Finished sync run. 0 synced, 1 skipped, 0 failed.')
-    expect(unchangedSync.stdout).toContain('Use `howicc sync --force` when you want to re-upload unchanged revisions.')
-    expect(harness.apiState.createSessionBodies).toHaveLength(1)
-    expect(harness.apiState.uploadBodies).toHaveLength(3)
-    expect(harness.apiState.finalizeBodies).toHaveLength(1)
+      expect(unchangedSync.code).toBe(0)
+      expectNoCliFailure(unchangedSync)
+      expect(unchangedSync.stdout).toContain('Finished sync run. 0 synced, 1 skipped, 0 failed.')
+      expect(unchangedSync.stdout).toContain(
+        'Use `howicc sync --force` when you want to re-upload unchanged revisions.',
+      )
+      expect(harness.apiState.createSessionBodies).toHaveLength(1)
+      expect(harness.apiState.uploadBodies).toHaveLength(3)
+      expect(harness.apiState.finalizeBodies).toHaveLength(1)
 
-    await writeSessionTranscript(harness, {
-      sessionId,
-      turns: [
-        {
-          user: 'Map the current CLI sync behavior',
-          assistant: 'I inspected the sync pipeline and summarized the current behavior.',
-        },
-        {
-          user: 'Summarize the gaps in that flow',
-          assistant: 'The gaps are around revision continuity, privacy checks, and command-level coverage.',
-        },
-      ],
-    })
+      await writeSessionTranscript(harness, {
+        sessionId,
+        turns: [
+          {
+            user: 'Map the current CLI sync behavior',
+            assistant: 'I inspected the sync pipeline and summarized the current behavior.',
+          },
+          {
+            user: 'Summarize the gaps in that flow',
+            assistant:
+              'The gaps are around revision continuity, privacy checks, and command-level coverage.',
+          },
+        ],
+      })
 
-    const changedSync = await runCli(harness, ['sync', '--all', '--yes'])
+      const changedSync = await runCli(harness, ['sync', '--all', '--yes'])
 
-    expect(changedSync.code).toBe(0)
-    expectNoCliFailure(changedSync)
-    expect(changedSync.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
-    expect(harness.apiState.createSessionBodies).toHaveLength(2)
-    expect(harness.apiState.uploadBodies).toHaveLength(6)
-    expect(harness.apiState.finalizeBodies).toHaveLength(2)
-    expect(harness.apiState.finalizeBodies[1]).toMatchObject({
-      sourceSessionId: sessionId,
-      conversationId: harness.apiState.finalizedRevisions[0]?.conversationId,
-    })
+      expect(changedSync.code).toBe(0)
+      expectNoCliFailure(changedSync)
+      expect(changedSync.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
+      expect(harness.apiState.createSessionBodies).toHaveLength(2)
+      expect(harness.apiState.uploadBodies).toHaveLength(6)
+      expect(harness.apiState.finalizeBodies).toHaveLength(2)
+      expect(harness.apiState.finalizeBodies[1]).toMatchObject({
+        sourceSessionId: sessionId,
+        conversationId: harness.apiState.finalizedRevisions[0]?.conversationId,
+      })
 
-    const syncedAfterSecondRevision = await readSyncedRevisions(harness)
-    const syncedRevisions = Object.values(syncedAfterSecondRevision)
+      const syncedAfterSecondRevision = await readSyncedRevisions(harness)
+      const syncedRevisions = Object.values(syncedAfterSecondRevision)
 
-    expect(syncedRevisions).toHaveLength(2)
-    expect(new Set(syncedRevisions.map(revision => revision.sourceRevisionHash)).size).toBe(2)
-    expect(new Set(syncedRevisions.map(revision => revision.conversationId))).toEqual(
-      new Set([harness.apiState.finalizedRevisions[0]?.conversationId]),
-    )
-  })
+      expect(syncedRevisions).toHaveLength(2)
+      expect(new Set(syncedRevisions.map(revision => revision.sourceRevisionHash)).size).toBe(2)
+      expect(new Set(syncedRevisions.map(revision => revision.conversationId))).toEqual(
+        new Set([harness.apiState.finalizedRevisions[0]?.conversationId]),
+      )
+    },
+    longSmokeTestTimeoutMs,
+  )
 
-  it('surfaces unsynced audit state through the real list command', async () => {
-    const harness = await createCliSmokeHarness()
-    const sessionId = '123e4567-e89b-42d3-a456-426614174011'
+  it(
+    'surfaces unsynced audit state through the real list command',
+    async () => {
+      const harness = await createCliSmokeHarness()
+      const sessionId = '123e4567-e89b-42d3-a456-426614174011'
 
-    await writeSessionTranscript(harness, {
-      sessionId,
-      turns: [
-        {
-          user: 'Review the unsynced CLI sessions',
-          assistant: 'I can audit which sessions are new or changed.',
-        },
-      ],
-    })
+      await writeSessionTranscript(harness, {
+        sessionId,
+        turns: [
+          {
+            user: 'Review the unsynced CLI sessions',
+            assistant: 'I can audit which sessions are new or changed.',
+          },
+        ],
+      })
 
-    const initialList = await runCli(harness, ['list', '--unsynced', '--all'])
+      const initialList = await runCli(harness, ['list', '--unsynced', '--all'])
 
-    expect(initialList.code).toBe(0)
-    expectNoCliFailure(initialList)
-    expect(initialList.stdout).toContain('1 never synced')
-    expect(initialList.stdout).toContain('Review the unsynced CLI sessions')
-    expect(initialList.stdout).toContain('Not synced yet')
+      expect(initialList.code).toBe(0)
+      expectNoCliFailure(initialList)
+      expect(initialList.stdout).toContain('1 never synced')
+      expect(initialList.stdout).toContain('Review the unsynced CLI sessions')
+      expect(initialList.stdout).toContain('Not synced yet')
 
-    await seedAuthToken(harness)
+      await seedAuthToken(harness)
 
-    const firstSync = await runCli(harness, ['sync', '--all', '--yes'])
-    expect(firstSync.code).toBe(0)
-    expect(firstSync.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
+      const firstSync = await runCli(harness, ['sync', '--all', '--yes'])
+      expect(firstSync.code).toBe(0)
+      expect(firstSync.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
 
-    const emptyUnsyncedList = await runCli(harness, ['list', '--unsynced', '--all'])
+      const emptyUnsyncedList = await runCli(harness, ['list', '--unsynced', '--all'])
 
-    expect(emptyUnsyncedList.code).toBe(0)
-    expectNoCliFailure(emptyUnsyncedList)
-    expect(emptyUnsyncedList.stdout).toContain('No sessions matched the selected filter.')
+      expect(emptyUnsyncedList.code).toBe(0)
+      expectNoCliFailure(emptyUnsyncedList)
+      expect(emptyUnsyncedList.stdout).toContain('No sessions matched the selected filter.')
 
-    await writeSessionTranscript(harness, {
-      sessionId,
-      turns: [
-        {
-          user: 'Review the unsynced CLI sessions',
-          assistant: 'I can audit which sessions are new or changed.',
-        },
-        {
-          user: 'Now show me only the sessions that changed',
-          assistant: 'This session now appears as updated since the last sync.',
-        },
-      ],
-    })
+      await writeSessionTranscript(harness, {
+        sessionId,
+        turns: [
+          {
+            user: 'Review the unsynced CLI sessions',
+            assistant: 'I can audit which sessions are new or changed.',
+          },
+          {
+            user: 'Now show me only the sessions that changed',
+            assistant: 'This session now appears as updated since the last sync.',
+          },
+        ],
+      })
 
-    const updatedUnsyncedList = await runCli(harness, ['list', '--unsynced', '--all'])
+      const updatedUnsyncedList = await runCli(harness, ['list', '--unsynced', '--all'])
 
-    expect(updatedUnsyncedList.code).toBe(0)
-    expectNoCliFailure(updatedUnsyncedList)
-    expect(updatedUnsyncedList.stdout).toContain('1 updated locally')
-    expect(updatedUnsyncedList.stdout).toContain('Updated since last sync')
-  })
+      expect(updatedUnsyncedList.code).toBe(0)
+      expectNoCliFailure(updatedUnsyncedList)
+      expect(updatedUnsyncedList.stdout).toContain('1 updated locally')
+      expect(updatedUnsyncedList.stdout).toContain('Updated since last sync')
+    },
+    longSmokeTestTimeoutMs,
+  )
 
   it('reports upload session creation failures without storing a synced revision', async () => {
     const harness = await createCliSmokeHarness()
