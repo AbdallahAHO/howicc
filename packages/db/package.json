@@ -24,16 +24,16 @@
     "type-check": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.45.2",
     "drizzle-zod": "^0.5.1",
     "envin": "^1.2.0",
-    "postgres": "^3.4.5",
-    "zod": "^3.24.1"
+    "postgres": "^3.4.9",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@howicc/typescript-config": "workspace:*",
-    "@types/node": "^22.10.2",
-    "typescript": "^5.7.2",
-    "vitest": "^3.0.5"
+    "@types/node": "^25.6.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }

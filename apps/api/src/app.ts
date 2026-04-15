@@ -12,6 +12,15 @@ import viewerRoutes from './routes/viewer'
 
 export const createApp = () => {
   const app = createOpenApiRouter()
+  const apiDocs = apiReference({
+    spec: {
+      url: '/openapi.json',
+    },
+    pageTitle: 'HowiCC API Reference',
+    theme: 'purple',
+    layout: 'modern',
+    hideClientButton: false,
+  } as Parameters<typeof apiReference>[0])
 
   app.route('/', healthRoutes)
   app.route('/', authRoutes)
@@ -79,15 +88,7 @@ export const createApp = () => {
 
   app.get(
     '/docs',
-    apiReference({
-      spec: {
-        url: '/openapi.json',
-      },
-      pageTitle: 'HowiCC API Reference',
-      theme: 'purple',
-      layout: 'modern',
-      hideClientButton: false,
-    }),
+    apiDocs,
   )
 
   return app

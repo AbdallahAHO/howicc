@@ -26,6 +26,8 @@
     "type-check": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.14",
+    "@hono/zod-openapi": "^0.18.4",
     "@howicc/auth": "workspace:*",
     "@howicc/canonical": "workspace:*",
     "@howicc/contracts": "workspace:*",
@@ -33,19 +35,17 @@
     "@howicc/model-pricing": "workspace:*",
     "@howicc/profile": "workspace:*",
     "@howicc/storage": "workspace:*",
-    "@hono/node-server": "^1.13.7",
-    "@hono/zod-openapi": "^0.18.3",
-    "@scalar/hono-api-reference": "^0.5.160",
-    "drizzle-orm": "^0.36.4",
+    "@scalar/hono-api-reference": "^0.5.184",
+    "drizzle-orm": "^0.45.2",
     "envin": "^1.2.0",
-    "hono": "^4.6.16",
-    "zod": "^3.24.1"
+    "hono": "^4.12.14",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@howicc/typescript-config": "workspace:*",
-    "@types/node": "^22.10.2",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vitest": "^3.0.5"
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }

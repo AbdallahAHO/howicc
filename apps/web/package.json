@@ -22,21 +22,21 @@
     "type-check": "astro check"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.1.8",
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.8",
+    "@astrojs/cloudflare": "^13.1.10",
     "@astrojs/react": "^5.0.3",
-    "@howicc/auth": "workspace:*",
     "@howicc/api-client": "workspace:*",
-    "astro": "^6.0.0",
+    "@howicc/auth": "workspace:*",
+    "astro": "^6.1.7",
     "envin": "^1.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "zod": "^3.24.1"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "typescript": "^5.7.2",
-    "vitest": "^3.0.5"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }
