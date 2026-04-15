@@ -1,6 +1,6 @@
 # Apps
 
-This folder contains deployable applications in the new HowiCC monorepo shape.
+This folder contains the deployable HowiCC applications.
 
 ## Current Apps
 
@@ -33,9 +33,3 @@ Apps own their final runtime composition.
   - merges both into one application runtime shape
 
 Shared packages only export env contracts or presets through `keys.ts`.
-
-## Legacy Note
-
-The existing top-level `app/` folder remains in place during the transition.
-
-It is a legacy path for the earlier implementation and should not define the architecture of the new system.

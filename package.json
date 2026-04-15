@@ -17,18 +17,14 @@
     "ci:web": "pnpm --filter @howicc/web type-check && pnpm --filter @howicc/web test && pnpm --filter @howicc/web build",
     "ci:cli": "pnpm --filter howicc type-check && pnpm --filter howicc test && pnpm --filter howicc build",
     "ci:jobs": "pnpm --filter @howicc/jobs type-check && pnpm --filter @howicc/jobs test && pnpm --filter @howicc/jobs build",
-    "dev:legacy:web": "pnpm --filter @howicc/app dev",
     "build": "turbo build --filter=./apps/* --filter=./packages/* --filter=./tooling/*",
-    "build:legacy:web": "pnpm --filter @howicc/app build",
     "test": "turbo test --filter=./apps/* --filter=./packages/* --filter=./tooling/*",
-    "test:legacy:web": "pnpm --filter @howicc/app test",
     "type-check": "turbo type-check --filter=./apps/* --filter=./packages/* --filter=./tooling/*",
     "gate": "pnpm run type-check && pnpm run test && pnpm run build",
     "release:status": "changeset status --verbose",
     "release:version": "changeset version",
     "update-deps:check": "pnpm outdated -r",
     "update-deps": "pnpm update -r --latest && pnpm dedupe",
-    "type-check:legacy:web": "pnpm --filter @howicc/app type-check",
     "clean": "git clean -xdf node_modules .turbo apps/*/node_modules packages/*/node_modules"
   },
   "engines": {

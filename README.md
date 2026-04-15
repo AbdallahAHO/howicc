@@ -34,8 +34,6 @@ packages/
   ...
 ```
 
-`app/` still exists as a legacy reference during the migration, but the active product lives in `apps/` and `packages/`.
-
 ## Stack
 
 - TypeScript monorepo
