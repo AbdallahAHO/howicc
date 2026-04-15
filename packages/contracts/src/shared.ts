@@ -341,7 +341,7 @@ export type RenderDocumentSummary = z.infer<typeof renderDocumentSummarySchema>
 
 export const cliAuthAuthorizeBodySchema = z
   .object({
-    callbackUrl: z.string().url(),
+    callbackUrl: z.url(),
     codeChallenge: z.string().min(16),
     state: z.string().min(8),
   })
@@ -350,7 +350,7 @@ export const cliAuthAuthorizeBodySchema = z
 export const cliAuthAuthorizeResponseSchema = z
   .object({
     success: z.literal(true),
-    redirectUrl: z.string().url(),
+    redirectUrl: z.url(),
     expiresAt: dateTimeSchema,
   })
   .openapi('CliAuthAuthorizeResponse')
@@ -365,7 +365,7 @@ export const cliAuthExchangeBodySchema = z
 export const cliAuthUserSchema = z
   .object({
     id: z.string(),
-    email: z.string().email(),
+    email: z.email(),
     name: z.string(),
   })
   .openapi('CliAuthUser')
@@ -638,7 +638,7 @@ export const repoProfileSchema = userProfileSchema
 export const viewerUserSchema = z
   .object({
     id: z.string(),
-    email: z.string().email(),
+    email: z.email(),
     name: z.string(),
     image: z.string().nullable().optional(),
     emailVerified: z.boolean().optional(),

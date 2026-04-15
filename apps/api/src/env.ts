@@ -26,8 +26,8 @@ export const apiPreset = {
       .enum(['development', 'staging', 'production', 'test'])
       .default('development'),
     PRODUCT_NAME: z.string().default('HowiCC'),
-    API_BASE_URL: z.string().url().default('http://localhost:8787'),
-    WEB_APP_URL: z.string().url().default('http://localhost:4321'),
+    API_BASE_URL: z.url().default('http://localhost:8787'),
+    WEB_APP_URL: z.url().default('http://localhost:4321'),
     SHARE_TOKEN_SECRET: z.string().min(32).optional(),
   },
   extends: [authPreset, dbPreset, storagePreset],

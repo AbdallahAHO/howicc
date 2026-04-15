@@ -1,4 +1,4 @@
-# @howicc/cli
+# howicc
 
 The current HowiCC command-line app for local coding-agent workflows.
 
@@ -22,10 +22,10 @@ The new CLI is designed around the real lifecycle of local sessions:
 ## Quick Start
 
 ```bash
-pnpm --filter @howicc/cli exec tsx src/index.ts login
-pnpm --filter @howicc/cli exec tsx src/index.ts list --unsynced
-pnpm --filter @howicc/cli exec tsx src/index.ts sync
-pnpm --filter @howicc/cli exec tsx src/index.ts profile
+pnpm --filter howicc exec tsx src/index.ts login
+pnpm --filter howicc exec tsx src/index.ts list --unsynced
+pnpm --filter howicc exec tsx src/index.ts sync
+pnpm --filter howicc exec tsx src/index.ts profile
 ```
 
 Published CLI usage is the same without the `pnpm ... tsx src/index.ts` prefix:
@@ -122,10 +122,10 @@ Aggregates local sessions into the AI coding profile view.
 Useful development commands:
 
 ```bash
-pnpm --filter @howicc/cli build
-pnpm --filter @howicc/cli type-check
-pnpm --filter @howicc/cli test
-pnpm --filter @howicc/cli pack:dry-run
+pnpm --filter howicc build
+pnpm --filter howicc type-check
+pnpm --filter howicc test
+pnpm --filter howicc pack:dry-run
 ```
 
 ## Scope

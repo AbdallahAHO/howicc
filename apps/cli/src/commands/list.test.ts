@@ -139,6 +139,7 @@ const createDigest = (
   prLinks: [],
   mcpServersConfigured: [],
   mcpServersUsed: [],
+  commandsInvoked: [],
   skillsTriggered: [],
 })
 

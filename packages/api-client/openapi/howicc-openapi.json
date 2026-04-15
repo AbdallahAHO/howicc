@@ -111,28 +111,6 @@
           "expiresAt"
         ]
       },
-      "ApiErrorCode": {
-        "type": "string",
-        "enum": [
-          "validation_failed",
-          "browser_session_required",
-          "auth_required",
-          "cli_token_invalid",
-          "cli_callback_invalid",
-          "cli_auth_grant_invalid",
-          "cli_auth_user_missing",
-          "repo_identifier_invalid",
-          "conversation_not_found",
-          "artifact_not_found",
-          "upload_request_invalid",
-          "upload_asset_target_missing",
-          "upload_session_not_found",
-          "upload_conflict",
-          "upload_expired",
-          "pricing_catalog_unavailable",
-          "internal_error"
-        ]
-      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
@@ -154,6 +132,28 @@
           "success",
           "code",
           "error"
+        ]
+      },
+      "ApiErrorCode": {
+        "type": "string",
+        "enum": [
+          "validation_failed",
+          "browser_session_required",
+          "auth_required",
+          "cli_token_invalid",
+          "cli_callback_invalid",
+          "cli_auth_grant_invalid",
+          "cli_auth_user_missing",
+          "repo_identifier_invalid",
+          "conversation_not_found",
+          "artifact_not_found",
+          "upload_request_invalid",
+          "upload_asset_target_missing",
+          "upload_session_not_found",
+          "upload_conflict",
+          "upload_expired",
+          "pricing_catalog_unavailable",
+          "internal_error"
         ]
       },
       "CliAuthAuthorizeBody": {
@@ -178,26 +178,6 @@
           "state"
         ]
       },
-      "CliAuthUser": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "name"
-        ]
-      },
       "CliAuthExchangeResponse": {
         "type": "object",
         "properties": {
@@ -218,6 +198,26 @@
           "success",
           "token",
           "user"
+        ]
+      },
+      "CliAuthUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name"
         ]
       },
       "CliAuthExchangeBody": {
@@ -283,14 +283,6 @@
           "sha256"
         ]
       },
-      "ConversationVisibility": {
-        "type": "string",
-        "enum": [
-          "private",
-          "unlisted",
-          "public"
-        ]
-      },
       "ConversationSummary": {
         "type": "object",
         "properties": {
@@ -320,26 +312,81 @@
           "updatedAt"
         ]
       },
-      "RenderSessionStats": {
+      "ConversationVisibility": {
+        "type": "string",
+        "enum": [
+          "private",
+          "unlisted",
+          "public"
+        ]
+      },
+      "RenderDocument": {
         "type": "object",
         "properties": {
-          "messageCount": {
-            "type": "integer",
-            "minimum": 0
+          "kind": {
+            "type": "string",
+            "enum": [
+              "render_document"
+            ]
           },
-          "toolRunCount": {
-            "type": "integer",
-            "minimum": 0
+          "schemaVersion": {
+            "type": "number",
+            "enum": [
+              1
+            ]
           },
-          "activityGroupCount": {
-            "type": "integer",
-            "minimum": 0
+          "session": {
+            "$ref": "#/components/schemas/RenderDocumentSession"
+          },
+          "context": {
+            "$ref": "#/components/schemas/RenderDocumentContext"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RenderMessageBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderQuestionBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderActivityGroupBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderCalloutBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderTodoSnapshotBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderTaskTimelineBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderResourceBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderStructuredDataBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderBriefDeliveryBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderSubagentThreadBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderCompactBoundaryBlock"
+                }
+              ]
+            }
           }
         },
         "required": [
-          "messageCount",
-          "toolRunCount",
-          "activityGroupCount"
+          "kind",
+          "schemaVersion",
+          "session",
+          "blocks"
         ]
       },
       "RenderDocumentSession": {
@@ -381,6 +428,28 @@
           "createdAt",
           "updatedAt",
           "stats"
+        ]
+      },
+      "RenderSessionStats": {
+        "type": "object",
+        "properties": {
+          "messageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "toolRunCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activityGroupCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "messageCount",
+          "toolRunCount",
+          "activityGroupCount"
         ]
       },
       "RenderDocumentContext": {
@@ -447,59 +516,6 @@
           "text"
         ]
       },
-      "RenderQuestionOption": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "preview": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "label",
-          "description"
-        ]
-      },
-      "RenderQuestionItem": {
-        "type": "object",
-        "properties": {
-          "question": {
-            "type": "string"
-          },
-          "header": {
-            "type": "string"
-          },
-          "options": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RenderQuestionOption"
-            }
-          },
-          "answer": {
-            "type": "string"
-          },
-          "notes": {
-            "type": "string"
-          },
-          "selectedPreview": {
-            "type": "string"
-          },
-          "multiSelect": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "question",
-          "header",
-          "options",
-          "multiSelect"
-        ]
-      },
       "RenderQuestionBlock": {
         "type": "object",
         "properties": {
@@ -544,6 +560,102 @@
           "questions",
           "outcome",
           "defaultCollapsed"
+        ]
+      },
+      "RenderQuestionItem": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "header": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderQuestionOption"
+            }
+          },
+          "answer": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "selectedPreview": {
+            "type": "string"
+          },
+          "multiSelect": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "question",
+          "header",
+          "options",
+          "multiSelect"
+        ]
+      },
+      "RenderQuestionOption": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "preview": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "description"
+        ]
+      },
+      "RenderActivityGroupBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "activity_group"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "defaultCollapsed": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RenderToolRunActivity"
+                },
+                {
+                  "$ref": "#/components/schemas/RenderHookActivity"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "label",
+          "defaultCollapsed",
+          "items"
         ]
       },
       "RenderToolRunActivity": {
@@ -636,49 +748,6 @@
           "tone"
         ]
       },
-      "RenderActivityGroupBlock": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "activity_group"
-            ]
-          },
-          "id": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          },
-          "defaultCollapsed": {
-            "type": "boolean"
-          },
-          "summary": {
-            "type": "string"
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/RenderToolRunActivity"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderHookActivity"
-                }
-              ]
-            }
-          }
-        },
-        "required": [
-          "type",
-          "id",
-          "label",
-          "defaultCollapsed",
-          "items"
-        ]
-      },
       "RenderCalloutBlock": {
         "type": "object",
         "properties": {
@@ -711,24 +780,6 @@
           "id",
           "tone",
           "title"
-        ]
-      },
-      "RenderTodoItem": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "priority": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "content",
-          "status"
         ]
       },
       "RenderTodoSnapshotBlock": {
@@ -764,27 +815,22 @@
           "defaultCollapsed"
         ]
       },
-      "RenderTaskTimelineEntry": {
+      "RenderTodoItem": {
         "type": "object",
         "properties": {
-          "taskId": {
+          "content": {
             "type": "string"
           },
           "status": {
             "type": "string"
           },
-          "description": {
+          "priority": {
             "type": "string"
-          },
-          "deltaSummary": {
-            "type": "string",
-            "nullable": true
           }
         },
         "required": [
-          "taskId",
-          "status",
-          "description"
+          "content",
+          "status"
         ]
       },
       "RenderTaskTimelineBlock": {
@@ -818,6 +864,29 @@
           "title",
           "entries",
           "defaultCollapsed"
+        ]
+      },
+      "RenderTaskTimelineEntry": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "deltaSummary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "taskId",
+          "status",
+          "description"
         ]
       },
       "RenderResourceBlock": {
@@ -887,23 +956,6 @@
           "defaultCollapsed"
         ]
       },
-      "RenderBriefDeliveryAttachment": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string"
-          },
-          "assetId": {
-            "type": "string"
-          },
-          "fileUuid": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "label"
-        ]
-      },
       "RenderBriefDeliveryBlock": {
         "type": "object",
         "properties": {
@@ -939,6 +991,23 @@
           "message",
           "attachments",
           "defaultCollapsed"
+        ]
+      },
+      "RenderBriefDeliveryAttachment": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": "string"
+          },
+          "fileUuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label"
         ]
       },
       "RenderSubagentThreadBlock": {
@@ -997,96 +1066,102 @@
           "text"
         ]
       },
-      "RenderDocument": {
+      "ProfileResponse": {
         "type": "object",
         "properties": {
-          "kind": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfile"
+          },
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "profile",
+          "digestCount"
+        ]
+      },
+      "UserProfile": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "generatedAt": {
             "type": "string",
-            "enum": [
-              "render_document"
-            ]
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
           },
-          "schemaVersion": {
-            "type": "number",
-            "enum": [
-              1
-            ]
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
           },
-          "session": {
-            "$ref": "#/components/schemas/RenderDocumentSession"
+          "activity": {
+            "$ref": "#/components/schemas/UserProfileActivity"
           },
-          "context": {
-            "$ref": "#/components/schemas/RenderDocumentContext"
-          },
-          "blocks": {
+          "projects": {
             "type": "array",
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/RenderMessageBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderQuestionBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderActivityGroupBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderCalloutBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderTodoSnapshotBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderTaskTimelineBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderResourceBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderStructuredDataBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderBriefDeliveryBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderSubagentThreadBlock"
-                },
-                {
-                  "$ref": "#/components/schemas/RenderCompactBoundaryBlock"
-                }
-              ]
+              "$ref": "#/components/schemas/UserProfileProject"
+            }
+          },
+          "productivity": {
+            "$ref": "#/components/schemas/UserProfileProductivity"
+          },
+          "toolcraft": {
+            "$ref": "#/components/schemas/UserProfileToolcraft"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileModel"
+            }
+          },
+          "cost": {
+            "$ref": "#/components/schemas/UserProfileCost"
+          },
+          "integrations": {
+            "$ref": "#/components/schemas/UserProfileIntegrations"
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileProvider"
+            }
+          },
+          "providerProfiles": {
+            "type": "object",
+            "properties": {
+              "claudeCode": {
+                "$ref": "#/components/schemas/ClaudeCodeProviderProfile"
+              }
             }
           }
         },
         "required": [
-          "kind",
-          "schemaVersion",
-          "session",
-          "blocks"
-        ]
-      },
-      "UserProfileDailyActivity": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date",
-            "example": "2026-04-14"
-          },
-          "sessionCount": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "totalDurationMs": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "date",
-          "sessionCount",
-          "totalDurationMs"
+          "userId",
+          "generatedAt",
+          "digestCount",
+          "activity",
+          "projects",
+          "productivity",
+          "toolcraft",
+          "models",
+          "cost",
+          "integrations",
+          "providers"
         ]
       },
       "UserProfileActivity": {
@@ -1164,33 +1239,28 @@
           "dailyActivity"
         ]
       },
-      "ProfileRepositorySummary": {
+      "UserProfileDailyActivity": {
         "type": "object",
         "properties": {
-          "fullName": {
+          "date": {
             "type": "string",
-            "example": "openai/openai-node"
+            "format": "date",
+            "example": "2026-04-14"
           },
-          "source": {
-            "type": "string",
-            "enum": [
-              "git_remote",
-              "pr_link",
-              "cwd_derived"
-            ]
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
           }
         },
         "required": [
-          "fullName",
-          "source"
+          "date",
+          "sessionCount",
+          "totalDurationMs"
         ]
-      },
-      "ProfileLanguageBreakdown": {
-        "type": "object",
-        "additionalProperties": {
-          "type": "integer",
-          "minimum": 0
-        }
       },
       "UserProfileProject": {
         "type": "object",
@@ -1245,85 +1315,33 @@
           "branches"
         ]
       },
-      "UserProfilePrRepository": {
+      "ProfileRepositorySummary": {
         "type": "object",
         "properties": {
-          "repository": {
-            "type": "string"
+          "fullName": {
+            "type": "string",
+            "example": "openai/openai-node"
           },
-          "prCount": {
-            "type": "integer",
-            "minimum": 0
+          "source": {
+            "type": "string",
+            "enum": [
+              "git_remote",
+              "pr_link",
+              "cwd_derived"
+            ]
           }
         },
         "required": [
-          "repository",
-          "prCount"
+          "fullName",
+          "source"
         ]
       },
-      "UserProfileTopLanguage": {
+      "ProfileLanguageBreakdown": {
         "type": "object",
-        "properties": {
-          "language": {
-            "type": "string"
-          },
-          "fileCount": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "language",
-          "fileCount"
-        ]
-      },
-      "UserProfileTopEditedFile": {
-        "type": "object",
-        "properties": {
-          "file": {
-            "type": "string"
-          },
-          "sessionCount": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "file",
-          "sessionCount"
-        ]
-      },
-      "SessionTypeDistribution": {
-        "type": "object",
-        "properties": {
-          "building": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "debugging": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "exploring": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "investigating": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "mixed": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "building",
-          "debugging",
-          "exploring",
-          "investigating",
-          "mixed"
-        ]
+        "additionalProperties": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "UserProfileProductivity": {
         "type": "object",
@@ -1410,66 +1428,84 @@
           "sessionTypeDistribution"
         ]
       },
-      "ToolCategoryBreakdown": {
+      "UserProfilePrRepository": {
         "type": "object",
         "properties": {
-          "read": {
-            "type": "integer",
-            "minimum": 0
+          "repository": {
+            "type": "string"
           },
-          "write": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "search": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "command": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "agent": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "mcp": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "plan": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "question": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "task": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "web": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "other": {
+          "prCount": {
             "type": "integer",
             "minimum": 0
           }
         },
         "required": [
-          "read",
-          "write",
-          "search",
-          "command",
-          "agent",
-          "mcp",
-          "plan",
-          "question",
-          "task",
-          "web",
-          "other"
+          "repository",
+          "prCount"
+        ]
+      },
+      "UserProfileTopLanguage": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "fileCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "language",
+          "fileCount"
+        ]
+      },
+      "UserProfileTopEditedFile": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "file",
+          "sessionCount"
+        ]
+      },
+      "SessionTypeDistribution": {
+        "type": "object",
+        "properties": {
+          "building": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "debugging": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "exploring": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "investigating": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mixed": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "building",
+          "debugging",
+          "exploring",
+          "investigating",
+          "mixed"
         ]
       },
       "UserProfileToolcraft": {
@@ -1543,6 +1579,68 @@
           "thinkingVisibleRate"
         ]
       },
+      "ToolCategoryBreakdown": {
+        "type": "object",
+        "properties": {
+          "read": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "write": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "search": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "command": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "agent": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mcp": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "plan": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "question": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "task": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "web": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "other": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "read",
+          "write",
+          "search",
+          "command",
+          "agent",
+          "mcp",
+          "plan",
+          "question",
+          "task",
+          "web",
+          "other"
+        ]
+      },
       "UserProfileModel": {
         "type": "object",
         "properties": {
@@ -1574,28 +1672,6 @@
           "estimatedCostUsd"
         ]
       },
-      "UserProfileMonthlyCost": {
-        "type": "object",
-        "properties": {
-          "month": {
-            "type": "string",
-            "pattern": "^\\d{4}-\\d{2}$"
-          },
-          "totalUsd": {
-            "type": "number",
-            "minimum": 0
-          },
-          "sessionCount": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "month",
-          "totalUsd",
-          "sessionCount"
-        ]
-      },
       "UserProfileCost": {
         "type": "object",
         "properties": {
@@ -1618,6 +1694,49 @@
           "totalUsd",
           "averagePerSessionUsd",
           "byMonth"
+        ]
+      },
+      "UserProfileMonthlyCost": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}$"
+          },
+          "totalUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "month",
+          "totalUsd",
+          "sessionCount"
+        ]
+      },
+      "UserProfileIntegrations": {
+        "type": "object",
+        "properties": {
+          "mcpServers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileMcpServer"
+            }
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileSkill"
+            }
+          }
+        },
+        "required": [
+          "mcpServers",
+          "skills"
         ]
       },
       "UserProfileMcpServer": {
@@ -1667,51 +1786,6 @@
           "totalInvocations"
         ]
       },
-      "UserProfileIntegrations": {
-        "type": "object",
-        "properties": {
-          "mcpServers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileMcpServer"
-            }
-          },
-          "skills": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileSkill"
-            }
-          }
-        },
-        "required": [
-          "mcpServers",
-          "skills"
-        ]
-      },
-      "ProviderId": {
-        "type": "string",
-        "enum": [
-          "claude_code",
-          "openai_codex",
-          "custom"
-        ]
-      },
-      "UserProfileProviderVersion": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "string"
-          },
-          "sessionCount": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "version",
-          "sessionCount"
-        ]
-      },
       "UserProfileProvider": {
         "type": "object",
         "properties": {
@@ -1745,6 +1819,30 @@
           "versions"
         ]
       },
+      "ProviderId": {
+        "type": "string",
+        "enum": [
+          "claude_code",
+          "openai_codex",
+          "custom"
+        ]
+      },
+      "UserProfileProviderVersion": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "version",
+          "sessionCount"
+        ]
+      },
       "ClaudeCodeProviderProfile": {
         "type": "object",
         "properties": {
@@ -1766,104 +1864,6 @@
         "required": [
           "thinkingVisibleRate",
           "avgTurnsPerSession"
-        ]
-      },
-      "UserProfile": {
-        "type": "object",
-        "nullable": true,
-        "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "generatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2026-04-14T12:34:56.000Z"
-          },
-          "digestCount": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "activity": {
-            "$ref": "#/components/schemas/UserProfileActivity"
-          },
-          "projects": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileProject"
-            }
-          },
-          "productivity": {
-            "$ref": "#/components/schemas/UserProfileProductivity"
-          },
-          "toolcraft": {
-            "$ref": "#/components/schemas/UserProfileToolcraft"
-          },
-          "models": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileModel"
-            }
-          },
-          "cost": {
-            "$ref": "#/components/schemas/UserProfileCost"
-          },
-          "integrations": {
-            "$ref": "#/components/schemas/UserProfileIntegrations"
-          },
-          "providers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileProvider"
-            }
-          },
-          "providerProfiles": {
-            "type": "object",
-            "properties": {
-              "claudeCode": {
-                "$ref": "#/components/schemas/ClaudeCodeProviderProfile"
-              }
-            }
-          }
-        },
-        "required": [
-          "userId",
-          "generatedAt",
-          "digestCount",
-          "activity",
-          "projects",
-          "productivity",
-          "toolcraft",
-          "models",
-          "cost",
-          "integrations",
-          "providers"
-        ]
-      },
-      "ProfileResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "profile": {
-            "$ref": "#/components/schemas/UserProfile"
-          },
-          "digestCount": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "success",
-          "profile",
-          "digestCount"
         ]
       },
       "ProfileRecomputeResponse": {
@@ -1891,22 +1891,34 @@
           "recomputed"
         ]
       },
-      "RepoProfileContributor": {
+      "RepoProfileResponse": {
         "type": "object",
         "properties": {
-          "userId": {
-            "type": "string"
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
           },
-          "name": {
-            "type": "string"
+          "repository": {
+            "type": "string",
+            "example": "openai/openai-node"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/RepoProfile"
           },
           "sessionCount": {
             "type": "integer",
             "minimum": 0
+          },
+          "message": {
+            "type": "string"
           }
         },
         "required": [
-          "userId",
+          "success",
+          "repository",
+          "profile",
           "sessionCount"
         ]
       },
@@ -1942,7 +1954,26 @@
           }
         ]
       },
-      "RepoProfileResponse": {
+      "RepoProfileContributor": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "userId",
+          "sessionCount"
+        ]
+      },
+      "ViewerSessionResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -1951,26 +1982,21 @@
               true
             ]
           },
-          "repository": {
-            "type": "string",
-            "example": "openai/openai-node"
+          "authenticated": {
+            "type": "boolean"
           },
-          "profile": {
-            "$ref": "#/components/schemas/RepoProfile"
+          "session": {
+            "$ref": "#/components/schemas/ViewerSession"
           },
-          "sessionCount": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "message": {
-            "type": "string"
+          "user": {
+            "$ref": "#/components/schemas/ViewerUser"
           }
         },
         "required": [
           "success",
-          "repository",
-          "profile",
-          "sessionCount"
+          "authenticated",
+          "session",
+          "user"
         ]
       },
       "ViewerSession": {
@@ -2046,32 +2072,6 @@
           "id",
           "email",
           "name"
-        ]
-      },
-      "ViewerSessionResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "authenticated": {
-            "type": "boolean"
-          },
-          "session": {
-            "$ref": "#/components/schemas/ViewerSession"
-          },
-          "user": {
-            "$ref": "#/components/schemas/ViewerUser"
-          }
-        },
-        "required": [
-          "success",
-          "authenticated",
-          "session",
-          "user"
         ]
       }
     },
@@ -3107,20 +3107,22 @@
           {
             "schema": {
               "type": "string",
-              "description": "Repository owner or organization slug.",
-              "example": "openai"
+              "example": "openai",
+              "description": "Repository owner or organization slug."
             },
             "required": true,
+            "description": "Repository owner or organization slug.",
             "name": "owner",
             "in": "path"
           },
           {
             "schema": {
               "type": "string",
-              "description": "Repository name.",
-              "example": "openai-node"
+              "example": "openai-node",
+              "description": "Repository name."
             },
             "required": true,
+            "description": "Repository name.",
             "name": "name",
             "in": "path"
           }

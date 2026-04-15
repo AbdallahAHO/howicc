@@ -3,17 +3,31 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "homepage": "https://howi.cc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdallahAHO/howicc.git",
+    "directory": "apps/api"
+  },
+  "bugs": {
+    "url": "https://github.com/AbdallahAHO/howicc/issues"
+  },
   "scripts": {
     "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8787 --ip 127.0.0.1",
     "build": "tsc -p tsconfig.json",
-    "cf:deploy": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc",
+    "deploy:prod": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc",
+    "deploy:check": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc --dry-run",
+    "cf:deploy": "pnpm run deploy:prod",
     "db:reset:local": "rm -rf .wrangler/state/v3/d1",
     "db:migrate:local": "pnpm exec wrangler d1 migrations apply DB --local --config wrangler.jsonc",
+    "db:migrate:prod": "pnpm exec wrangler d1 migrations apply DB --remote --config wrangler.jsonc",
     "db:prepare:local": "pnpm run db:reset:local && pnpm run db:migrate:local",
     "test": "vitest run --passWithNoTests",
     "type-check": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.14",
+    "@hono/zod-openapi": "^1.3.0",
     "@howicc/auth": "workspace:*",
     "@howicc/canonical": "workspace:*",
     "@howicc/contracts": "workspace:*",
@@ -21,18 +35,17 @@
     "@howicc/model-pricing": "workspace:*",
     "@howicc/profile": "workspace:*",
     "@howicc/storage": "workspace:*",
-    "@hono/node-server": "^1.13.7",
-    "@hono/zod-openapi": "^0.18.3",
-    "@scalar/hono-api-reference": "^0.5.160",
-    "drizzle-orm": "^0.36.4",
+    "@scalar/hono-api-reference": "^0.10.7",
+    "drizzle-orm": "^0.45.2",
     "envin": "^1.2.0",
-    "hono": "^4.6.16",
-    "zod": "^3.24.1"
+    "hono": "^4.12.14",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@howicc/typescript-config": "workspace:*",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vitest": "^3.0.5"
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }

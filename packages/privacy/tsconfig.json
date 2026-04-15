@@ -1,5 +1,5 @@
 {
-  "extends": "@howicc/typescript-config/library.json",
+  "extends": "@howicc/typescript-config/node.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"

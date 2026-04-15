@@ -3,10 +3,21 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "homepage": "https://howi.cc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdallahAHO/howicc.git",
+    "directory": "apps/jobs"
+  },
+  "bugs": {
+    "url": "https://github.com/AbdallahAHO/howicc/issues"
+  },
   "scripts": {
     "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8788 --ip 127.0.0.1",
     "build": "tsc -p tsconfig.json",
-    "cf:deploy": "pnpm exec wrangler deploy --config wrangler.jsonc",
+    "deploy:prod": "pnpm exec wrangler deploy --config wrangler.jsonc",
+    "deploy:check": "pnpm exec wrangler deploy --config wrangler.jsonc --dry-run",
+    "cf:deploy": "pnpm run deploy:prod",
     "test": "vitest run --passWithNoTests",
     "type-check": "tsc --noEmit -p tsconfig.json"
   },
@@ -15,13 +26,13 @@
     "@howicc/db": "workspace:*",
     "@howicc/storage": "workspace:*",
     "envin": "^1.2.0",
-    "zod": "^3.24.1"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@howicc/typescript-config": "workspace:*",
-    "@types/node": "^22.10.2",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vitest": "^3.0.5"
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }

@@ -1,0 +1,149 @@
+name: Deploy API
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/api/package.json'
+      - 'apps/api/CHANGELOG.md'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  deployments: write
+
+concurrency:
+  group: deploy-api-production
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: Detect API release
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.version.outputs.changed }}
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      release_name: ${{ steps.version.outputs.release_name }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect version change
+        id: version
+        run: node tooling/release/package-version-diff.mjs --surface api --base "${{ github.event.before }}" --head "${{ github.sha }}" --github-output
+
+  migrate:
+    name: Apply production D1 migrations
+    needs: detect
+    if: needs.detect.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production-db
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply production migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm --filter @howicc/api db:migrate:prod
+
+  deploy:
+    name: Deploy API to Cloudflare
+    needs:
+      - detect
+      - migrate
+    if: needs.detect.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OPTIONAL_GH_OAUTH_CLIENT_ID: ${{ secrets.GH_OAUTH_CLIENT_ID }}
+      OPTIONAL_GH_OAUTH_CLIENT_SECRET: ${{ secrets.GH_OAUTH_CLIENT_SECRET }}
+    environment:
+      name: production-api
+      url: https://api.howi.cc
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run API CI
+        run: pnpm run ci:api
+
+      - name: Sync required API Worker secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          SHARE_TOKEN_SECRET: ${{ secrets.SHARE_TOKEN_SECRET }}
+        run: |
+          printf '%s' "$BETTER_AUTH_SECRET" | pnpm --filter @howicc/api exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
+          printf '%s' "$SHARE_TOKEN_SECRET" | pnpm --filter @howicc/api exec wrangler secret put SHARE_TOKEN_SECRET --config wrangler.jsonc
+
+      - name: Sync optional GitHub OAuth secrets
+        if: ${{ env.OPTIONAL_GH_OAUTH_CLIENT_ID != '' && env.OPTIONAL_GH_OAUTH_CLIENT_SECRET != '' }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITHUB_CLIENT_ID: ${{ env.OPTIONAL_GH_OAUTH_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ env.OPTIONAL_GH_OAUTH_CLIENT_SECRET }}
+        run: |
+          printf '%s' "$GITHUB_CLIENT_ID" | pnpm --filter @howicc/api exec wrangler secret put GITHUB_CLIENT_ID --config wrangler.jsonc
+          printf '%s' "$GITHUB_CLIENT_SECRET" | pnpm --filter @howicc/api exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
+
+      - name: Deploy API worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: 4.81.0
+          workingDirectory: apps/api
+          packageManager: pnpm
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: deploy --config wrangler.jsonc --domains api.howi.cc
+
+      - name: Build release notes
+        if: needs.detect.outputs.changed == 'true'
+        run: node tooling/release/changelog-entry.mjs --surface api --version "${{ needs.detect.outputs.version }}" --output release-notes.md
+
+      - name: Create GitHub release
+        if: needs.detect.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.detect.outputs.tag }}
+          name: ${{ needs.detect.outputs.release_name }}
+          body_path: release-notes.md
+          target_commitish: ${{ github.sha }}

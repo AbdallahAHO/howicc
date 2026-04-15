@@ -1,3 +1,4 @@
+import { homedir } from 'node:os'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   formatLocalSessionSyncLabel,
@@ -14,7 +15,9 @@ describe('session-display', () => {
 
   it('collapses deep paths into a readable home-relative label', () => {
     expect(
-      formatProjectDisplayPath('/Users/abdallah/Developer/personal/howicc/apps/cli'),
+      formatProjectDisplayPath(
+        `${homedir()}/Developer/personal/howicc/apps/cli`,
+      ),
     ).toBe('~/Developer/.../apps/cli')
   })
 

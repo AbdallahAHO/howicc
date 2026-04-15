@@ -24,7 +24,7 @@
   "devDependencies": {
     "@howicc/profile": "workspace:*",
     "@howicc/typescript-config": "workspace:*",
-    "typescript": "^5.7.2",
-    "vitest": "^3.0.5"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }

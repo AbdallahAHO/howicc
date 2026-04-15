@@ -278,6 +278,7 @@ const extractDigest = async (
         prLinks: [],
         mcpServersConfigured: [],
         mcpServersUsed: [],
+        commandsInvoked: [],
         skillsTriggered: [],
       },
     }

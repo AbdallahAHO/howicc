@@ -1,0 +1,66 @@
+name: Release Plan
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.changeset/**'
+      - 'apps/**'
+      - 'packages/**'
+      - 'tooling/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'tsconfig.json'
+      - 'turbo.json'
+      - '.github/workflows/release-plan.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-plan-main
+  cancel-in-progress: true
+
+jobs:
+  release-plan:
+    name: Create or update release PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure git identity
+        run: |
+          git config user.name "Abdallah Othman"
+          git config user.email "abdallah.ali.hassan@gmail.com"
+
+      - name: Create release pull request
+        uses: changesets/action@v1
+        with:
+          version: pnpm run release:version
+          commit: 'chore: version release surfaces'
+          title: 'chore: version release surfaces'
+          setupGitUser: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

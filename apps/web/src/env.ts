@@ -9,12 +9,12 @@ export const env = defineEnv({
   },
   clientPrefix: 'PUBLIC_',
   server: {
-    API_SERVER_URL: z.string().url().default('http://localhost:8787'),
+    API_SERVER_URL: z.url().default('http://localhost:8787'),
   },
   client: {
     PUBLIC_PRODUCT_NAME: z.string().default('HowiCC'),
-    PUBLIC_SITE_URL: z.string().url().default('http://localhost:4321'),
-    PUBLIC_API_URL: z.string().url().default('http://localhost:8787'),
+    PUBLIC_SITE_URL: z.url().default('http://localhost:4321'),
+    PUBLIC_API_URL: z.url().default('http://localhost:8787'),
   },
   env: import.meta.env,
   isServer: import.meta.env.SSR,

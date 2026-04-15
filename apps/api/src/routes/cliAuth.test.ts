@@ -52,6 +52,16 @@ type MockState = {
   consumeGrantDenied: boolean
 }
 
+type CliAuthorizeResponse = {
+  success: boolean
+  redirectUrl: string
+}
+
+type CliExchangeResponse = {
+  success: boolean
+  token: string
+}
+
 const createMockDb = (state: MockState) => {
   type MockDb = {
     $client: {
@@ -307,7 +317,7 @@ describe('CLI auth routes', () => {
       }),
     })
 
-    const payload = await response.json()
+    const payload = await response.json() as CliAuthorizeResponse
 
     expect(response.status).toBe(200)
     expect(payload.success).toBe(true)
@@ -429,7 +439,7 @@ describe('CLI auth routes', () => {
       }),
     })
 
-    const payload = await response.json()
+    const payload = await response.json() as CliExchangeResponse
 
     expect(response.status).toBe(200)
     expect(payload.success).toBe(true)
