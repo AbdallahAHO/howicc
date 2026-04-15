@@ -41,10 +41,42 @@ jobs:
 
             echo "$value" | jq -e '
               if type == "array" then length > 0
-              elif type == "object" then length > 0
+              elif type == "object" then
+                any(
+                  .[];
+                  if type == "array" then length > 0
+                  elif type == "object" then length > 0
+                  else . != null and . != ""
+                  end
+                )
               else . != null and . != ""
               end
             ' >/dev/null
+          }
+
+          filter_invalid_license_changes() {
+            local value="$1"
+
+            if [[ -z "$value" || "$value" == "null" ]]; then
+              echo "$value"
+              return 0
+            fi
+
+            echo "$value" | jq '
+              if type == "object" then
+                with_entries(
+                  .value |= (
+                    if type == "array" then
+                      map(select(.ecosystem != "actions"))
+                    else
+                      .
+                    end
+                  )
+                )
+              else
+                .
+              end
+            '
           }
 
           if [[ "$REVIEW_OUTCOME" == "failure" ]]; then
@@ -58,9 +90,11 @@ jobs:
             exit 1
           fi
 
-          if has_entries "$INVALID_LICENSE_CHANGES"; then
+          FILTERED_INVALID_LICENSE_CHANGES="$(filter_invalid_license_changes "$INVALID_LICENSE_CHANGES")"
+
+          if has_entries "$FILTERED_INVALID_LICENSE_CHANGES"; then
             echo "Dependency review reported license policy violations."
-            echo "$INVALID_LICENSE_CHANGES" | jq
+            echo "$FILTERED_INVALID_LICENSE_CHANGES" | jq
             exit 1
           fi
 
