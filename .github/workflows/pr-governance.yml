@@ -1,0 +1,46 @@
+name: PR Governance
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
+
+jobs:
+  pr-title:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce Conventional Commit PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(revert: )?(build|chore|ci|docs|feat|fix|perf|refactor|release|test)(\([a-z0-9._/-]+\))?(!)?: .+$'
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            echo "Pull request titles must follow Conventional Commits."
+            echo "Example: feat(cli): add trusted publishing release flow"
+            echo "Received: $PR_TITLE"
+            exit 1
+          fi
+
+  branch-name:
+    name: Validate branch name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce gitflow-style branch names
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          pattern='^(feat|feature|fix|hotfix|release|chore|docs|refactor|test|ci|perf|build)/[a-z0-9._-]+$|^changeset-release/main$|^dependabot/.+$|^renovate/.+$'
+          if [[ ! "$BRANCH_NAME" =~ $pattern ]]; then
+            echo "Branch names must follow the repo flow."
+            echo "Examples: feature/release-automation, fix/api-secret-sync, release/v1-0-0"
+            echo "Received: $BRANCH_NAME"
+            exit 1
+          fi

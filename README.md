@@ -68,6 +68,7 @@ The new stack is built around:
 ### New Stack
 
 ```bash
+fnm use    # or nvm use
 pnpm install
 pnpm type-check
 pnpm build
@@ -76,15 +77,87 @@ pnpm dev:local
 pnpm dev:web
 pnpm dev:api
 pnpm dev:jobs
+```
 
 ### Cloudflare Deploy
 
 ```bash
-pnpm --filter @howicc/api cf:deploy
-pnpm --filter @howicc/jobs cf:deploy
-pnpm --filter @howicc/web cf:deploy
+pnpm --filter @howicc/api deploy:prod
+pnpm --filter @howicc/jobs deploy:prod
+pnpm --filter @howicc/web deploy:prod
+
+pnpm deploy:check:api
+pnpm deploy:check:jobs
+pnpm deploy:check:web
 ```
-```
+
+### Release Automation
+
+HowiCC now uses a release-PR workflow for the versioned production surfaces:
+
+- `@howicc/cli`
+- `@howicc/api`
+- `@howicc/web`
+- `@howicc/jobs`
+
+The workflow model is:
+
+1. feature PRs add a changeset describing the affected release surfaces
+2. pushing merged changes to `main` updates a release PR through Changesets
+3. merging that release PR bumps versions and changelogs
+4. version bumps trigger per-surface production workflows
+5. each successful release creates its own Git tag and GitHub Release
+
+Repository governance:
+
+- `main` is PR-only
+- squash merge is the only merge strategy
+- pull request titles must follow Conventional Commits
+- branch names follow the repo gitflow pattern described in `CONTRIBUTING.md`
+
+Production environments expected in GitHub:
+
+- `npm-release`
+- `production-web`
+- `production-api`
+- `production-jobs`
+- `production-db`
+
+Production secrets expected in GitHub:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+CLI publishing uses npm Trusted Publishing through GitHub OIDC, so `NPM_TOKEN` is not required. Configure the npm package with:
+
+- publisher: `GitHub Actions`
+- organization or user: `AbdallahAHO`
+- repository: `howicc`
+- workflow filename: `release-cli.yml`
+- environment name: `npm-release`
+
+API runtime secrets expected in the `production-api` environment:
+
+- `BETTER_AUTH_SECRET`
+- `SHARE_TOKEN_SECRET`
+- `GH_OAUTH_CLIENT_ID` (optional, syncs to the Worker secret `GITHUB_CLIENT_ID`)
+- `GH_OAUTH_CLIENT_SECRET` (optional, syncs to the Worker secret `GITHUB_CLIENT_SECRET`)
+
+The API deploy workflow syncs the required Worker secrets from GitHub before deployment so the Worker configuration stays reproducible.
+
+The repo also ships a dedicated `sync-api-secrets.yml` workflow so production API secrets can be reconciled on `main` API changes or by manual dispatch without waiting for a release deploy.
+
+Local contributors should use the repo runtime files:
+
+- `.node-version`
+- `.nvmrc`
+
+Cloudflare destinations:
+
+- `production-web` -> `howicc-web` on `https://howi.cc`
+- `production-api` -> `howicc-api` on `https://api.howi.cc`
+- `production-jobs` -> `howicc-jobs`
+- `production-db` -> D1 migration gate for `howicc-prod-db`
 
 ### Legacy Stack
 
