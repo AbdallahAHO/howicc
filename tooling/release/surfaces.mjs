@@ -46,7 +46,7 @@ export const releaseSurfaces = {
   cli: {
     key: 'cli',
     displayName: 'HowiCC CLI',
-    packageName: '@howicc/cli',
+    packageName: 'howicc',
     packageJsonPath: 'apps/cli/package.json',
     changelogPath: 'apps/cli/CHANGELOG.md',
     tagPrefix: 'cli-v',

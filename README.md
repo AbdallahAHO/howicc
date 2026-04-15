@@ -97,7 +97,7 @@ HowiCC ships separate release surfaces for:
 - `@howicc/web`
 - `@howicc/api`
 - `@howicc/jobs`
-- `@howicc/cli`
+- `howicc`
 
 At a high level:
 

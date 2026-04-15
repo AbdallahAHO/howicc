@@ -47,7 +47,7 @@ pnpm dev:api                        # API only (port 8787)
 pnpm dev:web                        # web only (port 4321)
 
 # CLI
-pnpm --filter @howicc/cli build     # build CLI
+pnpm --filter howicc build          # build CLI
 node apps/cli/dist/index.cjs profile    # AI coding dashboard
 node apps/cli/dist/index.cjs list       # browse local sessions
 node apps/cli/dist/index.cjs inspect <id>  # deep-dive session

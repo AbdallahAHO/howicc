@@ -1,5 +1,5 @@
 {
-  "name": "@howicc/cli",
+  "name": "howicc",
   "version": "2.0.0",
   "description": "HowiCC CLI for inspecting, exporting, and eventually syncing local coding-agent conversations",
   "license": "MIT",
@@ -19,8 +19,8 @@
   },
   "type": "module",
   "bin": {
-    "howicc": "./bin/howicc.cjs",
-    "howi": "./bin/howicc.cjs"
+    "howicc": "bin/howicc.cjs",
+    "howi": "bin/howicc.cjs"
   },
   "files": [
     "dist",
@@ -39,7 +39,7 @@
   "homepage": "https://howi.cc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AbdallahAHO/howicc.git",
+    "url": "git+https://github.com/AbdallahAHO/howicc.git",
     "directory": "apps/cli"
   },
   "bugs": {
@@ -78,7 +78,6 @@
     "vitest": "^4.0.8"
   },
   "publishConfig": {
-    "access": "public",
     "provenance": true
   },
   "engines": {

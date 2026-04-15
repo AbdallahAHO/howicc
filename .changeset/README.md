@@ -1,6 +1,6 @@
 This directory stores release intent for the versioned HowiCC surfaces:
 
-- `@howicc/cli`
+- `howicc`
 - `@howicc/api`
 - `@howicc/web`
 - `@howicc/jobs`

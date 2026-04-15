@@ -1,6 +1,6 @@
 ---
 '@howicc/api': patch
-'@howicc/cli': patch
+'howicc': patch
 '@howicc/jobs': patch
 '@howicc/web': patch
 ---

@@ -53,7 +53,7 @@ Production releases are tracked separately for:
 - `@howicc/web`
 - `@howicc/api`
 - `@howicc/jobs`
-- `@howicc/cli`
+- `howicc`
 
 If a pull request changes one of those surfaces, add a changeset:
 
