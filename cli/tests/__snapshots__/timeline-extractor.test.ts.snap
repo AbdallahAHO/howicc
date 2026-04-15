@@ -1,0 +1,127 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TimelineExtractor > Minimal conversation > should match snapshot 1`] = `
+{
+  "createdAt": "2024-11-12T10:00:01.000Z",
+  "gitBranch": "main",
+  "id": "test-session-id",
+  "project": "/test/project",
+  "tags": undefined,
+  "timeline": [
+    {
+      "content": "Hello, can you help me test this?",
+      "id": "user-1",
+      "timestamp": "2024-11-12T10:00:01.000Z",
+      "type": "user_prompt",
+    },
+    {
+      "content": [
+        {
+          "text": "Of course! I'll help you test the extraction.",
+          "type": "text_block",
+        },
+      ],
+      "id": "assistant-1",
+      "model": "claude-sonnet-4-5-20250929",
+      "stopReason": "end_turn",
+      "thoughts": undefined,
+      "timestamp": "2024-11-12T10:00:02.000Z",
+      "type": "assistant_turn",
+    },
+    {
+      "content": "Can you read a file?",
+      "id": "user-2",
+      "timestamp": "2024-11-12T10:00:03.000Z",
+      "type": "user_prompt",
+    },
+    {
+      "content": [
+        {
+          "text": "I'll read the file for you.",
+          "type": "text_block",
+        },
+        {
+          "argsSummary": "/test/file.txt",
+          "id": "tool-1",
+          "input": {
+            "file_path": "/test/file.txt",
+          },
+          "toolName": "Read",
+          "type": "tool_call_block",
+        },
+      ],
+      "id": "assistant-2",
+      "model": "claude-sonnet-4-5-20250929",
+      "stopReason": "tool_use",
+      "thoughts": undefined,
+      "timestamp": "2024-11-12T10:00:04.000Z",
+      "type": "assistant_turn",
+    },
+    {
+      "content": "File contents here",
+      "id": "tool-result-1",
+      "isError": false,
+      "status": "success",
+      "structuredContent": {
+        "content": "File contents here",
+        "type": "text",
+      },
+      "summary": undefined,
+      "timestamp": "2024-11-12T10:00:05.000Z",
+      "toolCallId": "tool-1",
+      "toolName": "Read",
+      "type": "tool_result",
+    },
+    {
+      "content": [
+        {
+          "text": "I've read the file. The contents are: File contents here",
+          "type": "text_block",
+        },
+      ],
+      "id": "assistant-3",
+      "model": "claude-sonnet-4-5-20250929",
+      "stopReason": "end_turn",
+      "thoughts": undefined,
+      "timestamp": "2024-11-12T10:00:06.000Z",
+      "type": "assistant_turn",
+    },
+  ],
+  "title": "Test Conversation",
+  "updatedAt": "2024-11-12T10:00:06.000Z",
+  "version": "1",
+}
+`;
+
+exports[`TimelineExtractor > Real conversation (integration) > should match snapshot structure 1`] = `
+{
+  "eventCount": 177,
+  "eventTypes": {
+    "assistant_turn": 131,
+    "tool_result": 43,
+    "user_prompt": 3,
+  },
+  "gitBranch": "claude/pocketpaste-astro-cli-integration-011CUtUezfktV3MgsmkNTu7L",
+  "id": "e7339573-3ef5-4cce-8b2d-8010f9559c78",
+  "project": "/Users/abdallah.othman/Developer/Personal/howicc",
+  "sampleEvents": [
+    {
+      "hasContent": true,
+      "hasThoughts": false,
+      "type": "user_prompt",
+    },
+    {
+      "hasContent": true,
+      "hasThoughts": false,
+      "type": "assistant_turn",
+    },
+    {
+      "hasContent": true,
+      "hasThoughts": false,
+      "type": "assistant_turn",
+    },
+  ],
+  "title": "This is an absolutely outstanding plan. You've not only internalized the require",
+  "version": "2.0.35",
+}
+`;

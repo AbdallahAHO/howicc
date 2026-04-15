@@ -1,0 +1,251 @@
+---
+// Header component with navigation
+import { getAuthenticatedPBClient } from '@/lib/auth';
+
+let currentUser = null;
+try {
+  const authResult = await getAuthenticatedPBClient(Astro.request);
+  currentUser = authResult?.user || null;
+} catch (error) {
+  // Ignore auth errors
+}
+---
+
+<a
+  href="#content"
+  class="px-3 py-1 text-white sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 bg-base-900 rounded-md"
+>
+  Skip to content
+</a>
+
+<header
+  class="w-full border-b border-base-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60"
+>
+  <div
+    x-data="{ open: false }"
+    class="px-6 mx-auto max-w-screen-xl md:px-10 lg:px-16"
+  >
+    <div class="flex items-center justify-between h-14 gap-3">
+      <a href="/" class="inline-flex items-center gap-2">
+        <span class="text-2xl font-bold text-base-900">💬</span>
+        <span class="text-lg font-semibold text-base-900 hidden sm:inline">How I Claude Code</span>
+        <span class="sr-only">Home</span>
+      </a>
+
+      <button
+        class="flex items-center justify-center text-center shadow-subtle font-medium duration-500 ease-in-out transition-colors focus:outline-2 focus:outline-offset-2 text-base-600 bg-base-50 outline outline-base-50 hover:bg-base-200 focus:outline-base-600 size-8 p-0.5 text-xs rounded-md md:hidden"
+        @click="open=!open"
+        :aria-expanded="open"
+        aria-controls="nav-mobile"
+        aria-label="Toggle menu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="size-4"
+        >
+          <path
+            x-show="!open"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+          <path
+            x-show="open"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+
+      <!-- Desktop navigation -->
+      <nav
+        id="nav-desktop"
+        aria-label="Primary"
+        class="items-center hidden md:flex gap-4"
+      >
+        <a
+          class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+          href="/#get-started"
+        >
+          Features
+        </a>
+        <a
+          class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+          href="/#get-started"
+        >
+          How It Works
+        </a>
+        <a
+          class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+          href="/leaderboard"
+        >
+          Leaderboard
+        </a>
+        <a
+          class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+          href="https://github.com/AbdallahAHO/howicc"
+          target="_blank"
+          rel="noopener"
+        >
+          Docs
+        </a>
+        <span
+          aria-hidden
+          class="hidden w-px h-4 mx-1 bg-base-200 md:block"
+        ></span>
+        {currentUser ? (
+          <>
+            <a
+              class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+              href="/dashboard"
+            >
+              My Conversations
+            </a>
+            <a
+              class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+              href="/settings"
+            >
+              Settings
+            </a>
+            <span
+              aria-hidden
+              class="hidden w-px h-4 mx-1 bg-base-200 md:block"
+            ></span>
+            <span class="text-sm font-medium text-base-600">
+              {currentUser.email}
+            </span>
+            <button
+              id="logout-btn-desktop"
+              class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+            >
+              Sign out
+            </button>
+          </>
+        ) : (
+          <>
+            <a
+              class="text-sm font-medium text-base-600 hover:text-base-900 transition-colors"
+              href="/login"
+            >
+              Sign in
+            </a>
+            <a
+              href="/register"
+              class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-white bg-base-900 outline outline-base-900 hover:bg-base-950 focus-visible:outline-base-950 h-8 px-3.5 text-xs"
+            >
+              Get started
+            </a>
+          </>
+        )}
+      </nav>
+    </div>
+
+    <!-- Mobile menu -->
+    <nav
+      id="nav-mobile"
+      x-cloak
+      x-show="open"
+      aria-label="Mobile"
+      class="pb-3 md:hidden grid grid-cols-1 gap-2"
+    >
+      <a
+        href="/#get-started"
+        class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+      >
+        Features
+      </a>
+      <a
+        href="/#get-started"
+        class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+      >
+        How It Works
+      </a>
+      <a
+        href="/leaderboard"
+        class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+      >
+        Leaderboard
+      </a>
+      <a
+        href="https://github.com/AbdallahAHO/howicc"
+        target="_blank"
+        rel="noopener"
+        class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+      >
+        Docs
+      </a>
+      {currentUser ? (
+        <>
+          <a
+            href="/dashboard"
+            class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+          >
+            My Conversations
+          </a>
+          <a
+            href="/settings"
+            class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+          >
+            Settings
+          </a>
+          <div class="text-sm font-medium text-base-600 px-3.5">
+            {currentUser.email}
+          </div>
+          <button
+            id="logout-btn-mobile"
+            class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+          >
+            Sign out
+          </button>
+        </>
+      ) : (
+        <>
+          <a
+            href="/login"
+            class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-base-600 bg-base-50 outline outline-base-100 hover:bg-base-200 focus-visible:outline-base-600 h-8 px-3.5 text-xs"
+          >
+            Sign in
+          </a>
+          <a
+            href="/register"
+            class="relative flex items-center justify-center text-center font-medium transition-colors duration-200 ease-in-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:z-10 justify-center rounded-md text-white bg-base-900 outline outline-base-900 hover:bg-base-950 focus-visible:outline-base-950 h-8 px-3.5 text-xs"
+          >
+            Get started
+          </a>
+        </>
+      )}
+    </nav>
+  </div>
+  <div id="content" class="sr-only"></div>
+</header>
+
+<script>
+  // Handle logout buttons
+  async function handleLogout() {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.reload();
+    }
+  }
+
+  const logoutBtnDesktop = document.getElementById('logout-btn-desktop');
+  const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+
+  logoutBtnDesktop?.addEventListener('click', handleLogout);
+  logoutBtnMobile?.addEventListener('click', handleLogout);
+</script>

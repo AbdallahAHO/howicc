@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@howicc/schemas": ["./packages/schemas/src/index.ts"],
+      "@howicc/schemas/*": ["./packages/schemas/src/*"]
+    }
+  },
+  "files": [],
+  "references": [
+    { "path": "./app" },
+    { "path": "./cli" },
+    { "path": "./packages/schemas" }
+  ]
+}

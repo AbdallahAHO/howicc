@@ -1,0 +1,37 @@
+{
+  "name": "howicc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm link:cli && concurrently -n \"Astro,CLI\" -c \"bgMagenta.bold,bgGreen.bold\" \"pnpm dev:app\" \"pnpm dev:cli\"",
+    "dev:app": "cd app && pnpm dev",
+    "dev:cli": "cd cli && pnpm dev",
+    "build": "pnpm build:cli && pnpm build:app",
+    "build:app": "cd app && pnpm build",
+    "build:cli": "cd cli && pnpm build",
+    "preview": "cd app && pnpm preview",
+    "test": "pnpm test:app && pnpm test:cli",
+    "test:app": "cd app && pnpm test",
+    "test:cli": "cd cli && pnpm test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "type-check": "pnpm type-check:app && pnpm type-check:cli",
+    "type-check:app": "cd app && pnpm type-check",
+    "type-check:cli": "cd cli && pnpm type-check",
+    "check-secrets": "cd app && pnpm check-secrets",
+    "validate-config": "cd app && pnpm validate-config",
+    "cli:start": "cd cli && pnpm start",
+    "cli:link": "cd cli && pnpm build && (pnpm link --global || true)",
+    "cli:unlink": "cd cli && (pnpm unlink --global || true)",
+    "link:cli": "pnpm cli:link",
+    "unlink:cli": "pnpm cli:unlink",
+    "install:all": "pnpm install && cd cli && pnpm install && cd ../app && pnpm install"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "concurrently": "^9.1.2",
+    "playwright": "^1.56.1"
+  }
+}

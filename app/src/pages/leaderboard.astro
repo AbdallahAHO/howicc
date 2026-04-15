@@ -1,0 +1,143 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Card from '@/components/ui/Card.astro';
+import { LeaderboardResponseSchema } from '@howicc/schemas';
+import type { LeaderboardConversation } from '@howicc/schemas';
+
+export const prerender = false;
+
+// Fetch leaderboard data from API
+let trending: LeaderboardConversation[] = [];
+let allTime: LeaderboardConversation[] = [];
+
+try {
+  const [trendingRes, allTimeRes] = await Promise.all([
+    fetch(`${Astro.url.origin}/api/leaderboard?type=trending&limit=20`),
+    fetch(`${Astro.url.origin}/api/leaderboard?type=alltime&limit=20`),
+  ]);
+
+  if (trendingRes.ok) {
+    const data = await trendingRes.json();
+    // Validate response with Zod schema
+    const validated = LeaderboardResponseSchema.parse(data);
+    trending = validated.conversations;
+  }
+
+  if (allTimeRes.ok) {
+    const data = await allTimeRes.json();
+    // Validate response with Zod schema
+    const validated = LeaderboardResponseSchema.parse(data);
+    allTime = validated.conversations;
+  }
+} catch (error) {
+  console.error('Error fetching leaderboard:', error);
+}
+---
+
+<BaseLayout
+  title="Leaderboard | How I Claude Code"
+  description="Discover trending and popular Claude conversations shared by the community"
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl sm:text-5xl font-bold text-base-900 mb-4">🏆 Leaderboard</h1>
+      <p class="text-xl text-base-600 max-w-2xl mx-auto">
+        Discover trending and popular Claude conversations shared by the community
+      </p>
+    </div>
+
+    <!-- Trending Section -->
+    <section class="mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-base-900">🔥 Trending Now</h2>
+        <span class="text-sm text-base-500">Sorted by recent activity</span>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {trending.map((conv, index) => (
+          <a
+            href={`/p/${conv.slug}`}
+            class="block group"
+          >
+            <Card hover={true} class="p-6 h-full">
+              <div class="flex items-start justify-between mb-3">
+                <span class="text-2xl font-bold text-primary-600">#{index + 1}</span>
+                <div class="flex items-center gap-2 text-sm text-base-500">
+                  <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  {conv.viewsTotal || 0}
+                </div>
+              </div>
+              <h3 class="text-lg font-semibold text-base-900 mb-2 group-hover:text-primary-600 transition-colors">
+                {conv.title || 'Untitled Conversation'}
+              </h3>
+              {conv.summary && (
+                <p class="text-sm text-base-600 line-clamp-2 mb-4">
+                  {conv.summary}
+                </p>
+              )}
+              {conv.tags && conv.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {conv.tags.slice(0, 3).map((tag: any) => (
+                    <span class="px-2 py-1 text-xs font-medium bg-primary-100 text-primary-700 rounded-full">
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- All-Time Section -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-base-900">⭐ All-Time Popular</h2>
+        <span class="text-sm text-base-500">Most viewed conversations</span>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {allTime.map((conv, index) => (
+          <a
+            href={`/p/${conv.slug}`}
+            class="block group"
+          >
+            <Card hover={true} class="p-6 h-full">
+              <div class="flex items-start justify-between mb-3">
+                <span class="text-2xl font-bold text-primary-600">#{index + 1}</span>
+                <div class="flex items-center gap-2 text-sm text-base-500">
+                  <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  {conv.viewsTotal || 0}
+                </div>
+              </div>
+              <h3 class="text-lg font-semibold text-base-900 mb-2 group-hover:text-primary-600 transition-colors">
+                {conv.title || 'Untitled Conversation'}
+              </h3>
+              {conv.summary && (
+                <p class="text-sm text-base-600 line-clamp-2 mb-4">
+                  {conv.summary}
+                </p>
+              )}
+              {conv.tags && conv.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {conv.tags.slice(0, 3).map((tag: any) => (
+                    <span class="px-2 py-1 text-xs font-medium bg-primary-100 text-primary-700 rounded-full">
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
