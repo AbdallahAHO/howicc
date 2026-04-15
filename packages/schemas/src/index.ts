@@ -22,7 +22,7 @@ export const ToolCallBlockSchema = z.object({
   id: z.string(),
   type: z.literal('tool_call_block'),
   toolName: z.string(),
-  input: z.record(z.unknown()),
+  input: z.record(z.string(), z.unknown()),
   argsSummary: z.string().optional(), // Human readable summary of arguments
   filePatches: z.array(FilePatchSchema).optional(),
 });

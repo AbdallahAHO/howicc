@@ -23,7 +23,7 @@
     "@howicc/db": "workspace:*",
     "better-auth": "^1.6.4",
     "envin": "^1.2.0",
-    "zod": "^3.25.76"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@howicc/typescript-config": "workspace:*",

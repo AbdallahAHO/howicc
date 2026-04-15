@@ -20,7 +20,7 @@ export const jobsPreset = {
       .default('development'),
     PRODUCT_NAME: z.string().default('HowiCC'),
     JOBS_WORKER_NAME: z.string().default('howicc-jobs'),
-    API_BASE_URL: z.string().url().default('http://localhost:8787'),
+    API_BASE_URL: z.url().default('http://localhost:8787'),
   },
   extends: [authPreset, dbPreset, storagePreset],
 } as const satisfies Preset

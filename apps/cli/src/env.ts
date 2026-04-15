@@ -1,8 +1,8 @@
 import * as z from 'zod'
 
 export const cliEnvSchema = z.object({
-  HOWICC_API_URL: z.string().url().default('https://api.howi.cc'),
-  HOWICC_WEB_URL: z.string().url().default('https://howi.cc'),
+  HOWICC_API_URL: z.url().default('https://api.howi.cc'),
+  HOWICC_WEB_URL: z.url().default('https://howi.cc'),
 })
 
 export const cliEnv = cliEnvSchema.parse({
