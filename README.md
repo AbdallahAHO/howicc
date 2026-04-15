@@ -1,285 +1,132 @@
 # HowiCC
 
-Share local coding-agent conversations as readable, structured artifacts.
+HowiCC turns local coding-agent conversations into structured, shareable artifacts.
 
-HowiCC is being rebuilt around a stronger import model:
+This monorepo contains the full product surface:
 
-```text
-source bundle
--> canonical session
--> render document
--> UI
-```
+- a web app for browsing and sharing sessions
+- an API for auth, uploads, and artifact delivery
+- background jobs for async processing
+- a CLI for working with local machine data
+- shared packages for canonical session models, provider adapters, privacy, rendering, storage, and contracts
 
-The active implementation now lives in the monorepo structure documented below.
-
-## Workspace Overview
+## Repo Shape
 
 ```text
 apps/
-  web/   Astro frontend
-  api/   Hono API
-  jobs/  background worker scaffold
-  cli/   new command-line app
+  web/   Astro app
+  api/   Hono API on Cloudflare Workers
+  jobs/  background worker
+  cli/   local CLI
 
 packages/
   canonical/
-  render/
-  parser-core/
   provider-claude-code/
-  provider-shared-artifacts/
+  parser-core/
+  privacy/
+  render/
+  profile/
   contracts/
   api-client/
+  auth/
   db/
   storage/
-  auth/
-
-tooling/
-  typescript/
-  vitest/
-
-revamp/
-  architecture, parser, platform, and rollout documentation
+  ...
 ```
 
-## Legacy Paths
+`app/` still exists as a legacy reference during the migration, but the active product lives in `apps/` and `packages/`.
 
-This still exists during the transition:
+## Stack
 
-- `app/`
+- TypeScript monorepo
+- pnpm workspaces
+- Turbo
+- Astro for web
+- Hono on Cloudflare Workers
+- D1 for metadata
+- R2 for assets
 
-It remains a useful reference, but it no longer defines the target architecture.
+## Quick Start
 
-## Current Direction
+Requirements:
 
-The new stack is built around:
+- Node 24
+- pnpm 9
 
-- Astro SSR for the frontend
-- React islands for authenticated UI interactions
-- Hono for the API
-- Drizzle for the relational schema layer
-- D1-first metadata storage with a Postgres adapter seam later
-- R2-first object storage with an S3-compatible adapter seam later
-- contract-first API packages
-- provider adapters for Claude Code now and more agents later
-
-## Development Commands
-
-### New Stack
+Install dependencies:
 
 ```bash
-fnm use    # or nvm use
+nvm use
 pnpm install
-pnpm type-check
-pnpm build
+```
 
+Run the main local stack:
+
+```bash
 pnpm dev:local
+```
+
+That prepares the local API database, then starts the web app and API together.
+
+Useful commands:
+
+```bash
 pnpm dev:web
 pnpm dev:api
 pnpm dev:jobs
+pnpm dev:cli
+
+pnpm type-check
+pnpm test
+pnpm build
 ```
 
-### Cloudflare Deploy
+Targeted validation:
 
 ```bash
-pnpm --filter @howicc/api deploy:prod
-pnpm --filter @howicc/jobs deploy:prod
-pnpm --filter @howicc/web deploy:prod
-
-pnpm deploy:check:api
-pnpm deploy:check:jobs
-pnpm deploy:check:web
+pnpm run ci:web
+pnpm run ci:api
+pnpm run ci:jobs
+pnpm run ci:cli
 ```
 
-### Release Automation
+## Release Model
 
-HowiCC now uses a release-PR workflow for the versioned production surfaces:
+HowiCC ships separate release surfaces for:
 
-- `@howicc/cli`
-- `@howicc/api`
 - `@howicc/web`
+- `@howicc/api`
 - `@howicc/jobs`
+- `@howicc/cli`
 
-The workflow model is:
+At a high level:
 
-1. feature PRs add a changeset describing the affected release surfaces
-2. pushing merged changes to `main` updates a release PR through Changesets
-3. merging that release PR bumps versions and changelogs
-4. version bumps trigger per-surface production workflows
-5. each successful release creates its own Git tag and GitHub Release
+1. feature work lands through pull requests
+2. release-impacting PRs include a changeset
+3. merging to `main` updates the release PR
+4. merging the release PR bumps versions and changelogs
+5. surface-specific workflows create tags, GitHub Releases, and deployments
 
-Repository governance:
+The CLI uses npm Trusted Publishing from GitHub Actions. The web, API, and jobs apps deploy through separate Cloudflare workflows.
 
-- `main` is PR-only
-- squash merge is the only merge strategy
-- pull request titles must follow Conventional Commits
-- branch names follow the repo gitflow pattern described in `CONTRIBUTING.md`
+## Contributing
 
-Production environments expected in GitHub:
+`main` is PR-only and squash-only.
 
-- `npm-release`
-- `production-web`
-- `production-api`
-- `production-jobs`
-- `production-db`
+Before opening a PR:
 
-Production secrets expected in GitHub:
+- use a conventional branch name
+- use a Conventional Commit PR title
+- add a changeset when a release surface changes
+- run the narrowest relevant checks locally
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
+The full contributor and release policy lives in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-CLI publishing uses npm Trusted Publishing through GitHub OIDC, so `NPM_TOKEN` is not required. Configure the npm package with:
+## Where To Look Next
 
-- publisher: `GitHub Actions`
-- organization or user: `AbdallahAHO`
-- repository: `howicc`
-- workflow filename: `release-cli.yml`
-- environment name: `npm-release`
-
-API runtime secrets expected in the `production-api` environment:
-
-- `BETTER_AUTH_SECRET`
-- `SHARE_TOKEN_SECRET`
-- `GH_OAUTH_CLIENT_ID` (optional, syncs to the Worker secret `GITHUB_CLIENT_ID`)
-- `GH_OAUTH_CLIENT_SECRET` (optional, syncs to the Worker secret `GITHUB_CLIENT_SECRET`)
-
-The API deploy workflow syncs the required Worker secrets from GitHub before deployment so the Worker configuration stays reproducible.
-
-The repo also ships a dedicated `sync-api-secrets.yml` workflow so production API secrets can be reconciled on `main` API changes or by manual dispatch without waiting for a release deploy.
-
-Local contributors should use the repo runtime files:
-
-- `.node-version`
-- `.nvmrc`
-
-Cloudflare destinations:
-
-- `production-web` -> `howicc-web` on `https://howi.cc`
-- `production-api` -> `howicc-api` on `https://api.howi.cc`
-- `production-jobs` -> `howicc-jobs`
-- `production-db` -> D1 migration gate for `howicc-prod-db`
-
-### Legacy Stack
-
-```bash
-pnpm dev:legacy:web
-
-pnpm build:legacy:web
-
-pnpm type-check:legacy:web
-```
-
-## Environment Strategy
-
-HowiCC now follows a package-owned environment contract pattern inspired by `really-app` and `starters/core`.
-
-### Package-owned env contracts
-
-Shared packages export env contracts through `keys.ts`:
-
-- `@howicc/db/keys`
-- `@howicc/storage/keys`
-- `@howicc/auth/keys`
-
-These packages define what they need without owning application runtime composition.
-
-### App-owned env composition
-
-Apps compose package presets in their own `env.ts` files:
-
-- `apps/api/src/env.ts`
-- `apps/jobs/src/env.ts`
-- `apps/web/src/env.ts`
-
-### Worker runtime split
-
-Worker-style apps also separate string env vars from platform bindings:
-
-- `env.ts` for string-based configuration
-- `bindings.ts` for Cloudflare object bindings
-- `runtime.ts` for composing both into runtime context
-
-This keeps D1/R2/Queue bindings out of the plain env schema while still making the runtime contract explicit.
-
-## Current Cloudflare Shape
-
-The project is now aligned around this Cloudflare layout:
-
-- `howicc-web`
-  - Astro SSR worker target for the web app
-- `howicc-api`
-  - Worker mounted on `api.howi.cc`
-- `howicc-jobs`
-  - background Worker consuming the ingest queue
-- `howicc-prod-db`
-  - D1 metadata database
-- `howicc-prod-assets`
-  - R2 bucket for artifacts and raw snapshots
-- `howicc-prod-ingest`
-  - queue shared between API producer and jobs consumer
-
-The API custom domain is live at `api.howi.cc`.
-
-The current public site at `howi.cc` is live, and the codebase is now being moved toward SSR-capable Astro deployment for protected routes and server-side auth helpers.
-
-## Auth Direction
-
-Auth is now centered on Better Auth with:
-
-- a Better Auth server factory in `@howicc/auth`
-- a vanilla client entrypoint for future Astro usage
-- D1-backed auth tables in `@howicc/db`
-- Hono-mounted auth handler at `/auth/*` on the API worker
-
-For local development, auth is also wired for a separate local GitHub OAuth app with callback:
-
-- `http://localhost:8787/auth/callback/github`
-
-For reliable local startup, `pnpm dev:local` now:
-
-1. resets the local D1 state for the API app
-2. applies tracked Wrangler migrations
-3. starts the local Astro SSR web app and local Wrangler API together
-
-To fully enable GitHub login in production, the remaining step is to set:
-
-- `GITHUB_CLIENT_ID`
-- `GITHUB_CLIENT_SECRET`
-
-as Worker secrets for the API app.
-
-### Example env files
-
-- root `.env.example`
-- `apps/web/.env.example`
-- `apps/api/.dev.vars.example`
-- `apps/jobs/.dev.vars.example`
-
-## Documentation
-
-The architecture and rebuild plan live in `revamp/`.
-
-Best starting points:
-
-- `revamp/README.md`
-- `revamp/claude-code-understanding/README.md`
-- `revamp/cli-rebuild/README.md`
-- `revamp/platform-rebuild/README.md`
-
-## Current Status
-
-The monorepo foundation, contract/client layer, env strategy, DB/storage adapter seams, and initial app/package scaffolding are in place.
-
-The web app now also includes a first SSR auth/debug layer:
-
-- Astro middleware session lookup
-- protected dashboard route
-- auth debug route
-- protected React island demo
-
-The next major implementation step is the real Claude Code adapter:
-
-- session discovery
-- source bundle generation
-- canonical session parsing
-- artifact extraction from real Claude Code data
+- [apps/README.md](apps/README.md) for deployable app boundaries
+- [packages/README.md](packages/README.md) for shared library structure
+- [apps/web/README.md](apps/web/README.md) for the frontend
+- [apps/api/README.md](apps/api/README.md) for the API
+- [apps/cli/README.md](apps/cli/README.md) for the CLI
+- [revamp/](revamp/) for architecture and migration notes
