@@ -10,21 +10,31 @@
     "dev:api": "turbo dev --filter=@howicc/api",
     "dev:jobs": "turbo dev --filter=@howicc/jobs",
     "dev:cli": "turbo dev --filter=@howicc/cli",
+    "deploy:check:api": "pnpm --filter @howicc/api deploy:check",
+    "deploy:check:web": "pnpm --filter @howicc/web deploy:check",
+    "deploy:check:jobs": "pnpm --filter @howicc/jobs deploy:check",
+    "ci:api": "pnpm --filter @howicc/api type-check && pnpm --filter @howicc/api test && pnpm --filter @howicc/api build",
+    "ci:web": "pnpm --filter @howicc/web type-check && pnpm --filter @howicc/web test && pnpm --filter @howicc/web build",
+    "ci:cli": "pnpm --filter @howicc/cli type-check && pnpm --filter @howicc/cli test && pnpm --filter @howicc/cli build",
+    "ci:jobs": "pnpm --filter @howicc/jobs type-check && pnpm --filter @howicc/jobs test && pnpm --filter @howicc/jobs build",
     "dev:legacy:web": "pnpm --filter @howicc/app dev",
     "build": "turbo build --filter=./apps/* --filter=./packages/* --filter=./tooling/*",
     "build:legacy:web": "pnpm --filter @howicc/app build",
     "test": "turbo test --filter=./apps/* --filter=./packages/* --filter=./tooling/*",
     "test:legacy:web": "pnpm --filter @howicc/app test",
     "type-check": "turbo type-check --filter=./apps/* --filter=./packages/* --filter=./tooling/*",
-    "gate": "pnpm run type-check && pnpm run test && pnpm --filter @howicc/cli build",
+    "gate": "pnpm run type-check && pnpm run test && pnpm run build",
+    "release:status": "changeset status --verbose",
+    "release:version": "changeset version",
     "type-check:legacy:web": "pnpm --filter @howicc/app type-check",
     "clean": "git clean -xdf node_modules .turbo apps/*/node_modules packages/*/node_modules"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "packageManager": "pnpm@9.15.0",
   "devDependencies": {
+    "@changesets/cli": "^2.30.0",
     "@types/node": "^22.10.2",
     "turbo": "^2.4.4",
     "typescript": "^5.7.2",

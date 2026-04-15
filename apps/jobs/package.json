@@ -3,10 +3,21 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "homepage": "https://howi.cc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdallahAHO/howicc.git",
+    "directory": "apps/jobs"
+  },
+  "bugs": {
+    "url": "https://github.com/AbdallahAHO/howicc/issues"
+  },
   "scripts": {
     "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8788 --ip 127.0.0.1",
     "build": "tsc -p tsconfig.json",
-    "cf:deploy": "pnpm exec wrangler deploy --config wrangler.jsonc",
+    "deploy:prod": "pnpm exec wrangler deploy --config wrangler.jsonc",
+    "deploy:check": "pnpm exec wrangler deploy --config wrangler.jsonc --dry-run",
+    "cf:deploy": "pnpm run deploy:prod",
     "test": "vitest run --passWithNoTests",
     "type-check": "tsc --noEmit -p tsconfig.json"
   },

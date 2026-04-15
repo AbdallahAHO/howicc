@@ -3,10 +3,21 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "homepage": "https://howi.cc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdallahAHO/howicc.git",
+    "directory": "apps/web"
+  },
+  "bugs": {
+    "url": "https://github.com/AbdallahAHO/howicc/issues"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "cf:deploy": "pnpm exec wrangler deploy --config wrangler.jsonc",
+    "deploy:prod": "pnpm run build && pnpm exec wrangler deploy --config dist/server/wrangler.json",
+    "deploy:check": "pnpm run build && pnpm exec wrangler deploy --config dist/server/wrangler.json --dry-run",
+    "cf:deploy": "pnpm run deploy:prod",
     "test": "vitest run --passWithNoTests",
     "type-check": "astro check"
   },

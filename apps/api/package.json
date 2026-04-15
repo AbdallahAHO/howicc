@@ -3,12 +3,24 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "homepage": "https://howi.cc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdallahAHO/howicc.git",
+    "directory": "apps/api"
+  },
+  "bugs": {
+    "url": "https://github.com/AbdallahAHO/howicc/issues"
+  },
   "scripts": {
     "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8787 --ip 127.0.0.1",
     "build": "tsc -p tsconfig.json",
-    "cf:deploy": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc",
+    "deploy:prod": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc",
+    "deploy:check": "pnpm exec wrangler deploy --config wrangler.jsonc --domains api.howi.cc --dry-run",
+    "cf:deploy": "pnpm run deploy:prod",
     "db:reset:local": "rm -rf .wrangler/state/v3/d1",
     "db:migrate:local": "pnpm exec wrangler d1 migrations apply DB --local --config wrangler.jsonc",
+    "db:migrate:prod": "pnpm exec wrangler d1 migrations apply DB --remote --config wrangler.jsonc",
     "db:prepare:local": "pnpm run db:reset:local && pnpm run db:migrate:local",
     "test": "vitest run --passWithNoTests",
     "type-check": "tsc --noEmit -p tsconfig.json"
@@ -31,6 +43,7 @@
   },
   "devDependencies": {
     "@howicc/typescript-config": "workspace:*",
+    "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^3.0.5"
