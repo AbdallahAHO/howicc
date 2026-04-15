@@ -8,6 +8,7 @@ import { loginCommand, logoutCommand, whoamiCommand } from './commands/login'
 import { previewCommand } from './commands/preview'
 import { profileCommand } from './commands/profile'
 import { syncCommand } from './commands/sync'
+import { cliVersion } from './version'
 
 const program = new Command()
 type ExportFormat = 'bundle' | 'canonical' | 'render'
@@ -37,7 +38,7 @@ const parseExportFormatOption = (value: string): ExportFormat => {
 program
   .name('howicc')
   .description('Inspect, sync, and understand local coding-agent conversations.')
-  .version('2.0.0')
+  .version(cliVersion)
   .showHelpAfterError()
   .showSuggestionAfterError()
 
@@ -141,7 +142,7 @@ const printLandingScreen = () => {
   const cyan = chalk.cyan
 
   console.log()
-  console.log(`  ${cyan('◆')} ${chalk.bold('HowiCC')} ${dim('v2.0.0')}`)
+  console.log(`  ${cyan('◆')} ${chalk.bold('HowiCC')} ${dim(`v${cliVersion}`)}`)
   console.log()
   console.log(`  ${dim('Inspect, sync, and understand your local coding-agent work.')}`)
   console.log()
