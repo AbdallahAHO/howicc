@@ -55,6 +55,16 @@ jobs:
           git config user.name "Abdallah Othman"
           git config user.email "abdallah.ali.hassan@gmail.com"
 
+      - name: Require release PR token
+        env:
+          RELEASE_PR_TOKEN: ${{ secrets.RELEASE_PR_TOKEN }}
+        run: |
+          if [[ -z "$RELEASE_PR_TOKEN" ]]; then
+            echo "Missing RELEASE_PR_TOKEN."
+            echo "Release PRs must be created with a non-GITHUB_TOKEN credential so pull_request checks trigger."
+            exit 1
+          fi
+
       - name: Create release pull request
         uses: changesets/action@v1
         with:
@@ -63,4 +73,4 @@ jobs:
           title: 'chore: version release surfaces'
           setupGitUser: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PR_TOKEN }}
