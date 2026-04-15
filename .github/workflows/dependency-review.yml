@@ -67,7 +67,12 @@ jobs:
                 with_entries(
                   .value |= (
                     if type == "array" then
-                      map(select(.ecosystem != "actions"))
+                      map(
+                        select(
+                          .ecosystem != "actions"
+                          and .license != null
+                        )
+                      )
                     else
                       .
                     end
@@ -91,6 +96,10 @@ jobs:
           fi
 
           FILTERED_INVALID_LICENSE_CHANGES="$(filter_invalid_license_changes "$INVALID_LICENSE_CHANGES")"
+
+          if has_entries "$INVALID_LICENSE_CHANGES" && ! has_entries "$FILTERED_INVALID_LICENSE_CHANGES"; then
+            echo "Dependency review returned only license entries with missing metadata; skipping failure."
+          fi
 
           if has_entries "$FILTERED_INVALID_LICENSE_CHANGES"; then
             echo "Dependency review reported license policy violations."

@@ -1274,7 +1274,9 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Repository name. */
                 name: string;
+                /** @description Repository owner or organization slug. */
                 owner: string;
             };
             cookie?: never;
