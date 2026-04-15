@@ -26,6 +26,8 @@
     "gate": "pnpm run type-check && pnpm run test && pnpm run build",
     "release:status": "changeset status --verbose",
     "release:version": "changeset version",
+    "update-deps:check": "pnpm outdated -r",
+    "update-deps": "pnpm update -r --latest && pnpm dedupe",
     "type-check:legacy:web": "pnpm --filter @howicc/app type-check",
     "clean": "git clean -xdf node_modules .turbo apps/*/node_modules packages/*/node_modules"
   },
