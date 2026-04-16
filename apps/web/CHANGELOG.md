@@ -1,5 +1,11 @@
 # @howicc/web
 
+## 0.0.3
+
+### Patch Changes
+
+- @howicc/auth@0.0.2
+
 ## 0.0.2
 
 ### Patch Changes

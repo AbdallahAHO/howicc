@@ -1,6 +1,6 @@
 {
   "name": "@howicc/db",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "description": "Drizzle schema and metadata storage models for HowiCC",
