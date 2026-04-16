@@ -1,5 +1,6 @@
 import type { APIContext, AstroGlobal } from 'astro'
 import type { WebLocals } from './types'
+import { getRuntimeWebConfig } from '../runtime/web-config.server'
 
 type SessionResponse = {
   session: {
@@ -80,5 +81,5 @@ export const createServerApiUrl = (astro: AstroGlobal | APIContext): string => {
   if (typeof locals.runtimeApiUrl === 'string') return locals.runtimeApiUrl
   if (typeof locals.authApiUrl === 'string') return locals.authApiUrl
 
-  return import.meta.env.API_SERVER_URL ?? import.meta.env.PUBLIC_API_URL
+  return getRuntimeWebConfig().apiServerUrl
 }

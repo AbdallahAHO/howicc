@@ -28,8 +28,7 @@ jobs:
       tag: ${{ steps.version.outputs.tag }}
       release_name: ${{ steps.version.outputs.release_name }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -45,22 +44,8 @@ jobs:
     timeout-minutes: 30
     environment: production-jobs
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
 
       - name: Run jobs CI
         run: pnpm run ci:jobs
@@ -70,7 +55,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: 4.81.0
           workingDirectory: apps/jobs
           packageManager: pnpm
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

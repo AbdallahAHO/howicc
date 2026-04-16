@@ -28,4 +28,6 @@ export type WebLocals = {
   auth: WebAuthState
   authApiUrl: string
   runtimeApiUrl: string
+  siteUrl: string
+  productName: string
 }

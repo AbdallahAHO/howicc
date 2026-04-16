@@ -9,5 +9,7 @@ declare namespace App {
     }
     authApiUrl: string
     runtimeApiUrl: string
+    siteUrl: string
+    productName: string
   }
 }

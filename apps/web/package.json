@@ -15,8 +15,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "deploy:prod": "pnpm run build && pnpm exec wrangler deploy --config dist/server/wrangler.json",
-    "deploy:check": "pnpm run build && pnpm exec wrangler deploy --config dist/server/wrangler.json --dry-run",
+    "deploy:prod": "pnpm run build && pnpm exec wrangler deploy --config dist/server/wrangler.json --domains howi.cc",
+    "deploy:check": "pnpm run build && pnpm exec wrangler deploy --config dist/server/wrangler.json --domains howi.cc --dry-run",
     "cf:deploy": "pnpm run deploy:prod",
     "test": "vitest run --passWithNoTests",
     "type-check": "astro check"

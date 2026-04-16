@@ -1,8 +1,8 @@
 import type { AstroGlobal } from 'astro'
 import { createServerApiClient } from './client'
+import { getRuntimeWebConfig } from '../runtime/web-config.server'
 
-const resolveServerApiBaseUrl = () =>
-  import.meta.env.API_SERVER_URL ?? import.meta.env.PUBLIC_API_URL
+const resolveServerApiBaseUrl = () => getRuntimeWebConfig().apiServerUrl
 
 export const fetchProtectedDebug = async (astro: AstroGlobal) => {
   const api = createServerApiClient({
