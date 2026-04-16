@@ -1,18 +1,21 @@
 import { defineMiddleware } from 'astro:middleware'
 import { getRequestSession } from './lib/auth/server'
 import type { WebLocals } from './lib/auth/types'
+import { getRuntimeWebConfig } from './lib/runtime/web-config.server'
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const apiUrl = import.meta.env.API_SERVER_URL ?? import.meta.env.PUBLIC_API_URL
+  const runtimeConfig = getRuntimeWebConfig()
   const auth = await getRequestSession({
     request: context.request,
-    apiUrl,
+    apiUrl: runtimeConfig.apiServerUrl,
   })
 
   const locals = context.locals as WebLocals
   locals.auth = auth
-  locals.authApiUrl = apiUrl
-  locals.runtimeApiUrl = apiUrl
+  locals.authApiUrl = runtimeConfig.publicApiUrl
+  locals.runtimeApiUrl = runtimeConfig.apiServerUrl
+  locals.siteUrl = runtimeConfig.siteUrl
+  locals.productName = runtimeConfig.productName
 
   return next()
 })

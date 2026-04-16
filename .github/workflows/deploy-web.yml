@@ -76,7 +76,7 @@ jobs:
           workingDirectory: apps/web
           packageManager: pnpm
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: deploy --config dist/server/wrangler.json
+          command: deploy --config dist/server/wrangler.json --domains howi.cc
 
       - name: Build release notes
         if: needs.detect.outputs.changed == 'true'
