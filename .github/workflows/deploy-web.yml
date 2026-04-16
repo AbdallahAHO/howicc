@@ -46,6 +46,7 @@ jobs:
       name: production-web
       url: https://howi.cc
     steps:
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
 
       - name: Run web CI

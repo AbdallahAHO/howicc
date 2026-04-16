@@ -55,9 +55,8 @@ jobs:
     timeout-minutes: 30
     environment: production-db
     steps:
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-        with:
-          fetch-depth: '0'
 
       - name: Apply production migrations
         env:
@@ -77,6 +76,7 @@ jobs:
       name: production-api
       url: https://api.howi.cc
     steps:
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
 
       - name: Run API CI
