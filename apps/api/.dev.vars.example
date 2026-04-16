@@ -8,6 +8,9 @@ WEB_APP_URL="http://localhost:4321"
 SHARE_TOKEN_SECRET="dev-share-token-secret-change-me-please"
 
 BETTER_AUTH_SECRET="dev-better-auth-secret-change-me-please"
+# Optional override for cross-subdomain cookies. Leave empty to derive from WEB_APP_URL.
+# Production should resolve to "howi.cc" so cookies set by api.howi.cc are readable on howi.cc.
+COOKIE_DOMAIN=""
 GITHUB_CLIENT_ID=""
 GITHUB_CLIENT_SECRET=""
 

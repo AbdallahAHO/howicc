@@ -6,6 +6,7 @@ export type ApiAuthRuntimeEnv = {
   WEB_APP_URL: string
   API_BASE_URL: string
   BETTER_AUTH_SECRET?: string
+  COOKIE_DOMAIN?: string
   GITHUB_CLIENT_ID?: string
   GITHUB_CLIENT_SECRET?: string
   DB: unknown
@@ -41,6 +42,7 @@ export const createApiAuthContext = (runtimeEnv: ApiAuthRuntimeEnv) => {
       baseURL: runtimeEnv.API_BASE_URL,
       secret,
       webOrigin: runtimeEnv.WEB_APP_URL,
+      cookieDomain: runtimeEnv.COOKIE_DOMAIN,
       githubClientId: runtimeEnv.GITHUB_CLIENT_ID,
       githubClientSecret: runtimeEnv.GITHUB_CLIENT_SECRET,
     }),
