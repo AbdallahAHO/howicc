@@ -1,0 +1,56 @@
+name: Auto Changeset
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-changeset-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate changeset from conventional commits
+    # Skip release PRs, bot PRs, and forks (GITHUB_TOKEN has no write access on forks).
+    if: >-
+      !startsWith(github.head_ref, 'changeset-release/') &&
+      !startsWith(github.head_ref, 'dependabot/') &&
+      !startsWith(github.head_ref, 'renovate/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          # Prefer CHANGESET_BOT_TOKEN (PAT with contents:write) so the auto-push
+          # triggers downstream workflows (changeset-check, release-plan).
+          # Falls back to GITHUB_TOKEN, which succeeds but will NOT fire
+          # pull_request.synchronize — you'll need to re-run `changeset-check`
+          # manually on the new commit. See:
+          # https://docs.github.com/actions/security-guides/automatic-token-authentication
+          token: ${{ secrets.CHANGESET_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Generate changeset from commits
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+        run: node ./scripts/auto-changeset.mjs
+
+      - name: Commit and push if a changeset was generated
+        run: |
+          if [ -z "$(git status --porcelain .changeset/)" ]; then
+            echo "::notice::Changeset already present or no packages touched — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .changeset/
+          git commit -m "chore(changeset): auto-generate from conventional commits"
+          git push
+          if [ -z "${{ secrets.CHANGESET_BOT_TOKEN }}" ]; then
+            echo "::warning::Pushed with GITHUB_TOKEN — GitHub will not auto-trigger follow-up workflows. Re-run 'Changeset Check' on the new commit if it stays pending."
+          fi

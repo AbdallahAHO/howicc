@@ -24,6 +24,9 @@
     "gate": "pnpm run type-check && pnpm run test && pnpm run build",
     "release:status": "changeset status --verbose",
     "release:version": "changeset version",
+    "cs": "node ./scripts/auto-changeset.mjs",
+    "cs:add": "changeset add",
+    "cs:empty": "changeset add --empty",
     "update-deps:check": "node ./scripts/deps.mjs check",
     "update-deps": "node ./scripts/deps.mjs update",
     "clean": "git clean -xdf node_modules .turbo apps/*/node_modules packages/*/node_modules"
