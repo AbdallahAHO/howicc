@@ -1,6 +1,6 @@
 {
   "name": "@howicc/auth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "description": "Auth helpers and token primitives for HowiCC",
