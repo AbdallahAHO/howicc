@@ -53,7 +53,7 @@ jobs:
 
       - name: Publish CLI package
         working-directory: apps/cli
-        run: npm publish
+        run: pnpm publish --no-git-checks
 
       - name: Build release notes
         run: node tooling/release/changelog-entry.mjs --surface cli --version "${{ needs.detect.outputs.version }}" --output release-notes.md
