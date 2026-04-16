@@ -1,4 +1,5 @@
 ---
+import Layout from '../../components/Layout.astro'
 import type { WebLocals } from '../../lib/auth/types'
 
 const callbackUrl = Astro.url.searchParams.get('callbackUrl') ?? ''
@@ -14,39 +15,35 @@ if (!locals.auth.user) {
 }
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Authorize CLI Login</title>
-  </head>
-  <body>
-    <main style="max-width: 640px; margin: 4rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.6; padding: 0 1rem;">
-      <h1>Authorize CLI Login</h1>
-      <p>
-        You are signed in as <strong>{locals.auth.user.email}</strong>.
-      </p>
-      <p>
-        Continue to hand a one-time code back to the local HowiCC CLI process running on your machine.
-      </p>
+<Layout title="Authorize CLI">
+  <main class="grid min-h-dvh place-items-center px-4 py-16">
+    <div class="w-full max-w-md">
+      <div class="bg-card text-card-foreground rounded-2xl border p-8 shadow-sm">
+        <h1 class="text-2xl font-semibold tracking-tight">Authorize CLI</h1>
+        <p class="text-muted-foreground mt-2 text-sm">
+          You're signed in as <strong class="text-foreground">{locals.auth.user.email}</strong>.
+        </p>
+        <p class="text-muted-foreground mt-3 text-sm">
+          Continue to hand a one-time code back to the local HowiCC CLI process running on your machine.
+        </p>
 
-      <button
-        id="continue-cli-login"
-        data-api-url={authApiUrl}
-        data-callback-url={callbackUrl}
-        data-code-challenge={codeChallenge}
-        data-state={state}
-        style="margin-top: 1.25rem; display: inline-flex; align-items: center; justify-content: center; padding: 0.85rem 1.15rem; background: #111827; color: white; border-radius: 999px; border: none; font: inherit; cursor: pointer; font-weight: 600;"
-      >
-        Continue in CLI
-      </button>
-      <p id="cli-auth-status" style="margin-top: 1rem; color: #6b7280;">Waiting to continue...</p>
-    </main>
+        <button
+          id="continue-cli-login"
+          data-api-url={authApiUrl}
+          data-callback-url={callbackUrl}
+          data-code-challenge={codeChallenge}
+          data-state={state}
+          class="bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex h-11 w-full items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
+        >
+          Continue in CLI
+        </button>
+        <p id="cli-auth-status" class="text-muted-foreground mt-3 text-center text-xs">Waiting to continue…</p>
+      </div>
+    </div>
+  </main>
 
-    <script>
-      import { wireCliLoginPage } from '../../lib/auth/browser/cli-login-page'
-
-      wireCliLoginPage()
-    </script>
-  </body>
-</html>
+  <script>
+    import { wireCliLoginPage } from '../../lib/auth/browser/cli-login-page'
+    wireCliLoginPage()
+  </script>
+</Layout>

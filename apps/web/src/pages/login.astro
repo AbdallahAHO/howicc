@@ -1,44 +1,55 @@
 ---
+import Layout from '../components/Layout.astro'
+import GithubSignInIsland from '../components/auth/GithubSignInIsland'
 import { resolveLoginCallbackUrl } from '../lib/auth/login'
 import type { WebLocals } from '../lib/auth/types'
 
 const locals = Astro.locals as WebLocals
-const authApiUrl = locals.authApiUrl
+
+if (locals.auth.user) {
+  return Astro.redirect('/dashboard')
+}
+
 const callbackUrl = resolveLoginCallbackUrl({
   siteUrl: locals.siteUrl,
   requestedReturnTo: Astro.url.searchParams.get('returnTo'),
 })
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sign in to {locals.productName}</title>
-  </head>
-  <body>
-    <main style="max-width: 560px; margin: 4rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.6; padding: 0 1rem;">
-      <h1>Sign in to {locals.productName}</h1>
-      <p>
-        Continue with GitHub to access your future private dashboard, sync flows, and CLI login bridge.
-      </p>
-      <button
-        id="github-sign-in"
-        data-auth-api-url={authApiUrl}
-        data-callback-url={callbackUrl}
-        style="margin-top: 1.5rem; display: inline-flex; align-items: center; justify-content: center; padding: 0.85rem 1.15rem; background: #111827; color: white; border-radius: 999px; border: none; font: inherit; cursor: pointer; text-decoration: none; font-weight: 600;"
-      >
-        Continue with GitHub
-      </button>
-      <p id="login-status" style="margin-top: 1rem; color: #6b7280;">
-        This will redirect through Better Auth on <code>{authApiUrl}</code> and then continue to GitHub.
-      </p>
-    </main>
+<Layout title="Sign in">
+  <main class="grid min-h-dvh place-items-center px-4 py-16">
+    <div class="w-full max-w-[26rem]">
+      <div class="mb-10 flex flex-col items-center gap-3 text-center">
+        <a href="/" class="inline-flex items-center gap-2 text-base font-semibold tracking-tight">
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          {locals.productName}
+        </a>
+      </div>
 
-    <script>
-      import { wireGithubLoginPage } from '../lib/auth/browser/login-page'
+      <div class="bg-card text-card-foreground rounded-2xl border p-8 shadow-sm">
+        <div class="flex flex-col gap-2 text-center">
+          <h1 class="text-2xl font-semibold tracking-tight">Sign in or create your account</h1>
+          <p class="text-muted-foreground text-sm">
+            Authenticate with GitHub. We'll create an account on your first sign-in — no password needed.
+          </p>
+        </div>
 
-      wireGithubLoginPage()
-    </script>
-  </body>
-</html>
+        <div class="mt-8">
+          <GithubSignInIsland
+            client:load
+            authApiUrl={locals.authApiUrl}
+            callbackUrl={callbackUrl}
+          />
+        </div>
+
+        <p class="text-muted-foreground mt-6 text-center text-xs">
+          By continuing you agree to authenticate via GitHub OAuth. We only request <code class="bg-muted rounded px-1 py-0.5">read:user</code> and <code class="bg-muted rounded px-1 py-0.5">user:email</code>.
+        </p>
+      </div>
+
+      <p class="text-muted-foreground mt-6 text-center text-xs">
+        <a href="/" class="hover:text-foreground underline-offset-4 hover:underline">Back to home</a>
+      </p>
+    </div>
+  </main>
+</Layout>
