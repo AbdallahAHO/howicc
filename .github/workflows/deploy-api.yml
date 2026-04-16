@@ -7,6 +7,7 @@ on:
     paths:
       - 'apps/api/package.json'
       - 'apps/api/CHANGELOG.md'
+      - 'packages/db/migrations/**'
       - '.github/workflows/deploy-api.yml'
   workflow_dispatch:
 
@@ -27,9 +28,9 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
       release_name: ${{ steps.version.outputs.release_name }}
+      migrations: ${{ steps.migrations.outputs.changed }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -37,30 +38,26 @@ jobs:
         id: version
         run: node tooling/release/package-version-diff.mjs --surface api --base "${{ github.event.before }}" --head "${{ github.sha }}" --github-output
 
+      - name: Detect migration changes
+        id: migrations
+        run: |
+          if git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep -q '^packages/db/migrations/'; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
   migrate:
     name: Apply production D1 migrations
     needs: detect
-    if: needs.detect.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.detect.outputs.changed == 'true' || needs.detect.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production-db
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+      - uses: ./.github/actions/setup
         with:
-          version: 9.15.0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          fetch-depth: '0'
 
       - name: Apply production migrations
         env:
@@ -76,64 +73,34 @@ jobs:
     if: needs.detect.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      OPTIONAL_GH_OAUTH_CLIENT_ID: ${{ secrets.GH_OAUTH_CLIENT_ID }}
-      OPTIONAL_GH_OAUTH_CLIENT_SECRET: ${{ secrets.GH_OAUTH_CLIENT_SECRET }}
     environment:
       name: production-api
       url: https://api.howi.cc
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
 
       - name: Run API CI
         run: pnpm run ci:api
 
-      - name: Sync required API Worker secrets
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          SHARE_TOKEN_SECRET: ${{ secrets.SHARE_TOKEN_SECRET }}
-        run: |
-          printf '%s' "$BETTER_AUTH_SECRET" | pnpm --filter @howicc/api exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
-          printf '%s' "$SHARE_TOKEN_SECRET" | pnpm --filter @howicc/api exec wrangler secret put SHARE_TOKEN_SECRET --config wrangler.jsonc
-
-      - name: Sync optional GitHub OAuth secrets
-        if: ${{ env.OPTIONAL_GH_OAUTH_CLIENT_ID != '' && env.OPTIONAL_GH_OAUTH_CLIENT_SECRET != '' }}
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          GITHUB_CLIENT_ID: ${{ env.OPTIONAL_GH_OAUTH_CLIENT_ID }}
-          GITHUB_CLIENT_SECRET: ${{ env.OPTIONAL_GH_OAUTH_CLIENT_SECRET }}
-        run: |
-          printf '%s' "$GITHUB_CLIENT_ID" | pnpm --filter @howicc/api exec wrangler secret put GITHUB_CLIENT_ID --config wrangler.jsonc
-          printf '%s' "$GITHUB_CLIENT_SECRET" | pnpm --filter @howicc/api exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
-
       - name: Deploy API worker
         uses: cloudflare/wrangler-action@v3
+        env:
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          SHARE_TOKEN_SECRET: ${{ secrets.SHARE_TOKEN_SECRET }}
+          GITHUB_CLIENT_ID: ${{ secrets.GH_OAUTH_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GH_OAUTH_CLIENT_SECRET }}
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: 4.81.0
           workingDirectory: apps/api
           packageManager: pnpm
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           command: deploy --config wrangler.jsonc --domains api.howi.cc
+          secrets: |
+            BETTER_AUTH_SECRET
+            SHARE_TOKEN_SECRET
+            GITHUB_CLIENT_ID
+            GITHUB_CLIENT_SECRET
 
       - name: Build release notes
         if: needs.detect.outputs.changed == 'true'

@@ -27,8 +27,7 @@ jobs:
       tag: ${{ steps.version.outputs.tag }}
       release_name: ${{ steps.version.outputs.release_name }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -44,23 +43,9 @@ jobs:
     timeout-minutes: 20
     environment: npm-release
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+      - uses: ./.github/actions/setup
         with:
-          version: 9.15.0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
           registry-url: https://registry.npmjs.org
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Run CLI CI
         run: pnpm run ci:cli
