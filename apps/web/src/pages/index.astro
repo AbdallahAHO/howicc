@@ -1,33 +1,99 @@
 ---
+import Layout from '../components/Layout.astro'
 import type { WebLocals } from '../lib/auth/types'
 
 const locals = Astro.locals as WebLocals
 const apiHealthUrl = new URL('/health', locals.authApiUrl).toString()
+const user = locals.auth.user
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{locals.productName}</title>
-  </head>
-  <body>
-    <main style="max-width: 720px; margin: 4rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.6; padding: 0 1rem;">
-      <h1>{locals.productName}</h1>
-      <p>
-        Share Claude Code and other coding-agent conversations as structured, readable web pages.
-      </p>
-      <p>
-        The rebuild is now running on canonical sessions, render documents, Better Auth, and a Cloudflare-native stack.
-      </p>
-      <div style="margin-top: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
-        <a href="/login" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.8rem 1rem; background: #111827; color: white; border-radius: 999px; text-decoration: none; font-weight: 600;">Continue with GitHub</a>
-        <a href={apiHealthUrl} style="display: inline-flex; align-items: center; justify-content: center; padding: 0.8rem 1rem; border: 1px solid #d1d5db; color: #111827; border-radius: 999px; text-decoration: none;">API health</a>
+<Layout>
+  <header class="border-border/60 border-b">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
+      <a href="/" class="inline-flex items-center gap-2 text-base font-semibold tracking-tight">
+        <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+        {locals.productName}
+      </a>
+      <nav class="flex items-center gap-2 text-sm">
+        <a
+          href={apiHealthUrl}
+          target="_blank"
+          rel="noreferrer"
+          class="text-muted-foreground hover:text-foreground hidden px-3 py-2 sm:inline-flex"
+        >
+          API health
+        </a>
+        {user ? (
+          <a
+            href="/dashboard"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors"
+          >
+            Open dashboard
+          </a>
+        ) : (
+          <a
+            href="/login"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors"
+          >
+            Sign in
+          </a>
+        )}
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto flex w-full max-w-3xl flex-col items-start gap-8 px-4 py-20 md:py-28">
+    <span class="border-border bg-muted/40 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
+      <span class="bg-primary size-1.5 rounded-full"></span>
+      Now running on canonical sessions
+    </span>
+
+    <h1 class="max-w-[20ch] text-5xl font-semibold tracking-tight text-balance md:text-6xl">
+      Share your AI coding sessions as readable web pages.
+    </h1>
+
+    <p class="text-muted-foreground max-w-[48ch] text-lg text-pretty">
+      HowiCC turns Claude Code, Codex, and other coding-agent transcripts into
+      structured, shareable conversations — with cost, model, and tool-use insights baked in.
+    </p>
+
+    <div class="flex flex-wrap items-center gap-3">
+      {user ? (
+        <>
+          <a
+            href="/dashboard"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
+          >
+            Welcome back, {user.name?.split(' ')[0] ?? 'friend'} → Dashboard
+          </a>
+        </>
+      ) : (
+        <>
+          <a
+            href="/login"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
+          >
+            Continue with GitHub
+          </a>
+          <a
+            href="/login"
+            class="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-11 items-center justify-center rounded-md border px-6 text-sm font-medium transition-colors"
+          >
+            Create account
+          </a>
+        </>
+      )}
+    </div>
+
+    <dl class="text-muted-foreground mt-12 grid gap-2 text-xs">
+      <div class="flex gap-2">
+        <dt class="font-medium">Web</dt>
+        <dd><code>{locals.siteUrl}</code></dd>
       </div>
-      <p style="margin-top: 1.5rem; color: #6b7280; font-size: 0.95rem;">
-        Web: <code>{locals.siteUrl}</code><br />
-        API: <code>{locals.authApiUrl}</code>
-      </p>
-    </main>
-  </body>
-</html>
+      <div class="flex gap-2">
+        <dt class="font-medium">API</dt>
+        <dd><code>{locals.authApiUrl}</code></dd>
+      </div>
+    </dl>
+  </main>
+</Layout>

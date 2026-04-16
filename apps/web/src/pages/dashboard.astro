@@ -1,4 +1,5 @@
 ---
+import Layout from '../components/Layout.astro'
 import AuthActionsIsland from '../components/auth/AuthActionsIsland'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
 import type { WebLocals } from '../lib/auth/types'
@@ -12,35 +13,90 @@ if (result instanceof Response) {
 
 const user = result
 const session = locals.auth.session!
+
+const initials = (user.name ?? user.email ?? '?')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => part[0]!.toUpperCase())
+  .join('')
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard - HowiCC</title>
-  </head>
-  <body>
-    <main style="max-width: 980px; margin: 3rem auto; font-family: Inter, system-ui, sans-serif; line-height: 1.65; padding: 0 1rem;">
-      <section style="border: 1px solid #e5e7eb; border-radius: 1.25rem; padding: 2rem; background: white;">
-        <h1 style="font-size: 3rem; margin: 0 0 0.5rem;">Dashboard - Astro</h1>
-        <p style="margin: 0 0 2rem; color: #6b7280;">SSR-authenticated page powered by Better Auth and Astro middleware.</p>
+<Layout title="Dashboard">
+  <header class="border-border/60 border-b">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
+      <a href="/" class="inline-flex items-center gap-2 text-base font-semibold tracking-tight">
+        <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+        {locals.productName}
+      </a>
+      <div class="flex items-center gap-3 text-sm">
+        {user.image ? (
+          <img
+            src={user.image}
+            alt={user.name ?? 'avatar'}
+            class="border-border size-8 rounded-full border object-cover"
+          />
+        ) : (
+          <span class="bg-muted text-muted-foreground grid size-8 place-items-center rounded-full text-xs font-medium">
+            {initials || '?'}
+          </span>
+        )}
+        <span class="text-muted-foreground hidden md:inline">{user.email}</span>
+      </div>
+    </div>
+  </header>
 
-        <p style="font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem;">
-          Status: Logged In
-        </p>
+  <main class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-12 md:py-16">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-3xl font-semibold tracking-tight">
+        Welcome, {user.name ?? user.email}
+      </h1>
+      <p class="text-muted-foreground text-sm">
+        You're signed in via GitHub OAuth. Future: list your synced sessions, repos, and shareable digests.
+      </p>
+    </div>
 
-        <div style="display: grid; gap: 0.85rem; font-size: 1.15rem;">
-          <div><strong>Welcome:</strong> {user.name}</div>
-          <div><strong>Email:</strong> {user.email}</div>
-          <div><strong>User ID:</strong> {user.id}</div>
-          <div><strong>Session ID:</strong> {session.id}</div>
-          <div><strong>Created At:</strong> {user.createdAt ?? 'Unknown'}</div>
-          <div><strong>Updated At:</strong> {user.updatedAt ?? 'Unknown'}</div>
+    <section class="bg-card text-card-foreground rounded-2xl border p-6 shadow-sm">
+      <header class="mb-4 flex items-center gap-3">
+        {user.image ? (
+          <img
+            src={user.image}
+            alt={user.name ?? 'avatar'}
+            class="border-border size-12 rounded-full border object-cover"
+          />
+        ) : (
+          <span class="bg-muted text-muted-foreground grid size-12 place-items-center rounded-full text-sm font-medium">
+            {initials || '?'}
+          </span>
+        )}
+        <div class="flex flex-col">
+          <p class="font-medium">{user.name ?? 'GitHub user'}</p>
+          <p class="text-muted-foreground text-sm">{user.email}</p>
         </div>
+      </header>
 
+      <dl class="text-sm">
+        <div class="border-border/60 grid grid-cols-[140px_1fr] gap-3 border-t py-3">
+          <dt class="text-muted-foreground">User ID</dt>
+          <dd class="font-mono text-xs">{user.id}</dd>
+        </div>
+        <div class="border-border/60 grid grid-cols-[140px_1fr] gap-3 border-t py-3">
+          <dt class="text-muted-foreground">Session ID</dt>
+          <dd class="font-mono text-xs">{session.id}</dd>
+        </div>
+        <div class="border-border/60 grid grid-cols-[140px_1fr] gap-3 border-t py-3">
+          <dt class="text-muted-foreground">Session expires</dt>
+          <dd class="tabular-nums">{new Date(session.expiresAt).toLocaleString()}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="bg-card text-card-foreground rounded-2xl border p-6 shadow-sm">
+      <h2 class="text-lg font-semibold">Account actions</h2>
+      <p class="text-muted-foreground mt-1 text-sm">Sign out of all devices using this browser.</p>
+      <div class="mt-5">
         <AuthActionsIsland client:load apiUrl={locals.authApiUrl} />
-      </section>
-    </main>
-  </body>
-</html>
+      </div>
+    </section>
+  </main>
+</Layout>
