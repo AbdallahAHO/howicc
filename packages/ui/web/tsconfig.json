@@ -1,0 +1,12 @@
+{
+  "extends": "@howicc/typescript-config/react-library.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "paths": {
+      "@howicc/ui-web/*": ["./src/*"]
+    }
+  },
+  "include": ["*.ts", "src/**/*"],
+  "exclude": ["node_modules"]
+}
