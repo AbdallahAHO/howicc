@@ -13,7 +13,7 @@
     "url": "https://github.com/AbdallahAHO/howicc/issues"
   },
   "scripts": {
-    "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8788 --ip 127.0.0.1",
+    "dev": "pnpm exec wrangler dev --config wrangler.jsonc --port 8788 --ip 127.0.0.1 --inspector-port 9230",
     "build": "tsc -p tsconfig.json",
     "deploy:prod": "pnpm exec wrangler deploy --config wrangler.jsonc",
     "deploy:check": "pnpm exec wrangler deploy --config wrangler.jsonc --dry-run",
