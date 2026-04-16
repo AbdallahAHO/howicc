@@ -1,6 +1,6 @@
-# @howicc/web
+# @howicc/ui-web
 
-## 0.1.0
+## 0.2.0
 
 ### Minor Changes
 
@@ -10,17 +10,3 @@
 
 - Updated dependencies [4f9e08f]
   - @howicc/ui@0.2.0
-  - @howicc/ui-web@0.2.0
-  - @howicc/auth@0.1.0
-
-## 0.0.3
-
-### Patch Changes
-
-- @howicc/auth@0.0.2
-
-## 0.0.2
-
-### Patch Changes
-
-- 1478dca: Introduce versioned release automation for the CLI, API, web app, and jobs worker, with separate GitHub releases, Cloudflare deployment workflows, and production migration safeguards.
