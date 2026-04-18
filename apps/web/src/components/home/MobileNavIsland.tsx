@@ -14,7 +14,12 @@ export const MobileNavIsland = () => {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon-sm" aria-label="Open menu">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Open menu"
+            className="touch-target"
+          >
             <Menu aria-hidden="true" />
           </Button>
         }

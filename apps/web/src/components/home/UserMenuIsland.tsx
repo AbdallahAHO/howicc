@@ -49,7 +49,7 @@ export const UserMenuIsland = ({ apiUrl, name, email, image }: Props) => {
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label="Open account menu"
-        className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="touch-target inline-flex items-center justify-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         <Avatar>
           {image ? <AvatarImage src={image} alt={displayName} /> : null}

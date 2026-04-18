@@ -175,7 +175,7 @@ const phaseGroups = doc
                     href={`#${group.anchor}`}
                     data-phase-link={group.anchor}
                     data-active="false"
-                    class="group/phase-chip border-border/60 bg-muted/30 text-muted-foreground hover:text-foreground hover:border-border data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-foreground flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors"
+                    class="group/phase-chip border-border/60 bg-muted/30 text-muted-foreground hover:text-foreground hover:border-border data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-foreground focus-visible:ring-ring/50 touch-target flex items-center gap-2 rounded-full border px-3 py-1.5 outline-none transition-colors focus-visible:ring-2"
                   >
                     <span class="bg-muted-foreground/70 text-background group-data-[active=true]/phase-chip:bg-primary group-data-[active=true]/phase-chip:text-primary-foreground tabular-nums inline-flex size-4 items-center justify-center rounded-full text-[0.6875rem] font-medium transition-colors">
                       {index + 1}
@@ -264,7 +264,7 @@ const phaseGroups = doc
             data-breakpoint="768"
             class="group/meta border-border/60 bg-background overflow-hidden rounded-xl border md:sticky md:top-24 md:self-start md:overflow-visible md:rounded-none md:border-0 md:bg-transparent"
           >
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 md:hidden [&::-webkit-details-marker]:hidden">
+            <summary class="focus-visible:ring-ring/50 touch-target flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 outline-none focus-visible:ring-2 md:hidden [&::-webkit-details-marker]:hidden">
               <span class="text-foreground text-sm font-medium">Session info</span>
               <svg
                 class="text-muted-foreground size-4 transition-transform group-open/meta:rotate-180"

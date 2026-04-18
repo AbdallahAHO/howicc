@@ -88,6 +88,7 @@ export const VisibilityMenuIsland = ({
         size="sm"
         onClick={copyLink}
         data-icon="inline-start"
+        className="touch-target"
       >
         {copied ? <Check aria-hidden="true" /> : null}
         {copied ? 'Link copied' : 'Copy link'}
@@ -100,6 +101,7 @@ export const VisibilityMenuIsland = ({
               size="sm"
               data-icon="inline-end"
               disabled={pending}
+              className="touch-target"
             >
               {pending ? (
                 <Loader2 className="size-3 animate-spin" aria-hidden="true" />

@@ -96,7 +96,7 @@ export const ArtifactDrawerIsland = ({ apiUrl, conversationId, artifactId, label
         onClick={toggle}
         aria-expanded={open}
         aria-controls={panelId}
-        className="text-muted-foreground hover:text-foreground flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50"
+        className="text-muted-foreground hover:text-foreground touch-target flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50"
       >
         <ChevronRight
           aria-hidden="true"
@@ -144,6 +144,7 @@ export const ArtifactDrawerIsland = ({ apiUrl, conversationId, artifactId, label
                     size="icon-xs"
                     onClick={copy}
                     aria-label="Copy artifact content"
+                    className="touch-target"
                   >
                     {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
                   </Button>

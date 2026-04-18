@@ -27,6 +27,7 @@ export const CopyButtonIsland = ({ value, ariaLabel }: Props) => {
       size="icon-xs"
       onClick={copy}
       aria-label={ariaLabel ?? 'Copy'}
+      className="touch-target"
     >
       {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
     </Button>

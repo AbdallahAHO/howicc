@@ -1,1 +1,39 @@
 @import "@howicc/ui-web/globals.css";
+
+/* ---------------------------------------------------------------
+ * Web-app-only utilities on top of the shared UI package.
+ * -------------------------------------------------------------- */
+
+/**
+ * Matches viewports with a coarse primary pointer (phones, tablets)
+ * so touch-first visitors get larger tap targets without inflating
+ * the desktop visual density.
+ */
+@custom-variant coarse-pointer (@media (hover: none) and (pointer: coarse));
+
+/**
+ * Bumps an element's interactive area to the WCAG 2.5.5 AAA target
+ * size (44×44 CSS pixels) on coarse-pointer devices. Visible size
+ * stays unchanged on mouse-driven viewports so the design keeps its
+ * intended rhythm.
+ *
+ * @example
+ * <button class="touch-target size-8"><icon /></button>
+ */
+@utility touch-target {
+  @variant coarse-pointer {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+}
+
+/**
+ * Smooth scroll for anchor navigation (phase spine, copy-link, back-to-
+ * top affordances). Disabled automatically when the user requests
+ * reduced motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

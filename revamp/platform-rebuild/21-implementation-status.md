@@ -197,7 +197,7 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   visitors still see the TOC. Residual: Claude-style connector lines
   between blocks within a phase, and moving the heuristic into
   `@howicc/render` once it stabilises.
-- ~~**Mobile-first polish for public view**~~ ◐ shipped 2026-04-19.
+- ~~**Mobile-first polish for public view**~~ ✓ shipped 2026-04-19.
   The mobile phase chip bar now pins sticky at `top-14` beneath the
   header with a backdrop-blur surface so the active phase stays in
   reach while reading. Phase section headers wrap gracefully on narrow
@@ -206,8 +206,13 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   and stays in its sticky desktop slot via `md:sticky md:top-24`; a
   small `wireResponsiveDetails()` helper locks the details open on md+
   and restores the user's toggle preference when the viewport shrinks
-  below 768. Remaining: bottom-sheet pattern for the visibility menu,
-  44px minimum tap targets on icon buttons (currently 32–36px).
+  below 768. A `touch-target` utility + `coarse-pointer` custom
+  variant in the web app's `globals.css` bump icon/chip buttons to
+  44×44 CSS pixels only on coarse-pointer devices, so desktop visual
+  density stays intact. Focus rings added to the mobile chip bar
+  links and the session-meta summary. `prefers-reduced-motion`-aware
+  `scroll-behavior: smooth` on `html` keeps anchor navigation gentle
+  without forcing motion on visitors who've opted out.
 - ~~**Artifact drilldown**~~ ✓ shipped 2026-04-19. Tool runs with an
   `artifactId` now render an inline `ArtifactDrawerIsland` — first click
   opens + fetches `GET /conversations/:id/artifacts/:id`, subsequent
