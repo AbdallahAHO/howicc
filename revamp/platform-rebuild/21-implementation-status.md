@@ -193,10 +193,15 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   the heuristic into `@howicc/render` once it stabilises.
 - **Mobile-first polish for public view** — doc 17 calls this the most
   important mobile surface; current layout is desktop-leaning.
-- **Artifact drilldown** — `GET /conversations/:id/artifacts/:artifactId`
-  exists but isn't wired from `/s/:slug` yet. Placeholder labels live
-  inside `BlockActivityGroup.ToolRun` and `BlockResource` and reference
-  "Wave 5" of the block kit plan (doc 22).
+- ~~**Artifact drilldown**~~ ✓ shipped 2026-04-19. Tool runs with an
+  `artifactId` now render an inline `ArtifactDrawerIsland` — first click
+  opens + fetches `GET /conversations/:id/artifacts/:id`, subsequent
+  toggles reuse cached content; loading / error / empty / copy states
+  handled; keyboard-accessible via `aria-expanded` + `aria-controls`.
+  `conversationId` and `apiUrl` thread through
+  `BlockRenderer → BlockActivityGroup → ToolRun` (and recurse through
+  `BlockSubagentThread`). Resource-block `assetId` drilldown still
+  waiting on a dedicated resource-asset endpoint — flagged in place.
 - **"Load more" feed pagination** on `/home` — cursor is returned by the API
   but no UI consumes it.
 

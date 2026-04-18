@@ -1,15 +1,21 @@
 ---
 import type { RenderToolRunActivity } from '@howicc/contracts'
 import { Badge } from '@howicc/ui-web/badge'
+import ArtifactDrawerIsland from './shared/ArtifactDrawerIsland'
 import MonoChip from './shared/MonoChip.astro'
 import StatusPill from './shared/StatusPill.astro'
 import ToolRunPreview from './shared/ToolRunPreview.astro'
 
 type Props = {
   item: RenderToolRunActivity
+  conversationId?: string
+  apiUrl?: string
 }
 
-const { item } = Astro.props
+const { item, conversationId, apiUrl } = Astro.props
+
+const canDrillDown =
+  Boolean(item.artifactId) && Boolean(conversationId) && Boolean(apiUrl)
 ---
 
 <li class="border-border/60 flex flex-col gap-2.5 px-4 py-3 [&+li]:border-t sm:px-5">
@@ -19,9 +25,7 @@ const { item } = Astro.props
       <Badge variant="outline" className="text-[0.6875rem]">MCP</Badge>
     ) : null}
     <p class="text-foreground min-w-0 flex-1 truncate text-sm">{item.title}</p>
-    {item.status === 'ok' ? null : (
-      <StatusPill status={item.status} />
-    )}
+    {item.status === 'ok' ? null : <StatusPill status={item.status} />}
   </div>
 
   {item.inputPreview ? (
@@ -32,11 +36,19 @@ const { item } = Astro.props
     <ToolRunPreview label="output" body={item.outputPreview} />
   ) : null}
 
-  {item.artifactId ? (
+  {canDrillDown && item.artifactId ? (
+    <ArtifactDrawerIsland
+      client:load
+      apiUrl={apiUrl!}
+      conversationId={conversationId!}
+      artifactId={item.artifactId}
+      label={item.toolName}
+    />
+  ) : item.artifactId ? (
     <p class="text-muted-foreground text-xs">
       Artifact
       <MonoChip label={item.artifactId} class="ml-1" />
-      <span class="text-muted-foreground ml-1">(drilldown coming in Wave 5)</span>
+      <span class="text-muted-foreground ml-1">— drilldown needs a conversation context.</span>
     </p>
   ) : null}
 </li>

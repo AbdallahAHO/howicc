@@ -7,9 +7,11 @@ import ToolRunItem from './BlockActivityGroup.ToolRun.astro'
 
 type Props = {
   block: RenderActivityGroupBlock
+  conversationId?: string
+  apiUrl?: string
 }
 
-const { block } = Astro.props
+const { block, conversationId, apiUrl } = Astro.props
 ---
 
 <CollapsibleBlockShell
@@ -31,7 +33,11 @@ const { block } = Astro.props
     <ul role="list" class="-mx-4 -my-4 flex flex-col sm:-mx-5">
       {block.items.map((item) =>
         item.type === 'tool_run' ? (
-          <ToolRunItem item={item} />
+          <ToolRunItem
+            item={item}
+            conversationId={conversationId}
+            apiUrl={apiUrl}
+          />
         ) : (
           <HookEventItem item={item} />
         ),

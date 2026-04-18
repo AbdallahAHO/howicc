@@ -29,9 +29,11 @@ import BlockTodoSnapshot from './BlockTodoSnapshot.astro'
 type Props = {
   blocks: RenderBlock[]
   depth?: number
+  conversationId?: string
+  apiUrl?: string
 }
 
-const { blocks, depth = 0 } = Astro.props
+const { blocks, depth = 0, conversationId, apiUrl } = Astro.props
 
 const assertExhaustive = (_block: never, type: string) => type
 ---
@@ -42,7 +44,13 @@ const assertExhaustive = (_block: never, type: string) => type
       case 'message':
         return <BlockMessage block={block} />
       case 'activity_group':
-        return <BlockActivityGroup block={block} />
+        return (
+          <BlockActivityGroup
+            block={block}
+            conversationId={conversationId}
+            apiUrl={apiUrl}
+          />
+        )
       case 'callout':
         return <BlockCallout block={block} />
       case 'compact_boundary':
@@ -60,7 +68,14 @@ const assertExhaustive = (_block: never, type: string) => type
       case 'brief_delivery':
         return <BlockBriefDelivery block={block} />
       case 'subagent_thread':
-        return <BlockSubagentThread block={block} depth={depth} />
+        return (
+          <BlockSubagentThread
+            block={block}
+            depth={depth}
+            conversationId={conversationId}
+            apiUrl={apiUrl}
+          />
+        )
       default: {
         const unknownType = assertExhaustive(block, (block as { type: string }).type)
         return (

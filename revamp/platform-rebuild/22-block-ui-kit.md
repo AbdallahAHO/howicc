@@ -241,7 +241,7 @@ check fires at compile time when a new block type is added to the union.
 2. **Wave 2** — message, activity_group (+ tool_run, hook_event children), callout, compact_boundary. Swap `/s/:slug` to the dispatcher. Delete legacy `components/session/RenderBlocks.astro`.
 3. **Wave 3** — todo_snapshot, question, task_timeline.
 4. **Wave 4** — resource, structured_data, brief_delivery.
-5. **Wave 5** — subagent_thread with depth-aware tonal lift; hook `artifactId` into the tool-run preview (closes the Wave A artifact-drilldown residual).
+5. **Wave 5** — subagent_thread with depth-aware tonal lift ✓ (shipped with the kit). Artifact drilldown wired via `ArtifactDrawerIsland` in `shared/` ✓ — tool runs with an `artifactId` render an inline disclosure that fetches `GET /conversations/:id/artifacts/:id` on first open and caches the response in component state for subsequent toggles. Resource-block `assetId` still waits on a dedicated resource-asset endpoint — flagged in `BlockResource.astro` with an explicit reason so future readers aren't surprised.
 
 ---
 

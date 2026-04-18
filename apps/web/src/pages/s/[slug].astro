@@ -231,11 +231,19 @@ const phaseGroups = doc
                         {group.blocks.length} {group.blocks.length === 1 ? 'block' : 'blocks'}
                       </span>
                     </header>
-                    <BlockRenderer blocks={group.blocks as unknown as RenderBlock[]} />
+                    <BlockRenderer
+                      blocks={group.blocks as unknown as RenderBlock[]}
+                      conversationId={doc.sharedMeta.conversationId}
+                      apiUrl={locals.authApiUrl}
+                    />
                   </section>
                 ))
               ) : (
-                <BlockRenderer blocks={doc.blocks as unknown as RenderBlock[]} />
+                <BlockRenderer
+                  blocks={doc.blocks as unknown as RenderBlock[]}
+                  conversationId={doc.sharedMeta.conversationId}
+                  apiUrl={locals.authApiUrl}
+                />
               )
             ) : (
               <Card>

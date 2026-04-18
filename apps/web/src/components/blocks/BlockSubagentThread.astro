@@ -7,9 +7,11 @@ import BlockRenderer from './BlockRenderer.astro'
 type Props = {
   block: RenderSubagentThreadBlock
   depth?: number
+  conversationId?: string
+  apiUrl?: string
 }
 
-const { block, depth = 0 } = Astro.props
+const { block, depth = 0, conversationId, apiUrl } = Astro.props
 
 // Subagent blocks type their children as z.unknown() to avoid a circular
 // zod schema. Narrow once at the component boundary; downstream consumers
@@ -36,6 +38,11 @@ const clampedDepth = Math.min(depth + 1, 2)
       This subagent thread has no rendered blocks.
     </p>
   ) : (
-    <BlockRenderer blocks={childBlocks} depth={clampedDepth} />
+    <BlockRenderer
+      blocks={childBlocks}
+      depth={clampedDepth}
+      conversationId={conversationId}
+      apiUrl={apiUrl}
+    />
   )}
 </CollapsibleBlockShell>
