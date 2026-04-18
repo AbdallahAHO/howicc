@@ -3,10 +3,11 @@ import Layout from '../../components/Layout.astro'
 import { Badge } from '@howicc/ui-web/badge'
 import { buttonVariants } from '@howicc/ui-web/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@howicc/ui-web/card'
+import BlockRenderer from '../../components/blocks/BlockRenderer.astro'
 import PhaseSpine from '../../components/session/PhaseSpine.astro'
-import RenderBlocks from '../../components/session/RenderBlocks.astro'
 import VisibilityMenuIsland from '../../components/session/VisibilityMenuIsland'
 import { classifyPhases } from '../../components/session/classifyPhases'
+import type { RenderBlock } from '@howicc/contracts'
 import { createServerApiClient } from '../../lib/api/client'
 import { getRuntimeWebConfig } from '../../lib/runtime/web-config.server'
 import type { WebLocals } from '../../lib/auth/types'
@@ -230,11 +231,11 @@ const phaseGroups = doc
                         {group.blocks.length} {group.blocks.length === 1 ? 'block' : 'blocks'}
                       </span>
                     </header>
-                    <RenderBlocks blocks={group.blocks as unknown[]} />
+                    <BlockRenderer blocks={group.blocks as unknown as RenderBlock[]} />
                   </section>
                 ))
               ) : (
-                <RenderBlocks blocks={doc.blocks} />
+                <BlockRenderer blocks={doc.blocks as unknown as RenderBlock[]} />
               )
             ) : (
               <Card>

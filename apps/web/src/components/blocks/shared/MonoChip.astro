@@ -1,0 +1,19 @@
+---
+type Props = {
+  label: string
+  class?: string
+  title?: string
+}
+
+const { label, class: className, title } = Astro.props
+---
+
+<code
+  title={title}
+  class:list={[
+    'bg-muted text-foreground inline-flex max-w-[20ch] truncate rounded px-1.5 py-0.5 font-mono text-xs',
+    className,
+  ]}
+>
+  {label}
+</code>

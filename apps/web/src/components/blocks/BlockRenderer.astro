@@ -1,0 +1,75 @@
+---
+/**
+ * The sole consumer-facing entry point for the block UI kit.
+ *
+ * Iterates the render document's `blocks` array and dispatches each entry
+ * to its matching component. The default branch is typed as `never`, so
+ * adding a new block variant to `RenderBlock` without a matching case
+ * fails the build with a pointer to this file.
+ *
+ * @example
+ * ---
+ * import BlockRenderer from '../components/blocks/BlockRenderer.astro'
+ * ---
+ * <BlockRenderer blocks={doc.blocks} />
+ */
+import type { RenderBlock } from '@howicc/contracts'
+import BlockActivityGroup from './BlockActivityGroup.astro'
+import BlockBriefDelivery from './BlockBriefDelivery.astro'
+import BlockCallout from './BlockCallout.astro'
+import BlockCompactBoundary from './BlockCompactBoundary.astro'
+import BlockMessage from './BlockMessage.astro'
+import BlockQuestion from './BlockQuestion.astro'
+import BlockResource from './BlockResource.astro'
+import BlockStructuredData from './BlockStructuredData.astro'
+import BlockSubagentThread from './BlockSubagentThread.astro'
+import BlockTaskTimeline from './BlockTaskTimeline.astro'
+import BlockTodoSnapshot from './BlockTodoSnapshot.astro'
+
+type Props = {
+  blocks: RenderBlock[]
+  depth?: number
+}
+
+const { blocks, depth = 0 } = Astro.props
+
+const assertExhaustive = (_block: never, type: string) => type
+---
+
+<div class="flex flex-col gap-6">
+  {blocks.map((block) => {
+    switch (block.type) {
+      case 'message':
+        return <BlockMessage block={block} />
+      case 'activity_group':
+        return <BlockActivityGroup block={block} />
+      case 'callout':
+        return <BlockCallout block={block} />
+      case 'compact_boundary':
+        return <BlockCompactBoundary block={block} />
+      case 'todo_snapshot':
+        return <BlockTodoSnapshot block={block} />
+      case 'question':
+        return <BlockQuestion block={block} />
+      case 'task_timeline':
+        return <BlockTaskTimeline block={block} />
+      case 'resource':
+        return <BlockResource block={block} />
+      case 'structured_data':
+        return <BlockStructuredData block={block} />
+      case 'brief_delivery':
+        return <BlockBriefDelivery block={block} />
+      case 'subagent_thread':
+        return <BlockSubagentThread block={block} depth={depth} />
+      default: {
+        const unknownType = assertExhaustive(block, (block as { type: string }).type)
+        return (
+          <div class="border-border/60 bg-muted/20 text-muted-foreground rounded-xl border px-4 py-3 text-sm">
+            Unsupported block type:
+            <code class="bg-muted ml-1 rounded px-1 py-0.5 font-mono text-xs">{unknownType}</code>
+          </div>
+        )
+      }
+    }
+  })}
+</div>

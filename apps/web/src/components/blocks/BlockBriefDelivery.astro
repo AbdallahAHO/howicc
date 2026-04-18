@@ -1,0 +1,43 @@
+---
+import type { RenderBriefDeliveryBlock } from '@howicc/contracts'
+import AttachmentChip from './shared/AttachmentChip.astro'
+import BlockHeader from './shared/BlockHeader.astro'
+import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+
+type Props = {
+  block: RenderBriefDeliveryBlock
+}
+
+const { block } = Astro.props
+---
+
+<CollapsibleBlockShell
+  defaultOpen={!block.defaultCollapsed}
+  ariaLabel={block.title}
+>
+  <BlockHeader
+    slot="summary"
+    eyebrow="Delivery"
+    title={block.title}
+    count={block.attachments.length > 0 ? block.attachments.length : undefined}
+  />
+
+  <div class="flex flex-col gap-4 text-sm">
+    <p class="text-foreground text-pretty whitespace-pre-wrap">{block.message}</p>
+
+    {block.attachments.length > 0 ? (
+      <div class="flex flex-col gap-2">
+        <p class="text-muted-foreground text-[0.6875rem] font-medium tracking-wide uppercase">
+          Attachments
+        </p>
+        <ul role="list" class="flex flex-wrap gap-2">
+          {block.attachments.map((attachment) => (
+            <li>
+              <AttachmentChip label={attachment.label} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
+  </div>
+</CollapsibleBlockShell>

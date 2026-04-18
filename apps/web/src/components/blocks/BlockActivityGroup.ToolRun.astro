@@ -1,0 +1,42 @@
+---
+import type { RenderToolRunActivity } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import MonoChip from './shared/MonoChip.astro'
+import StatusPill from './shared/StatusPill.astro'
+import ToolRunPreview from './shared/ToolRunPreview.astro'
+
+type Props = {
+  item: RenderToolRunActivity
+}
+
+const { item } = Astro.props
+---
+
+<li class="border-border/60 flex flex-col gap-2.5 px-4 py-3 [&+li]:border-t sm:px-5">
+  <div class="flex flex-wrap items-center gap-2">
+    <MonoChip label={item.toolName} />
+    {item.source === 'mcp' ? (
+      <Badge variant="outline" className="text-[0.6875rem]">MCP</Badge>
+    ) : null}
+    <p class="text-foreground min-w-0 flex-1 truncate text-sm">{item.title}</p>
+    {item.status === 'ok' ? null : (
+      <StatusPill status={item.status} />
+    )}
+  </div>
+
+  {item.inputPreview ? (
+    <ToolRunPreview label="input" body={item.inputPreview} />
+  ) : null}
+
+  {item.outputPreview ? (
+    <ToolRunPreview label="output" body={item.outputPreview} />
+  ) : null}
+
+  {item.artifactId ? (
+    <p class="text-muted-foreground text-xs">
+      Artifact
+      <MonoChip label={item.artifactId} class="ml-1" />
+      <span class="text-muted-foreground ml-1">(drilldown coming in Wave 5)</span>
+    </p>
+  ) : null}
+</li>

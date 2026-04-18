@@ -1,0 +1,22 @@
+---
+import type { RenderHookActivity } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import TonePill from './shared/TonePill.astro'
+
+type Props = {
+  item: RenderHookActivity
+}
+
+const { item } = Astro.props
+---
+
+<li class="border-border/60 flex flex-col gap-1 px-4 py-3 [&+li]:border-t sm:px-5">
+  <div class="flex flex-wrap items-center gap-2">
+    <Badge variant="outline">Hook</Badge>
+    <TonePill tone={item.tone} />
+    <p class="text-foreground min-w-0 flex-1 truncate text-sm font-medium">{item.title}</p>
+  </div>
+  {item.body ? (
+    <p class="text-muted-foreground text-sm text-pretty">{item.body}</p>
+  ) : null}
+</li>

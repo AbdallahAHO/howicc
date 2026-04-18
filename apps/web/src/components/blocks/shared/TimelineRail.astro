@@ -1,0 +1,40 @@
+---
+/**
+ * Vertical connector used by block bodies that render a timeline of
+ * items (task_timeline, and later the phase spine once we align them).
+ *
+ * Renders the dot + optional connector; the caller controls spacing and
+ * puts content in the default slot.
+ */
+
+type Props = {
+  first?: boolean
+  last?: boolean
+  class?: string
+}
+
+const { first = false, last = false, class: className } = Astro.props
+---
+
+<div class:list={['relative flex gap-3', className]}>
+  <div class="relative flex flex-col items-center" aria-hidden="true">
+    <span
+      class:list={[
+        'bg-border w-px flex-none',
+        first ? 'h-2 opacity-0' : 'h-2',
+      ]}
+    ></span>
+    <span class="bg-background border-border relative z-10 inline-flex size-3.5 shrink-0 items-center justify-center rounded-full border-2">
+      <span class="bg-primary size-1.5 rounded-full"></span>
+    </span>
+    <span
+      class:list={[
+        'bg-border w-px flex-1',
+        last ? 'opacity-0' : '',
+      ]}
+    ></span>
+  </div>
+  <div class="min-w-0 flex-1 pb-4">
+    <slot />
+  </div>
+</div>

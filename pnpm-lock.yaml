@@ -202,6 +202,9 @@ importers:
       '@howicc/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@howicc/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@howicc/ui':
         specifier: workspace:*
         version: link:../../packages/ui/shared

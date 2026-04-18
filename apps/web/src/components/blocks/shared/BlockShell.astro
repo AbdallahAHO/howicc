@@ -1,0 +1,37 @@
+---
+/**
+ * Outer container for every top-level block.
+ *
+ * Single knob: `tone` maps to a surface treatment. `depth` deepens the
+ * subagent tone one tonal step so nested threads read as "inside"
+ * without the borders fighting.
+ *
+ * @example
+ * <BlockShell tone="muted"><slot /></BlockShell>
+ */
+
+type Props = {
+  tone?: 'default' | 'muted' | 'subagent'
+  depth?: number
+  class?: string
+  ariaLabel?: string
+}
+
+const { tone = 'default', depth = 0, class: className, ariaLabel } = Astro.props
+
+const toneClass =
+  tone === 'muted'
+    ? 'bg-muted/30 border-border/60'
+    : tone === 'subagent'
+      ? depth >= 1
+        ? 'bg-muted/40 border-border'
+        : 'bg-muted/20 border-border/60'
+      : 'bg-background border-border/60'
+---
+
+<article
+  aria-label={ariaLabel}
+  class:list={['rounded-xl border p-4 sm:p-5', toneClass, className]}
+>
+  <slot />
+</article>

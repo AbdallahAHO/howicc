@@ -1,0 +1,40 @@
+---
+import CopyButtonIsland from './CopyButtonIsland'
+
+type Props = {
+  label: 'input' | 'output'
+  body: string
+  maxChars?: number
+}
+
+const { label, body, maxChars } = Astro.props
+
+const defaultMax = label === 'input' ? 400 : 600
+const limit = typeof maxChars === 'number' ? maxChars : defaultMax
+const truncated = body.length > limit
+const preview = truncated ? `${body.slice(0, limit).trimEnd()}…` : body
+
+const shellClass =
+  label === 'input'
+    ? 'bg-muted/50 border-border/40'
+    : 'bg-background border-border/60'
+---
+
+<figure class:list={['group/preview relative overflow-hidden rounded-md border', shellClass]}>
+  <figcaption class="border-border/40 text-muted-foreground flex items-center justify-between gap-2 border-b px-3 py-1.5 text-[0.6875rem] font-medium tracking-wide uppercase">
+    <span>{label}</span>
+    {truncated ? (
+      <span class="text-muted-foreground normal-case tracking-normal">
+        truncated to {limit.toLocaleString()} chars
+      </span>
+    ) : null}
+  </figcaption>
+  <div class="absolute top-1 right-1 opacity-0 transition-opacity group-hover/preview:opacity-100 focus-within:opacity-100">
+    <CopyButtonIsland
+      client:load
+      value={body}
+      ariaLabel={`Copy ${label}`}
+    />
+  </div>
+  <pre class="text-foreground overflow-x-auto px-3 py-2 font-mono text-xs leading-relaxed"><code>{preview}</code></pre>
+</figure>

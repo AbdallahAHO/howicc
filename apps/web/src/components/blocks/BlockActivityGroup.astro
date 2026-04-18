@@ -1,0 +1,41 @@
+---
+import type { RenderActivityGroupBlock } from '@howicc/contracts'
+import BlockHeader from './shared/BlockHeader.astro'
+import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+import HookEventItem from './BlockActivityGroup.HookEvent.astro'
+import ToolRunItem from './BlockActivityGroup.ToolRun.astro'
+
+type Props = {
+  block: RenderActivityGroupBlock
+}
+
+const { block } = Astro.props
+---
+
+<CollapsibleBlockShell
+  defaultOpen={!block.defaultCollapsed}
+  ariaLabel={block.label}
+>
+  <BlockHeader
+    slot="summary"
+    title={block.label}
+    meta={block.summary}
+    count={block.items.length}
+  />
+
+  {block.items.length === 0 ? (
+    <p class="text-muted-foreground py-2 text-sm">
+      No tool runs or hooks in this group.
+    </p>
+  ) : (
+    <ul role="list" class="-mx-4 -my-4 flex flex-col sm:-mx-5">
+      {block.items.map((item) =>
+        item.type === 'tool_run' ? (
+          <ToolRunItem item={item} />
+        ) : (
+          <HookEventItem item={item} />
+        ),
+      )}
+    </ul>
+  )}
+</CollapsibleBlockShell>

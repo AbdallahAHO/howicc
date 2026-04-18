@@ -1,0 +1,65 @@
+---
+import type { RenderCalloutBlock } from '@howicc/contracts'
+
+type Props = {
+  block: RenderCalloutBlock
+}
+
+const { block } = Astro.props
+
+const toneClass: Record<RenderCalloutBlock['tone'], string> = {
+  info: 'border-border bg-muted/30 text-foreground',
+  warning: 'border-yellow-500/40 bg-yellow-500/10 text-foreground',
+  error: 'border-destructive/40 bg-destructive/10 text-destructive',
+}
+
+const iconTone: Record<RenderCalloutBlock['tone'], string> = {
+  info: 'text-muted-foreground',
+  warning: 'text-yellow-600 dark:text-yellow-400',
+  error: 'text-destructive',
+}
+
+const ariaRole: Record<RenderCalloutBlock['tone'], 'status' | 'alert'> = {
+  info: 'status',
+  warning: 'status',
+  error: 'alert',
+}
+---
+
+<aside
+  role={ariaRole[block.tone]}
+  class:list={['rounded-xl border p-4 sm:p-5', toneClass[block.tone]]}
+>
+  <div class="flex items-start gap-3">
+    <span
+      class:list={['mt-0.5 shrink-0', iconTone[block.tone]]}
+      aria-hidden="true"
+    >
+      {block.tone === 'info' ? (
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-4">
+          <circle cx="8" cy="8" r="6.5" />
+          <path d="M8 11v-4" />
+          <circle cx="8" cy="5" r="0.5" fill="currentColor" />
+        </svg>
+      ) : block.tone === 'warning' ? (
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-4">
+          <path d="M8 2l6 11H2z" />
+          <path d="M8 6.5v3" />
+          <circle cx="8" cy="11.25" r="0.5" fill="currentColor" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-4">
+          <circle cx="8" cy="8" r="6.5" />
+          <path d="M5.5 5.5l5 5" />
+          <path d="M10.5 5.5l-5 5" />
+        </svg>
+      )}
+    </span>
+    <div class="flex min-w-0 flex-col gap-1">
+      <p class="font-medium text-sm text-balance">{block.title}</p>
+      {block.body ? (
+        <p class="text-sm text-pretty">{block.body}</p>
+      ) : null}
+    </div>
+  </div>
+</aside>

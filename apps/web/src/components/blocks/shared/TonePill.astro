@@ -1,0 +1,29 @@
+---
+import { Badge } from '@howicc/ui-web/badge'
+
+type Tone = 'info' | 'warning' | 'error'
+
+type Props = {
+  tone: Tone
+  label?: string
+  class?: string
+}
+
+const { tone, label, class: className } = Astro.props
+
+const defaultLabel: Record<Tone, string> = {
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
+}
+
+const variant: Record<Tone, 'outline' | 'secondary' | 'destructive'> = {
+  info: 'outline',
+  warning: 'secondary',
+  error: 'destructive',
+}
+---
+
+<Badge variant={variant[tone]} className={className}>
+  {label ?? defaultLabel[tone]}
+</Badge>
