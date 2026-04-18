@@ -7,7 +7,7 @@ import type { WebLocals } from '../lib/auth/types'
 const locals = Astro.locals as WebLocals
 
 if (locals.auth.user) {
-  return Astro.redirect('/dashboard')
+  return Astro.redirect('/home')
 }
 
 const callbackUrl = resolveLoginCallbackUrl({

@@ -1,0 +1,547 @@
+---
+import Layout from '../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import { Button } from '@howicc/ui-web/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import { Separator } from '@howicc/ui-web/separator'
+import { Skeleton } from '@howicc/ui-web/skeleton'
+import AccountAvatar from '../components/home/AccountAvatar'
+import CopyCommandIsland from '../components/home/CopyCommandIsland'
+import MobileNavIsland from '../components/home/MobileNavIsland'
+import UserMenuIsland from '../components/home/UserMenuIsland'
+import { createServerApiClient } from '../lib/api/client'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+const session = locals.auth.session!
+
+const firstName = user.name?.split(' ')[0] ?? user.email.split('@')[0] ?? 'friend'
+
+const api = createServerApiClient({
+  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+type ActivityItem = {
+  conversationId: string
+  slug: string
+  title: string
+  visibility: 'private' | 'unlisted' | 'public'
+  provider: string
+  projectKey: string
+  projectPath?: string
+  sessionCreatedAt: string
+  syncedAt: string
+  durationMs?: number
+  estimatedCostUsd?: number
+  toolRunCount: number
+  turnCount: number
+  messageCount: number
+  sessionType: 'building' | 'debugging' | 'exploring' | 'investigating' | 'mixed'
+  hasPlan: boolean
+  models: string[]
+  repository: { fullName: string; source: string } | null
+}
+
+type StatsSnapshot = {
+  digestCount: number
+  totalSessions: number
+  totalDurationMs: number
+  totalCostUsd: number
+  activeDays: number
+  currentStreak: number
+  longestStreak: number
+  firstSessionAt?: string
+  lastSessionAt?: string
+}
+
+const [statsResult, activityResult] = await Promise.all([
+  api.profile.stats().catch(() => null),
+  api.profile.activity({ limit: 10 }).catch(() => null),
+])
+
+const stats: StatsSnapshot | null =
+  statsResult && 'success' in statsResult && statsResult.success === true
+    ? (statsResult.stats as StatsSnapshot | null)
+    : null
+
+const activityItems: ActivityItem[] =
+  activityResult && 'success' in activityResult && activityResult.success === true
+    ? (activityResult.items as ActivityItem[])
+    : []
+
+const totalSessions =
+  activityResult && 'success' in activityResult && activityResult.success === true
+    ? (activityResult.total as number)
+    : 0
+
+const formatDuration = (durationMs?: number): string => {
+  if (!durationMs || durationMs < 1000) return '—'
+  const totalSeconds = Math.round(durationMs / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`
+  if (hours > 0) return `${hours}h`
+  if (minutes > 0) return `${minutes}m`
+  return `${totalSeconds}s`
+}
+
+const formatCost = (cost?: number): string => {
+  if (cost === undefined || cost === null) return '—'
+  if (cost === 0) return '$0'
+  if (cost < 0.01) return '<$0.01'
+  return `$${cost.toFixed(2)}`
+}
+
+const formatRelative = (iso: string): string => {
+  const then = new Date(iso)
+  if (Number.isNaN(then.valueOf())) return iso
+  const diffMs = Date.now() - then.valueOf()
+  const diffMin = Math.round(diffMs / 60_000)
+  if (diffMin < 1) return 'just now'
+  if (diffMin < 60) return `${diffMin}m ago`
+  const diffHr = Math.round(diffMin / 60)
+  if (diffHr < 24) return `${diffHr}h ago`
+  const diffDay = Math.round(diffHr / 24)
+  if (diffDay < 30) return `${diffDay}d ago`
+  return then.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+}
+
+const sessionTypeLabel: Record<ActivityItem['sessionType'], string> = {
+  building: 'Building',
+  debugging: 'Debugging',
+  exploring: 'Exploring',
+  investigating: 'Investigating',
+  mixed: 'Mixed',
+}
+
+const sessionTypeTone: Record<ActivityItem['sessionType'], 'default' | 'secondary' | 'outline'> = {
+  building: 'default',
+  debugging: 'secondary',
+  exploring: 'secondary',
+  investigating: 'secondary',
+  mixed: 'outline',
+}
+
+const visibilityLabel: Record<ActivityItem['visibility'], string> = {
+  private: 'Private',
+  unlisted: 'Unlisted',
+  public: 'Public',
+}
+
+const statCards = stats
+  ? [
+      {
+        label: 'Sessions synced',
+        value: stats.totalSessions.toLocaleString(),
+      },
+      {
+        label: 'Active days',
+        value: stats.activeDays.toLocaleString(),
+        hint:
+          stats.currentStreak > 1
+            ? `${stats.currentStreak} day streak`
+            : stats.currentStreak === 1
+              ? 'Active today'
+              : undefined,
+      },
+      {
+        label: 'Total cost',
+        value: formatCost(stats.totalCostUsd),
+        hint:
+          stats.totalDurationMs > 0 ? `${formatDuration(stats.totalDurationMs)} coding` : undefined,
+      },
+    ]
+  : null
+
+const navItems = [
+  { href: '/home', label: 'Home', active: true, note: undefined },
+  { href: '/sessions', label: 'Sessions', active: false, note: 'Wave B' },
+  { href: '/insights', label: 'Insights', active: false, note: 'Wave D' },
+]
+---
+
+<Layout title="Home">
+  <div class="isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div class="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+
+        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
+          <ul role="list" class="flex items-center gap-1">
+            {navItems.map((item) => (
+              <li>
+                {item.active ? (
+                  <a
+                    href={item.href}
+                    aria-current="page"
+                    class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <a
+                    href={item.href}
+                    aria-disabled="true"
+                    tabindex="-1"
+                    title={`Coming in ${item.note}`}
+                    class="text-muted-foreground hover:text-foreground pointer-events-none inline-flex h-8 items-center gap-2 rounded-md px-3"
+                  >
+                    {item.label}
+                    <Badge variant="secondary" className="h-4 px-1.5 text-[0.6875rem]">
+                      {item.note}
+                    </Badge>
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-2">
+          <a
+            href="https://github.com/AbdallahAHO/howicc"
+            target="_blank"
+            rel="noreferrer"
+            class="text-muted-foreground hover:text-foreground hidden text-sm md:inline-flex md:items-center md:gap-1 md:px-2 md:py-1.5"
+          >
+            Docs
+          </a>
+          <span class="bg-border mx-1 hidden h-6 w-px md:inline-block"></span>
+          <div class="hidden lg:block">
+            <UserMenuIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              name={user.name ?? null}
+              email={user.email}
+              image={user.image ?? null}
+            />
+          </div>
+          <div class="lg:hidden">
+            <MobileNavIsland client:load />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-3">
+        <Badge variant="outline" className="gap-2">
+          <span class="bg-primary size-1.5 rounded-full"></span>
+          Canonical sessions
+        </Badge>
+        <h1 class="max-w-[22ch] text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+          {stats && stats.totalSessions > 0
+            ? `Welcome back, ${firstName}.`
+            : `Welcome, ${firstName}.`}
+        </h1>
+        <p class="text-muted-foreground max-w-[56ch] text-base text-pretty">
+          {stats && stats.totalSessions > 0
+            ? `You've synced ${stats.totalSessions.toLocaleString()} ${stats.totalSessions === 1 ? 'session' : 'sessions'} across ${stats.activeDays} active ${stats.activeDays === 1 ? 'day' : 'days'}. The shared-session reader lands in the next wave.`
+            : `Your synced sessions, activity, and key stats will land here. The web surface is rolling out in waves — until then, the CLI is the fastest way in.`}
+        </p>
+      </section>
+
+      <section class="grid gap-6 md:grid-cols-3">
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Recent activity</CardTitle>
+            <CardDescription>
+              {activityItems.length > 0
+                ? `Your ${activityItems.length} most recent synced ${activityItems.length === 1 ? 'session' : 'sessions'}.`
+                : "You don't have any synced sessions yet. Sync your first with the CLI."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-5">
+            {activityItems.length > 0 ? (
+              <>
+                <ol role="list" class="flex flex-col">
+                  {activityItems.map((item, index) => (
+                    <li
+                      class:list={[
+                        'flex flex-col gap-2 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6',
+                        index > 0 ? 'border-border/60 border-t' : '',
+                      ]}
+                    >
+                      <div class="flex min-w-0 flex-col gap-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <Badge variant={sessionTypeTone[item.sessionType]}>
+                            {sessionTypeLabel[item.sessionType]}
+                          </Badge>
+                          <a
+                            href={`/s/${item.slug}`}
+                            class="text-foreground hover:text-primary min-w-0 truncate text-sm font-medium transition-colors"
+                          >
+                            {item.title}
+                          </a>
+                          {item.hasPlan ? (
+                            <Badge variant="outline" className="text-[0.6875rem]">Plan</Badge>
+                          ) : null}
+                          {item.visibility !== 'private' ? (
+                            <Badge variant="outline" className="text-[0.6875rem]">
+                              {visibilityLabel[item.visibility]}
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <p class="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
+                          {item.repository ? (
+                            <>
+                              <span class="font-mono">{item.repository.fullName}</span>
+                              <span aria-hidden="true">·</span>
+                            </>
+                          ) : (
+                            <>
+                              <span class="font-mono truncate max-w-[24ch]">{item.projectKey}</span>
+                              <span aria-hidden="true">·</span>
+                            </>
+                          )}
+                          {item.models.length > 0 ? (
+                            <>
+                              <span class="font-mono">{item.models[0]}</span>
+                              <span aria-hidden="true">·</span>
+                            </>
+                          ) : null}
+                          <span class="tabular-nums">{item.toolRunCount} tool runs</span>
+                          <span aria-hidden="true">·</span>
+                          <span class="tabular-nums">{item.turnCount} turns</span>
+                        </p>
+                      </div>
+                      <dl class="flex shrink-0 flex-wrap items-baseline gap-x-4 gap-y-1 text-xs sm:flex-col sm:items-end sm:gap-y-1 sm:text-right">
+                        <div class="flex items-baseline gap-1.5 sm:justify-end">
+                          <dt class="text-muted-foreground sr-only">Duration</dt>
+                          <dd class="tabular-nums text-foreground font-medium">
+                            {formatDuration(item.durationMs)}
+                          </dd>
+                          <span class="text-muted-foreground" aria-hidden="true">·</span>
+                          <dt class="text-muted-foreground sr-only">Cost</dt>
+                          <dd class="text-muted-foreground tabular-nums">
+                            {formatCost(item.estimatedCostUsd)}
+                          </dd>
+                        </div>
+                        <div class="text-muted-foreground text-xs">
+                          <dt class="sr-only">Synced</dt>
+                          <dd>
+                            Synced <time datetime={item.syncedAt}>{formatRelative(item.syncedAt)}</time>
+                          </dd>
+                        </div>
+                      </dl>
+                    </li>
+                  ))}
+                </ol>
+
+                {totalSessions > activityItems.length ? (
+                  <footer class="text-muted-foreground flex items-center justify-between text-xs">
+                    <p>
+                      Showing <span class="tabular-nums">{activityItems.length}</span> of
+                      <span class="tabular-nums"> {totalSessions}</span>.
+                    </p>
+                    <Button
+                      variant="link"
+                      disabled
+                      aria-disabled="true"
+                      title="Full list lands in Wave B"
+                      className="h-auto p-0"
+                    >
+                      Browse all → Wave B
+                    </Button>
+                  </footer>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <div class="flex flex-col gap-3">
+                  <p class="text-foreground text-sm font-medium">Sync your first session</p>
+                  <CopyCommandIsland client:load command="howicc sync" />
+                </div>
+                <Separator />
+                <div class="flex flex-col gap-3">
+                  <p class="text-foreground text-sm font-medium">Browse what you have locally</p>
+                  <div class="flex flex-col gap-2">
+                    <CopyCommandIsland client:load command="howicc list" />
+                    <CopyCommandIsland client:load command="howicc inspect <id>" />
+                  </div>
+                  <p class="text-muted-foreground text-sm text-pretty">
+                    Sessions live under
+                    <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">~/.claude/projects/</code>
+                    until you sync them. Everything stays local until you explicitly upload.
+                  </p>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        <aside class="flex flex-col gap-6">
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Account</CardTitle>
+              <CardDescription>Signed in via GitHub OAuth.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <AccountAvatar
+                  size="lg"
+                  name={user.name ?? null}
+                  email={user.email}
+                  image={user.image ?? null}
+                />
+                <div class="flex min-w-0 flex-col">
+                  <p class="truncate text-sm font-medium">{user.name ?? 'GitHub user'}</p>
+                  <p class="text-muted-foreground truncate text-sm">{user.email}</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              <dl class="text-sm">
+                <div class="flex items-baseline justify-between gap-3 py-1.5">
+                  <dt class="text-muted-foreground">User</dt>
+                  <dd class="max-w-[60%] truncate font-mono text-xs">{user.id}</dd>
+                </div>
+                <div class="flex items-baseline justify-between gap-3 py-1.5">
+                  <dt class="text-muted-foreground">Session expires</dt>
+                  <dd class="tabular-nums">
+                    {new Date(session.expiresAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                  </dd>
+                </div>
+              </dl>
+
+              <div class="lg:hidden">
+                <Button variant="outline" className="w-full" disabled>
+                  Settings (Wave B)
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Key stats</CardTitle>
+              <CardDescription>
+                {stats
+                  ? stats.lastSessionAt
+                    ? `Last sync ${formatRelative(stats.lastSessionAt)}.`
+                    : 'Rolled up from your synced session digests.'
+                  : 'Rolled up from your synced session digests.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {statCards ? (
+                <dl class="flex flex-col">
+                  {statCards.map((stat, index) => (
+                    <div
+                      class:list={[
+                        'flex items-baseline justify-between gap-3 py-3',
+                        index < statCards.length - 1 ? 'border-border/60 border-b' : '',
+                      ]}
+                    >
+                      <dt class="text-muted-foreground truncate text-sm">{stat.label}</dt>
+                      <dd class="flex flex-col items-end gap-0.5 text-right">
+                        <span class="text-foreground tabular-nums text-base font-semibold">
+                          {stat.value}
+                        </span>
+                        {stat.hint ? (
+                          <span class="text-muted-foreground text-xs">{stat.hint}</span>
+                        ) : null}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <dl class="flex flex-col">
+                  <div class="flex items-center justify-between gap-3 py-3">
+                    <dt class="text-muted-foreground truncate text-sm">Sessions synced</dt>
+                    <dd><Skeleton className="h-5 w-10" /></dd>
+                  </div>
+                  <div class="border-border/60 flex items-center justify-between gap-3 border-t py-3">
+                    <dt class="text-muted-foreground truncate text-sm">Active days</dt>
+                    <dd><Skeleton className="h-5 w-10" /></dd>
+                  </div>
+                  <div class="border-border/60 flex items-center justify-between gap-3 border-t py-3">
+                    <dt class="text-muted-foreground truncate text-sm">Total cost</dt>
+                    <dd><Skeleton className="h-5 w-12" /></dd>
+                  </div>
+                </dl>
+              )}
+            </CardContent>
+          </Card>
+        </aside>
+      </section>
+
+      <section aria-labelledby="roadmap-heading" class="flex flex-col gap-4">
+        <div class="flex items-baseline justify-between gap-3">
+          <h2 id="roadmap-heading" class="text-lg font-medium tracking-tight">What's next</h2>
+          <span class="text-muted-foreground text-xs">revamp doc 21</span>
+        </div>
+        <ul role="list" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <li>
+            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
+              <header class="flex items-center justify-between gap-2">
+                <span class="text-foreground text-sm font-medium">Wave A</span>
+                <Badge variant="secondary">In progress</Badge>
+              </header>
+              <p class="text-muted-foreground text-sm text-pretty">
+                Sharing loop — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/s/:slug</code> owner + public and the visibility toggle.
+              </p>
+            </article>
+          </li>
+          <li>
+            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
+              <header class="flex items-center justify-between gap-2">
+                <span class="text-foreground text-sm font-medium">Wave B</span>
+                <Badge variant="outline">Next</Badge>
+              </header>
+              <p class="text-muted-foreground text-sm text-pretty">
+                Own your data — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/sessions</code>, <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/settings</code>, CLI token management.
+              </p>
+            </article>
+          </li>
+          <li>
+            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
+              <header class="flex items-center justify-between gap-2">
+                <span class="text-foreground text-sm font-medium">Wave C</span>
+                <Badge variant="outline">Later</Badge>
+              </header>
+              <p class="text-muted-foreground text-sm text-pretty">
+                Team features — GitHub-gated <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/r/:owner/:name</code> pages and repo moderation.
+              </p>
+            </article>
+          </li>
+          <li>
+            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
+              <header class="flex items-center justify-between gap-2">
+                <span class="text-foreground text-sm font-medium">Wave D</span>
+                <Badge variant="outline">Later</Badge>
+              </header>
+              <p class="text-muted-foreground text-sm text-pretty">
+                Insights and virality — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/insights</code>, public <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/@:username</code>, OG cards.
+              </p>
+            </article>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</Layout>

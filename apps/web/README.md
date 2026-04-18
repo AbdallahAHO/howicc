@@ -26,8 +26,11 @@ The first web auth slice is now live:
   - landing page with a GitHub sign-in CTA
 - `/login`
   - GitHub sign-in entrypoint
-- `/dashboard`
-  - protected SSR page that redirects unauthenticated users to `/login`
+- `/home`
+  - protected SSR home page; redirects unauthenticated users to `/login`
+  - (legacy `/dashboard` issues a 301 redirect to `/home`)
+- `/cli/login`
+  - CLI auth bridge
 - `/debug/auth`
   - SSR auth debug page with a protected React island demo
 
@@ -89,6 +92,6 @@ The web app now uses:
 The first real SSR auth layer is now present:
 
 - middleware session lookup
-- protected dashboard route
+- protected `/home` route (replaces the `/dashboard` stub; 301 redirect in place)
 - auth debug route
 - React island demo for logout and protected fetches

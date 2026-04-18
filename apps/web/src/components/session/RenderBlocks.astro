@@ -1,0 +1,278 @@
+---
+import { Badge } from '@howicc/ui-web/badge'
+
+type Props = {
+  blocks: unknown[]
+}
+
+const { blocks } = Astro.props
+
+type MessageBlock = { type: 'message'; id: string; role: 'user' | 'assistant'; text: string }
+type ToolRun = {
+  type: 'tool_run'
+  id: string
+  toolName: string
+  source: 'native' | 'mcp'
+  title: string
+  inputPreview?: string
+  outputPreview?: string
+  status: 'ok' | 'error' | 'partial'
+}
+type HookEvent = {
+  type: 'hook_event'
+  id: string
+  title: string
+  body?: string
+  tone: 'info' | 'warning' | 'error'
+}
+type ActivityGroupBlock = {
+  type: 'activity_group'
+  id: string
+  label: string
+  defaultCollapsed: boolean
+  summary?: string
+  items: Array<ToolRun | HookEvent>
+}
+type CalloutBlock = {
+  type: 'callout'
+  id: string
+  tone: 'info' | 'warning' | 'error'
+  title: string
+  body?: string
+}
+type TodoBlock = {
+  type: 'todo_snapshot'
+  id: string
+  title: string
+  items: Array<{ content: string; status: string; priority?: string }>
+  defaultCollapsed: boolean
+}
+type QuestionBlock = {
+  type: 'question'
+  id: string
+  title: string
+  questions: Array<{
+    question: string
+    header: string
+    answer?: string
+    selectedPreview?: string
+  }>
+  outcome: 'answered' | 'declined' | 'redirected' | 'finished_plan_interview'
+  feedbackText?: string
+  defaultCollapsed: boolean
+}
+type CompactBoundary = { type: 'compact_boundary'; id: string; text: string }
+type UnknownBlock = { type: string; id: string }
+
+type AnyBlock =
+  | MessageBlock
+  | ToolRun
+  | HookEvent
+  | ActivityGroupBlock
+  | CalloutBlock
+  | TodoBlock
+  | QuestionBlock
+  | CompactBoundary
+  | UnknownBlock
+
+const toneToAlertClass: Record<'info' | 'warning' | 'error', string> = {
+  info: 'border-border bg-muted/40 text-foreground',
+  warning: 'border-yellow-500/40 bg-yellow-500/10 text-foreground',
+  error: 'border-destructive/40 bg-destructive/10 text-destructive',
+}
+
+const truncate = (value: string | undefined, limit = 600) => {
+  if (!value) return value
+  if (value.length <= limit) return value
+  return `${value.slice(0, limit)}…`
+}
+---
+
+<div class="flex flex-col gap-6">
+  {(blocks as AnyBlock[]).map((block) => {
+    if (block.type === 'message') {
+      const messageBlock = block as MessageBlock
+      const isUser = messageBlock.role === 'user'
+      return (
+        <article
+          class:list={[
+            'rounded-xl border p-4 sm:p-5',
+            isUser
+              ? 'border-border bg-muted/30'
+              : 'border-border/60 bg-background',
+          ]}
+        >
+          <header class="mb-2 flex items-center gap-2">
+            <Badge variant={isUser ? 'secondary' : 'outline'}>
+              {isUser ? 'You' : 'Claude'}
+            </Badge>
+          </header>
+          <div class="text-foreground text-sm text-pretty whitespace-pre-wrap">
+            {messageBlock.text}
+          </div>
+        </article>
+      )
+    }
+
+    if (block.type === 'activity_group') {
+      const groupBlock = block as ActivityGroupBlock
+      return (
+        <details
+          class="border-border/60 bg-muted/20 group rounded-xl border"
+          open={!groupBlock.defaultCollapsed}
+        >
+          <summary class="cursor-pointer list-none px-4 py-3 sm:px-5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex min-w-0 flex-col">
+                <p class="text-foreground truncate text-sm font-medium">{groupBlock.label}</p>
+                {groupBlock.summary ? (
+                  <p class="text-muted-foreground truncate text-xs">{groupBlock.summary}</p>
+                ) : null}
+              </div>
+              <Badge variant="outline">{groupBlock.items.length}</Badge>
+            </div>
+          </summary>
+          <ul role="list" class="border-border/60 flex flex-col border-t">
+            {groupBlock.items.map((item) => {
+              if (item.type === 'tool_run') {
+                const toolTone: 'default' | 'secondary' | 'destructive' =
+                  item.status === 'error'
+                    ? 'destructive'
+                    : item.status === 'partial'
+                      ? 'secondary'
+                      : 'default'
+                return (
+                  <li class="border-border/60 flex flex-col gap-2 px-4 py-3 [&+li]:border-t sm:px-5">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <Badge variant={toolTone}>{item.toolName}</Badge>
+                      {item.source === 'mcp' ? (
+                        <Badge variant="outline">MCP</Badge>
+                      ) : null}
+                      <p class="text-foreground min-w-0 truncate text-sm">{item.title}</p>
+                    </div>
+                    {item.inputPreview ? (
+                      <pre class="bg-muted text-foreground overflow-x-auto rounded-md px-3 py-2 font-mono text-xs leading-relaxed"><code>{truncate(item.inputPreview, 400)}</code></pre>
+                    ) : null}
+                    {item.outputPreview ? (
+                      <pre class="bg-background border-border/60 text-foreground overflow-x-auto rounded-md border px-3 py-2 font-mono text-xs leading-relaxed"><code>{truncate(item.outputPreview, 600)}</code></pre>
+                    ) : null}
+                  </li>
+                )
+              }
+              const hook = item as HookEvent
+              return (
+                <li class="border-border/60 flex flex-col gap-1 px-4 py-3 [&+li]:border-t sm:px-5">
+                  <div class="flex items-center gap-2">
+                    <Badge
+                      variant={hook.tone === 'error' ? 'destructive' : hook.tone === 'warning' ? 'secondary' : 'outline'}
+                    >
+                      Hook
+                    </Badge>
+                    <p class="text-foreground min-w-0 truncate text-sm font-medium">{hook.title}</p>
+                  </div>
+                  {hook.body ? (
+                    <p class="text-muted-foreground text-sm text-pretty">{hook.body}</p>
+                  ) : null}
+                </li>
+              )
+            })}
+          </ul>
+        </details>
+      )
+    }
+
+    if (block.type === 'callout') {
+      const callout = block as CalloutBlock
+      return (
+        <aside
+          class:list={['rounded-xl border p-4 text-sm text-pretty sm:p-5', toneToAlertClass[callout.tone]]}
+        >
+          <p class="mb-1 font-medium">{callout.title}</p>
+          {callout.body ? <p>{callout.body}</p> : null}
+        </aside>
+      )
+    }
+
+    if (block.type === 'todo_snapshot') {
+      const todoBlock = block as TodoBlock
+      return (
+        <details
+          class="border-border/60 bg-background rounded-xl border"
+          open={!todoBlock.defaultCollapsed}
+        >
+          <summary class="cursor-pointer list-none px-4 py-3 sm:px-5">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-foreground truncate text-sm font-medium">{todoBlock.title}</p>
+              <Badge variant="outline">{todoBlock.items.length}</Badge>
+            </div>
+          </summary>
+          <ul role="list" class="border-border/60 flex flex-col gap-1 border-t px-4 py-3 text-sm sm:px-5">
+            {todoBlock.items.map((todo) => (
+              <li class="flex items-start gap-2">
+                <Badge
+                  variant={todo.status === 'completed' ? 'default' : 'outline'}
+                  className="mt-0.5 shrink-0"
+                >
+                  {todo.status}
+                </Badge>
+                <p class="text-foreground text-pretty">{todo.content}</p>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+
+    if (block.type === 'question') {
+      const questionBlock = block as QuestionBlock
+      return (
+        <details
+          class="border-border/60 bg-background rounded-xl border"
+          open={!questionBlock.defaultCollapsed}
+        >
+          <summary class="cursor-pointer list-none px-4 py-3 sm:px-5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex flex-col">
+                <p class="text-foreground truncate text-sm font-medium">{questionBlock.title}</p>
+                <p class="text-muted-foreground text-xs">Outcome: {questionBlock.outcome.replace(/_/g, ' ')}</p>
+              </div>
+              <Badge variant="outline">{questionBlock.questions.length}</Badge>
+            </div>
+          </summary>
+          <ol role="list" class="border-border/60 flex flex-col gap-4 border-t px-4 py-3 text-sm sm:px-5">
+            {questionBlock.questions.map((q) => (
+              <li class="flex flex-col gap-1">
+                <p class="text-foreground font-medium text-pretty">{q.question}</p>
+                {q.answer ? (
+                  <p class="text-muted-foreground text-sm text-pretty">→ {q.answer}</p>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+          {questionBlock.feedbackText ? (
+            <p class="border-border/60 text-muted-foreground border-t px-4 py-3 text-sm text-pretty sm:px-5">
+              {questionBlock.feedbackText}
+            </p>
+          ) : null}
+        </details>
+      )
+    }
+
+    if (block.type === 'compact_boundary') {
+      const boundary = block as CompactBoundary
+      return (
+        <div class="relative flex items-center gap-3 py-2">
+          <div class="bg-border h-px flex-1"></div>
+          <p class="text-muted-foreground text-xs tracking-wide uppercase">{boundary.text}</p>
+          <div class="bg-border h-px flex-1"></div>
+        </div>
+      )
+    }
+
+    return (
+      <div class="border-border/60 bg-muted/20 text-muted-foreground rounded-xl border px-4 py-3 text-xs">
+        Unsupported block type: <code class="font-mono">{block.type}</code>
+      </div>
+    )
+  })}
+</div>

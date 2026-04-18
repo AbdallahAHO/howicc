@@ -1,0 +1,271 @@
+---
+import Layout from '../../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import { buttonVariants } from '@howicc/ui-web/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@howicc/ui-web/card'
+import RenderBlocks from '../../components/session/RenderBlocks.astro'
+import VisibilityMenuIsland from '../../components/session/VisibilityMenuIsland'
+import { createServerApiClient } from '../../lib/api/client'
+import { getRuntimeWebConfig } from '../../lib/runtime/web-config.server'
+import type { WebLocals } from '../../lib/auth/types'
+
+const locals = Astro.locals as WebLocals
+const slug = Astro.params.slug ?? ''
+
+if (!slug) {
+  return new Response(null, { status: 404 })
+}
+
+type SharedMeta = {
+  slug: string
+  conversationId: string
+  visibility: 'private' | 'unlisted' | 'public'
+  ownerUserId: string
+  isOwner: boolean
+  updatedAt: string
+}
+
+type RenderDocumentResponse = {
+  kind: 'render_document'
+  schemaVersion: number
+  session: {
+    sessionId: string
+    title: string
+    provider: string
+    createdAt: string
+    updatedAt: string
+    gitBranch?: string
+    tag?: string
+    stats: { messageCount: number; toolRunCount: number; activityGroupCount: number }
+  }
+  context?: {
+    currentPlan?: {
+      title: string
+      body: string
+      source: 'file' | 'transcript_recovered'
+      filePath?: string
+      artifactId?: string
+    }
+  }
+  blocks: unknown[]
+  sharedMeta: SharedMeta
+}
+
+const api = createServerApiClient({
+  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const result = await api.conversations.getShared(slug).catch(() => null)
+
+const payload = result as RenderDocumentResponse | { success: false; code?: string } | null
+const isNotFound =
+  !payload ||
+  (typeof payload === 'object' &&
+    'success' in payload &&
+    payload.success === false)
+
+if (isNotFound) {
+  Astro.response.status = 404
+}
+
+const doc = !isNotFound ? (payload as RenderDocumentResponse) : null
+const title = doc ? doc.session.title : 'Conversation not found'
+const viewerIsAuthenticated = Boolean(locals.auth.user)
+
+const visibilityLabel: Record<SharedMeta['visibility'], string> = {
+  private: 'Private',
+  unlisted: 'Unlisted',
+  public: 'Public',
+}
+
+const visibilityTone: Record<SharedMeta['visibility'], 'default' | 'secondary' | 'outline'> = {
+  private: 'secondary',
+  unlisted: 'outline',
+  public: 'default',
+}
+
+const formatDateTime = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+---
+
+<Layout title={title}>
+  <div class="isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div class="mx-auto flex w-full max-w-5xl items-center gap-3 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+        <div class="ml-auto flex items-center gap-2 text-sm">
+          {viewerIsAuthenticated ? (
+            <a
+              href="/home"
+              class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
+            >
+              ← Home
+            </a>
+          ) : (
+            <a
+              href="/login"
+              class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-8 items-center rounded-md px-3 font-medium"
+            >
+              Sign in
+            </a>
+          )}
+        </div>
+      </div>
+    </header>
+
+    {doc ? (
+      <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+        <section class="flex flex-col gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <Badge variant={visibilityTone[doc.sharedMeta.visibility]}>
+              {visibilityLabel[doc.sharedMeta.visibility]}
+            </Badge>
+            {doc.sharedMeta.isOwner ? <Badge variant="outline">Owner view</Badge> : null}
+            {doc.session.tag ? <Badge variant="secondary">{doc.session.tag}</Badge> : null}
+          </div>
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
+            <div class="flex min-w-0 flex-col gap-1">
+              <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                {doc.session.title}
+              </h1>
+              <p class="text-muted-foreground text-sm">
+                <span class="tabular-nums">{doc.session.stats.messageCount}</span> messages ·
+                <span class="tabular-nums"> {doc.session.stats.toolRunCount}</span> tool runs ·
+                <span class="tabular-nums"> {doc.session.stats.activityGroupCount}</span> activity groups
+              </p>
+            </div>
+            {doc.sharedMeta.isOwner ? (
+              <VisibilityMenuIsland
+                client:load
+                apiUrl={locals.authApiUrl}
+                conversationId={doc.sharedMeta.conversationId}
+                initialVisibility={doc.sharedMeta.visibility}
+              />
+            ) : null}
+          </div>
+        </section>
+
+        <section class="grid gap-8 md:grid-cols-[minmax(0,1fr)_18rem] md:items-start">
+          <div class="flex min-w-0 flex-col gap-6">
+            {doc.context?.currentPlan ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Badge variant="secondary">Plan</Badge>
+                    <span>{doc.context.currentPlan.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre class="text-foreground whitespace-pre-wrap font-mono text-sm leading-relaxed">{doc.context.currentPlan.body}</pre>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {doc.blocks.length > 0 ? (
+              <RenderBlocks blocks={doc.blocks} />
+            ) : (
+              <Card>
+                <CardContent>
+                  <p class="text-muted-foreground py-6 text-center text-sm">
+                    This conversation has no rendered blocks yet.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <aside class="flex flex-col gap-4 md:sticky md:top-24">
+            <Card size="sm">
+              <CardHeader>
+                <CardTitle>Session</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <dl class="text-sm">
+                  <div class="flex items-baseline justify-between gap-3 py-1.5">
+                    <dt class="text-muted-foreground">Provider</dt>
+                    <dd class="font-mono text-xs">{doc.session.provider}</dd>
+                  </div>
+                  {doc.session.gitBranch ? (
+                    <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                      <dt class="text-muted-foreground">Branch</dt>
+                      <dd class="max-w-[60%] truncate font-mono text-xs">{doc.session.gitBranch}</dd>
+                    </div>
+                  ) : null}
+                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                    <dt class="text-muted-foreground">Created</dt>
+                    <dd class="tabular-nums text-xs">{formatDateTime(doc.session.createdAt)}</dd>
+                  </div>
+                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                    <dt class="text-muted-foreground">Updated</dt>
+                    <dd class="tabular-nums text-xs">{formatDateTime(doc.session.updatedAt)}</dd>
+                  </div>
+                </dl>
+              </CardContent>
+            </Card>
+
+            {!doc.sharedMeta.isOwner && viewerIsAuthenticated ? (
+              <Card size="sm">
+                <CardHeader>
+                  <CardTitle>Shared with you</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p class="text-muted-foreground text-sm text-pretty">
+                    This conversation was shared by another HowiCC user. Only the owner can change its visibility.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {!viewerIsAuthenticated ? (
+              <Card size="sm">
+                <CardHeader>
+                  <CardTitle>Seen something you like?</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3">
+                  <p class="text-muted-foreground text-sm text-pretty">
+                    Sign in to sync your own Claude Code sessions and share them like this.
+                  </p>
+                  <a href="/login" class={buttonVariants({ variant: 'default' })}>
+                    Sign in with GitHub
+                  </a>
+                </CardContent>
+              </Card>
+            ) : null}
+          </aside>
+        </section>
+      </main>
+    ) : (
+      <main class="mx-auto flex w-full max-w-2xl flex-col items-start gap-6 px-4 py-20 sm:px-6">
+        <Badge variant="outline">404</Badge>
+        <h1 class="text-3xl font-semibold tracking-tight text-balance">
+          We couldn't find that conversation.
+        </h1>
+        <p class="text-muted-foreground text-base text-pretty">
+          It may be private, unpublished, or the link is wrong. Private conversations are only visible to the owner when signed in.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          {viewerIsAuthenticated ? (
+            <a href="/home" class={buttonVariants({ variant: 'default' })}>
+              Back to home
+            </a>
+          ) : (
+            <a href="/login" class={buttonVariants({ variant: 'default' })}>
+              Sign in
+            </a>
+          )}
+          <a href="/" class={buttonVariants({ variant: 'outline' })}>
+            Home
+          </a>
+        </div>
+      </main>
+    )}
+  </div>
+</Layout>
