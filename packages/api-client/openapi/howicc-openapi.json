@@ -147,6 +147,8 @@
           "repo_identifier_invalid",
           "conversation_not_found",
           "artifact_not_found",
+          "asset_not_found",
+          "token_not_found",
           "upload_request_invalid",
           "upload_asset_target_missing",
           "upload_session_not_found",
@@ -3256,6 +3258,125 @@
           },
           "500": {
             "description": "Visibility update failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/assets/{assetId}": {
+      "get": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Fetch a text preview for an asset referenced by a render block",
+        "description": "Returns the stored text preview and metadata for an `AssetRef` captured in the canonical session (source file, tool output, plan file, brief attachment, MCP blob). Visibility-gated against the owning conversation: private conversations require the owner bearer token or cookie. Callers that just want the session's render document should use `/shared/:slug` or `/conversations/:id/render` instead.",
+        "operationId": "getConversationAsset",
+        "security": [
+          {},
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "assetId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset metadata and text preview",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "assetId": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "source_file",
+                        "tool_output",
+                        "plan_file",
+                        "brief_attachment",
+                        "mcp_blob",
+                        "unknown"
+                      ]
+                    },
+                    "storage": {
+                      "type": "string",
+                      "enum": [
+                        "bundle",
+                        "inline",
+                        "remote"
+                      ]
+                    },
+                    "mimeType": {
+                      "type": "string"
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "relPath": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "assetId",
+                    "kind",
+                    "storage",
+                    "content"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation or asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
             "content": {
               "application/json": {
                 "schema": {

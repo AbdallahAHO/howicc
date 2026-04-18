@@ -118,6 +118,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    [path: `/conversations/${string}/assets/${string}`]: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch a text preview for an asset referenced by a render block
+         * @description Returns the stored text preview and metadata for an `AssetRef` captured in the canonical session (source file, tool output, plan file, brief attachment, MCP blob). Visibility-gated against the owning conversation: private conversations require the owner bearer token or cookie. Callers that just want the session's render document should use `/shared/:slug` or `/conversations/:id/render` instead.
+         */
+        get: operations["getConversationAsset"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     [path: `/conversations/${string}/render`]: {
         parameters: {
             query?: never;
@@ -1254,6 +1274,59 @@ export interface operations {
             };
         };
     };
+    getConversationAsset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assetId: string;
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Asset metadata and text preview */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        assetId: string;
+                        bytes?: number;
+                        content: string;
+                        /** @enum {string} */
+                        kind: PathsConversationsConversationIdAssetsAssetIdGetResponses200ContentApplicationJsonKind;
+                        mimeType?: string;
+                        relPath?: string;
+                        /** @enum {string} */
+                        storage: PathsConversationsConversationIdAssetsAssetIdGetResponses200ContentApplicationJsonStorage;
+                        /** @enum {boolean} */
+                        success: true;
+                    };
+                };
+            };
+            /** @description Conversation or asset not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getConversationRenderDocument: {
         parameters: {
             query?: never;
@@ -1973,6 +2046,19 @@ export interface operations {
         };
     };
 }
+export enum PathsConversationsConversationIdAssetsAssetIdGetResponses200ContentApplicationJsonKind {
+    source_file = "source_file",
+    tool_output = "tool_output",
+    plan_file = "plan_file",
+    brief_attachment = "brief_attachment",
+    mcp_blob = "mcp_blob",
+    unknown = "unknown"
+}
+export enum PathsConversationsConversationIdAssetsAssetIdGetResponses200ContentApplicationJsonStorage {
+    bundle = "bundle",
+    inline = "inline",
+    remote = "remote"
+}
 export enum PathsPricingModelsGetResponses200ContentApplicationJsonModelsSource {
     openrouter_public_catalog = "openrouter_public_catalog"
 }
@@ -1990,6 +2076,8 @@ export enum ApiErrorCode {
     repo_identifier_invalid = "repo_identifier_invalid",
     conversation_not_found = "conversation_not_found",
     artifact_not_found = "artifact_not_found",
+    asset_not_found = "asset_not_found",
+    token_not_found = "token_not_found",
     upload_request_invalid = "upload_request_invalid",
     upload_asset_target_missing = "upload_asset_target_missing",
     upload_session_not_found = "upload_session_not_found",
@@ -2123,6 +2211,7 @@ export enum ApiPaths {
     getConversationRenderDocument = "/conversations/{conversationId}/render",
     getSharedRenderDocument = "/shared/{slug}",
     updateConversationVisibility = "/conversations/{conversationId}/visibility",
+    getConversationAsset = "/conversations/{conversationId}/assets/{assetId}",
     getConversationArtifact = "/conversations/{conversationId}/artifacts/{artifactId}",
     listPricingModels = "/pricing/models",
     getProfile = "/profile",

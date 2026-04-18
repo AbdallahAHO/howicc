@@ -2,6 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 import {
   getArtifactRoute,
+  getAssetPreviewRoute,
   getRenderDocumentRoute,
   getSharedRenderDocumentRoute,
   listConversationsRoute,
@@ -11,6 +12,7 @@ import { createApiRuntime } from '../runtime'
 import {
   getSharedRenderDocumentBySlug,
   getStoredArtifactPreview,
+  getStoredAssetPreview,
   getStoredRenderDocument,
   listUserConversations,
   updateConversationVisibility,
@@ -218,6 +220,55 @@ app.openapi(updateConversationVisibilityRoute, async c => {
     const response = toApiErrorResponse(error, 'internalError')
     const status =
       response.status === 401 ? 401 : response.status === 404 ? 404 : 500
+
+    return c.json(
+      {
+        success: false,
+        code: response.code,
+        error: response.error,
+      },
+      status,
+    )
+  }
+})
+
+app.openapi(getAssetPreviewRoute, async c => {
+  try {
+    const runtime = createApiRuntime(c.env as Record<string, unknown>)
+    const conversationId = c.req.param('conversationId') ?? ''
+    const assetId = c.req.param('assetId') ?? ''
+
+    if (!conversationId || !assetId) {
+      return c.json(toApiErrorPayload('assetNotFound', 'Asset not found.'), 404)
+    }
+
+    const asset = await getStoredAssetPreview(
+      runtime,
+      conversationId,
+      assetId,
+      c.req.header('Authorization'),
+    )
+
+    if (!asset) {
+      return c.json(toApiErrorPayload('assetNotFound', 'Asset not found.'), 404)
+    }
+
+    return c.json(
+      {
+        success: true as const,
+        assetId: asset.assetId,
+        kind: asset.kind,
+        storage: asset.storage,
+        mimeType: asset.mimeType,
+        bytes: asset.bytes,
+        relPath: asset.relPath,
+        content: asset.content,
+      },
+      200,
+    )
+  } catch (error) {
+    const response = toApiErrorResponse(error, 'internalError')
+    const status = response.status === 404 ? 404 : 500
 
     return c.json(
       {

@@ -2,14 +2,20 @@
 import type { RenderResourceBlock } from '@howicc/contracts'
 import BlockHeader from './shared/BlockHeader.astro'
 import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+import ContentDrawerIsland from './shared/ContentDrawerIsland'
 import MonoChip from './shared/MonoChip.astro'
 import ToolRunPreview from './shared/ToolRunPreview.astro'
 
 type Props = {
   block: RenderResourceBlock
+  conversationId?: string
+  apiUrl?: string
 }
 
-const { block } = Astro.props
+const { block, conversationId, apiUrl } = Astro.props
+
+const canDrillDownAsset =
+  Boolean(block.assetId) && Boolean(conversationId) && Boolean(apiUrl)
 ---
 
 <CollapsibleBlockShell
@@ -38,15 +44,24 @@ const { block } = Astro.props
       <ToolRunPreview label="output" body={block.previewText} />
     ) : (
       <p class="text-muted-foreground text-sm">
-        No preview available. Open the resource to inspect it.
+        No preview available. Open the asset to inspect its stored content.
       </p>
     )}
 
-    {block.assetId ? (
+    {canDrillDownAsset && block.assetId ? (
+      <ContentDrawerIsland
+        client:load
+        apiUrl={apiUrl!}
+        conversationId={conversationId!}
+        kind="asset"
+        id={block.assetId}
+        label={block.server ?? block.title}
+      />
+    ) : block.assetId ? (
       <p class="text-muted-foreground text-xs">
         Asset
         <MonoChip label={block.assetId} class="ml-1" />
-        <span class="text-muted-foreground ml-1">— stored in R2; needs a dedicated resource-asset endpoint.</span>
+        <span class="text-muted-foreground ml-1">— open this resource from a conversation context to preview.</span>
       </p>
     ) : null}
   </div>

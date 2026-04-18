@@ -187,6 +187,17 @@ export const createApiClient = (config: ApiClientConfig) => {
             },
           }),
         ),
+      getAsset: (conversationId: string, assetId: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getConversationAsset, {
+            params: {
+              path: {
+                assetId,
+                conversationId,
+              },
+            },
+          }),
+        ),
     },
     pricing: {
       getModels: () => unwrapFetchResult(fetchClient.GET(ApiPaths.listPricingModels)),

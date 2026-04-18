@@ -217,6 +217,65 @@ export const updateConversationVisibilityRoute = createRoute({
   },
 })
 
+export const getAssetPreviewRoute = createRoute({
+  method: 'get',
+  path: '/conversations/{conversationId}/assets/{assetId}',
+  tags: ['Artifacts'],
+  summary: 'Fetch a text preview for an asset referenced by a render block',
+  description:
+    "Returns the stored text preview and metadata for an `AssetRef` captured in the canonical session (source file, tool output, plan file, brief attachment, MCP blob). Visibility-gated against the owning conversation: private conversations require the owner bearer token or cookie. Callers that just want the session's render document should use `/shared/:slug` or `/conversations/:id/render` instead.",
+  operationId: 'getConversationAsset',
+  security: [{}, { BearerAuth: [] }, { BrowserSession: [] }],
+  request: {
+    params: z.object({
+      conversationId: z.string(),
+      assetId: z.string(),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Asset metadata and text preview',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            assetId: z.string(),
+            kind: z.enum([
+              'source_file',
+              'tool_output',
+              'plan_file',
+              'brief_attachment',
+              'mcp_blob',
+              'unknown',
+            ]),
+            storage: z.enum(['bundle', 'inline', 'remote']),
+            mimeType: z.string().optional(),
+            bytes: z.number().int().nonnegative().optional(),
+            relPath: z.string().optional(),
+            content: z.string(),
+          }),
+        },
+      },
+    },
+    404: {
+      description: 'Conversation or asset not found',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    500: {
+      description: 'Internal error',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+  },
+})
+
 export const getArtifactRoute = createRoute({
   method: 'get',
   path: '/conversations/{conversationId}/artifacts/{artifactId}',

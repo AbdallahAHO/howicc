@@ -1,7 +1,7 @@
 ---
 import type { RenderToolRunActivity } from '@howicc/contracts'
 import { Badge } from '@howicc/ui-web/badge'
-import ArtifactDrawerIsland from './shared/ArtifactDrawerIsland'
+import ContentDrawerIsland from './shared/ContentDrawerIsland'
 import MonoChip from './shared/MonoChip.astro'
 import StatusPill from './shared/StatusPill.astro'
 import ToolRunPreview from './shared/ToolRunPreview.astro'
@@ -37,11 +37,12 @@ const canDrillDown =
   ) : null}
 
   {canDrillDown && item.artifactId ? (
-    <ArtifactDrawerIsland
+    <ContentDrawerIsland
       client:load
       apiUrl={apiUrl!}
       conversationId={conversationId!}
-      artifactId={item.artifactId}
+      kind="artifact"
+      id={item.artifactId}
       label={item.toolName}
     />
   ) : item.artifactId ? (

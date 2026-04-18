@@ -56,6 +56,54 @@ export const getStoredRenderDocument = async (
   return parseGzipJson<Record<string, unknown>>(object.body as ArrayBuffer)
 }
 
+/**
+ * Fetches an AssetRef preview from the canonical session.
+ *
+ * Resource and tool-run blocks reference assets by id; this service
+ * resolves the id against `canonical.assets`, returns the preview text
+ * (for `storage: 'inline'` assets this is the full content; for bundled
+ * or remote assets it's a summary), plus metadata (kind, mime, bytes,
+ * relPath) so the UI can render a meaningful drawer even when there's
+ * no previewable text.
+ *
+ * Visibility-gated via `getConversationAccess` — private conversations
+ * require the owner bearer token or browser session.
+ */
+export const getStoredAssetPreview = async (
+  runtime: ApiRuntime,
+  conversationId: string,
+  assetId: string,
+  authorizationHeader?: string,
+) => {
+  const { canonicalAsset } = await getConversationAccess(runtime, conversationId, authorizationHeader)
+  const storage = getRuntimeStorage(runtime)
+  const object = await storage.getObject(canonicalAsset.storageKey)
+
+  if (!object) {
+    throw new ApiError(
+      'internalError',
+      'The stored canonical session could not be found in R2.',
+    )
+  }
+
+  const canonical = parseGzipJson<CanonicalSession>(object.body as ArrayBuffer)
+  const asset = canonical.assets.find((candidate) => candidate.id === assetId)
+
+  if (!asset) {
+    return null
+  }
+
+  return {
+    assetId: asset.id,
+    kind: asset.kind,
+    storage: asset.storage,
+    mimeType: asset.mimeType,
+    bytes: asset.bytes,
+    relPath: asset.relPath,
+    content: asset.textPreview ?? '',
+  }
+}
+
 export const getStoredArtifactPreview = async (
   runtime: ApiRuntime,
   conversationId: string,

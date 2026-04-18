@@ -2,6 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { cliAuthAuthorizeRoute, cliAuthExchangeRoute, cliAuthWhoamiRoute } from './cli-auth'
 import {
   getArtifactRoute,
+  getAssetPreviewRoute,
   getRenderDocumentRoute,
   getSharedRenderDocumentRoute,
   listConversationsRoute,
@@ -65,6 +66,7 @@ export const routes = app
   .openapi(getSharedRenderDocumentRoute, contractHandler)
   .openapi(updateConversationVisibilityRoute, contractHandler)
   .openapi(getArtifactRoute, contractHandler)
+  .openapi(getAssetPreviewRoute, contractHandler)
   .openapi(openRouterModelsRoute, contractHandler)
   .openapi(cliAuthAuthorizeRoute, contractHandler)
   .openapi(cliAuthExchangeRoute, contractHandler)

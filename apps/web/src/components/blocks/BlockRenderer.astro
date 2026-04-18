@@ -62,7 +62,13 @@ const assertExhaustive = (_block: never, type: string) => type
       case 'task_timeline':
         return <BlockTaskTimeline block={block} />
       case 'resource':
-        return <BlockResource block={block} />
+        return (
+          <BlockResource
+            block={block}
+            conversationId={conversationId}
+            apiUrl={apiUrl}
+          />
+        )
       case 'structured_data':
         return <BlockStructuredData block={block} />
       case 'brief_delivery':

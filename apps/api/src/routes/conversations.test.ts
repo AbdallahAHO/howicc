@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   listUserConversations: vi.fn(),
   getStoredRenderDocument: vi.fn(),
   getStoredArtifactPreview: vi.fn(),
+  getStoredAssetPreview: vi.fn(),
 }))
 
 vi.mock('../runtime', () => ({
@@ -38,6 +39,7 @@ vi.mock('../modules/conversations/service', async () => {
     listUserConversations: mocks.listUserConversations,
     getStoredRenderDocument: mocks.getStoredRenderDocument,
     getStoredArtifactPreview: mocks.getStoredArtifactPreview,
+    getStoredAssetPreview: mocks.getStoredAssetPreview,
   }
 })
 
@@ -209,6 +211,53 @@ describe('conversations routes', () => {
       'public',
       { viewerUserId: 'user_1' },
     )
+  })
+
+  it('returns an asset preview with metadata on GET /conversations/:id/assets/:assetId', async () => {
+    mocks.getStoredAssetPreview.mockResolvedValue({
+      assetId: 'asset_1',
+      kind: 'tool_output',
+      storage: 'inline',
+      mimeType: 'text/plain',
+      bytes: 42,
+      relPath: 'logs/test.txt',
+      content: 'hello world',
+    })
+
+    const response = await conversationsRoutes.request(
+      'http://localhost/conversations/conv_1/assets/asset_1',
+      undefined,
+      runtimeEnv,
+    )
+
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      assetId: 'asset_1',
+      kind: 'tool_output',
+      storage: 'inline',
+      mimeType: 'text/plain',
+      bytes: 42,
+      relPath: 'logs/test.txt',
+      content: 'hello world',
+    })
+  })
+
+  it('returns 404 when the asset id does not resolve', async () => {
+    mocks.getStoredAssetPreview.mockResolvedValue(null)
+
+    const response = await conversationsRoutes.request(
+      'http://localhost/conversations/conv_1/assets/asset_missing',
+      undefined,
+      runtimeEnv,
+    )
+
+    expect(response.status).toBe(404)
+    await expect(response.json()).resolves.toEqual({
+      success: false,
+      code: 'asset_not_found',
+      error: 'Asset not found.',
+    })
   })
 
   it('returns 404 when the conversation is not owned by the caller', async () => {
