@@ -166,7 +166,7 @@ const phaseGroups = doc
         {phaseGroups.length > 1 ? (
           <nav
             aria-label="Phases"
-            class="border-border/60 bg-background/90 supports-[backdrop-filter]:bg-background/70 -mx-4 flex gap-2 overflow-x-auto border-y px-4 py-2 backdrop-blur lg:hidden"
+            class="border-border/60 bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-14 z-30 -mx-4 flex gap-2 overflow-x-auto border-b px-4 py-2 backdrop-blur lg:hidden"
           >
             <ul role="list" class="flex items-center gap-2 text-xs">
               {phaseGroups.map((group, index) => (
@@ -216,7 +216,7 @@ const phaseGroups = doc
                     aria-labelledby={`${group.anchor}-heading`}
                     class="scroll-mt-24 flex flex-col gap-4"
                   >
-                    <header class="flex items-baseline gap-3 border-b border-border/60 pb-2">
+                    <header class="border-border/60 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b pb-2">
                       <span
                         class="text-muted-foreground tabular-nums text-[0.6875rem] font-medium tracking-wide uppercase"
                         aria-hidden="true"
@@ -229,7 +229,7 @@ const phaseGroups = doc
                       >
                         {group.label}
                       </h2>
-                      <span class="text-muted-foreground text-[0.6875rem]">
+                      <span class="text-muted-foreground text-[0.6875rem] tabular-nums">
                         {group.blocks.length} {group.blocks.length === 1 ? 'block' : 'blocks'}
                       </span>
                     </header>
@@ -258,64 +258,87 @@ const phaseGroups = doc
             )}
           </div>
 
-          <aside class="flex flex-col gap-4 md:sticky md:top-24">
-            <Card size="sm">
-              <CardHeader>
-                <CardTitle>Session</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <dl class="text-sm">
-                  <div class="flex items-baseline justify-between gap-3 py-1.5">
-                    <dt class="text-muted-foreground">Provider</dt>
-                    <dd class="font-mono text-xs">{doc.session.provider}</dd>
-                  </div>
-                  {doc.session.gitBranch ? (
-                    <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
-                      <dt class="text-muted-foreground">Branch</dt>
-                      <dd class="max-w-[60%] truncate font-mono text-xs">{doc.session.gitBranch}</dd>
-                    </div>
-                  ) : null}
-                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
-                    <dt class="text-muted-foreground">Created</dt>
-                    <dd class="tabular-nums text-xs">{formatDateTime(doc.session.createdAt)}</dd>
-                  </div>
-                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
-                    <dt class="text-muted-foreground">Updated</dt>
-                    <dd class="tabular-nums text-xs">{formatDateTime(doc.session.updatedAt)}</dd>
-                  </div>
-                </dl>
-              </CardContent>
-            </Card>
+          <details
+            open
+            data-responsive-details
+            data-breakpoint="768"
+            class="group/meta border-border/60 bg-background overflow-hidden rounded-xl border md:sticky md:top-24 md:self-start md:overflow-visible md:rounded-none md:border-0 md:bg-transparent"
+          >
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 md:hidden [&::-webkit-details-marker]:hidden">
+              <span class="text-foreground text-sm font-medium">Session info</span>
+              <svg
+                class="text-muted-foreground size-4 transition-transform group-open/meta:rotate-180"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 6l4 4 4-4" />
+              </svg>
+            </summary>
 
-            {!doc.sharedMeta.isOwner && viewerIsAuthenticated ? (
+            <div class="border-border/60 flex flex-col gap-4 border-t p-4 md:border-0 md:p-0">
               <Card size="sm">
                 <CardHeader>
-                  <CardTitle>Shared with you</CardTitle>
+                  <CardTitle>Session</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p class="text-muted-foreground text-sm text-pretty">
-                    This conversation was shared by another HowiCC user. Only the owner can change its visibility.
-                  </p>
+                  <dl class="text-sm">
+                    <div class="flex items-baseline justify-between gap-3 py-1.5">
+                      <dt class="text-muted-foreground">Provider</dt>
+                      <dd class="font-mono text-xs">{doc.session.provider}</dd>
+                    </div>
+                    {doc.session.gitBranch ? (
+                      <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                        <dt class="text-muted-foreground">Branch</dt>
+                        <dd class="max-w-[60%] truncate font-mono text-xs">{doc.session.gitBranch}</dd>
+                      </div>
+                    ) : null}
+                    <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                      <dt class="text-muted-foreground">Created</dt>
+                      <dd class="tabular-nums text-xs">{formatDateTime(doc.session.createdAt)}</dd>
+                    </div>
+                    <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                      <dt class="text-muted-foreground">Updated</dt>
+                      <dd class="tabular-nums text-xs">{formatDateTime(doc.session.updatedAt)}</dd>
+                    </div>
+                  </dl>
                 </CardContent>
               </Card>
-            ) : null}
 
-            {!viewerIsAuthenticated ? (
-              <Card size="sm">
-                <CardHeader>
-                  <CardTitle>Seen something you like?</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  <p class="text-muted-foreground text-sm text-pretty">
-                    Sign in to sync your own Claude Code sessions and share them like this.
-                  </p>
-                  <a href="/login" class={buttonVariants({ variant: 'default' })}>
-                    Sign in with GitHub
-                  </a>
-                </CardContent>
-              </Card>
-            ) : null}
-          </aside>
+              {!doc.sharedMeta.isOwner && viewerIsAuthenticated ? (
+                <Card size="sm">
+                  <CardHeader>
+                    <CardTitle>Shared with you</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p class="text-muted-foreground text-sm text-pretty">
+                      This conversation was shared by another HowiCC user. Only the owner can change its visibility.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : null}
+
+              {!viewerIsAuthenticated ? (
+                <Card size="sm">
+                  <CardHeader>
+                    <CardTitle>Seen something you like?</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-3">
+                    <p class="text-muted-foreground text-sm text-pretty">
+                      Sign in to sync your own Claude Code sessions and share them like this.
+                    </p>
+                    <a href="/login" class={buttonVariants({ variant: 'default' })}>
+                      Sign in with GitHub
+                    </a>
+                  </CardContent>
+                </Card>
+              ) : null}
+            </div>
+          </details>
         </section>
       </main>
     ) : (
@@ -347,6 +370,8 @@ const phaseGroups = doc
 
   <script>
     import { wirePhaseSpine } from '../../components/session/wirePhaseSpine'
+    import { wireResponsiveDetails } from '../../components/session/wireResponsiveDetails'
     wirePhaseSpine()
+    wireResponsiveDetails()
   </script>
 </Layout>

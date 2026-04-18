@@ -197,8 +197,17 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   visitors still see the TOC. Residual: Claude-style connector lines
   between blocks within a phase, and moving the heuristic into
   `@howicc/render` once it stabilises.
-- **Mobile-first polish for public view** — doc 17 calls this the most
-  important mobile surface; current layout is desktop-leaning.
+- ~~**Mobile-first polish for public view**~~ ◐ shipped 2026-04-19.
+  The mobile phase chip bar now pins sticky at `top-14` beneath the
+  header with a backdrop-blur surface so the active phase stays in
+  reach while reading. Phase section headers wrap gracefully on narrow
+  screens. The session-meta sidebar is now a native `<details open>`
+  that collapses into a compact "Session info" disclosure on mobile
+  and stays in its sticky desktop slot via `md:sticky md:top-24`; a
+  small `wireResponsiveDetails()` helper locks the details open on md+
+  and restores the user's toggle preference when the viewport shrinks
+  below 768. Remaining: bottom-sheet pattern for the visibility menu,
+  44px minimum tap targets on icon buttons (currently 32–36px).
 - ~~**Artifact drilldown**~~ ✓ shipped 2026-04-19. Tool runs with an
   `artifactId` now render an inline `ArtifactDrawerIsland` — first click
   opens + fetches `GET /conversations/:id/artifacts/:id`, subsequent
@@ -208,8 +217,14 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   `BlockRenderer → BlockActivityGroup → ToolRun` (and recurse through
   `BlockSubagentThread`). Resource-block `assetId` drilldown still
   waiting on a dedicated resource-asset endpoint — flagged in place.
-- **"Load more" feed pagination** on `/home` — cursor is returned by the API
-  but no UI consumes it.
+- ~~**"Load more" feed pagination**~~ ✓ shipped 2026-04-19. `ActivityFeedIsland`
+  owns the full /home feed (SSR + hydration), takes initial items and
+  cursor as props, and extends the list via
+  `api.profile.activity({ cursor, limit })` on button click. Pending,
+  error, and "caught up" states handled inline; loader spinner during
+  fetch. Shared formatters (`components/home/format.ts`) and typed
+  models (`components/home/activity-types.ts`) ensure SSR and client
+  render byte-identically.
 
 Everything else (insights, repo pages, settings, public profile, sessions
 list) is post-loop and can sequence behind these.
