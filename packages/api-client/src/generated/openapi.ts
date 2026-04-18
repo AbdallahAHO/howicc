@@ -18,6 +18,50 @@ export type Writable<T> = T extends $Read<any> ? never : T extends $Write<infer 
     [K in keyof T as NonNullable<T[K]> extends $Read<any> ? K : never]?: never;
 } : T;
 export interface paths {
+    "/api-tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List API tokens for the authenticated user
+         * @description Returns the caller's API tokens with opaque metadata (id, 12-char prefix, createdAt, revokedAt). Tokens are never returned in plaintext after creation.
+         */
+        get: operations["listApiTokens"];
+        put?: never;
+        /**
+         * Mint a new API token for the authenticated user
+         * @description Generates a new `hwi_*` bearer token for the caller. The plaintext `secret` is returned once in this response; the server only stores a SHA-256 hash. Pair the new token with the CLI (`howicc login` or a manual config entry) to authenticate subsequent requests.
+         */
+        post: operations["createApiToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    [path: `/api-tokens/${string}`]: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Revoke an API token owned by the caller
+         * @description Sets `revokedAt` on the caller's token. Revoked tokens remain in the list (marked revoked) so the UI can surface audit history; they stop authenticating immediately. Returns 404 when the token does not exist or belongs to a different user — the 404 is deliberate so non-owners can't probe for token ids.
+         */
+        delete: operations["revokeApiToken"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/cli-auth/authorize": {
         parameters: {
             query?: never;
@@ -444,6 +488,20 @@ export interface components {
     schemas: {
         /** @enum {string} */
         ApiErrorCode: ApiErrorCode;
+        ApiTokenSummary: {
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            createdAt: string;
+            id: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            revokedAt?: string;
+            tokenPrefix: string;
+        };
         ClaudeCodeProviderProfile: {
             avgTurnsPerSession: number;
             cacheHitRate?: number;
@@ -500,6 +558,13 @@ export interface components {
         };
         /** @enum {string} */
         ConversationVisibility: ConversationVisibility;
+        CreateApiTokenResponse: {
+            /** @description The plaintext bearer token. Returned once at creation time; the server only stores a SHA-256 hash. The caller must capture this value immediately — it cannot be retrieved later. */
+            secret: string;
+            /** @enum {boolean} */
+            success: true;
+            token: components["schemas"]["ApiTokenSummary"];
+        };
         ErrorResponse: {
             code: components["schemas"]["ApiErrorCode"];
             /** @example Authentication required. */
@@ -512,6 +577,11 @@ export interface components {
             status: HealthResponseStatus;
             /** @enum {boolean} */
             success: true;
+        };
+        ListApiTokensResponse: {
+            /** @enum {boolean} */
+            success: true;
+            tokens: components["schemas"]["ApiTokenSummary"][];
         };
         ProfileActivityItem: {
             conversationId: string;
@@ -815,6 +885,16 @@ export interface components {
             /** @enum {boolean} */
             success: true;
         };
+        RevokeApiTokenResponse: {
+            id: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            revokedAt: string;
+            /** @enum {boolean} */
+            success: true;
+        };
         /** @enum {string} */
         SessionType: SessionType;
         SessionTypeDistribution: {
@@ -1073,6 +1153,131 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listApiTokens: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Token summaries, ordered newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListApiTokensResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createApiToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Token created; secret returned once */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateApiTokenResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    revokeApiToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tokenId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Token was revoked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevokeApiTokenResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Token not found or not owned by the caller */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     authorizeCliSession: {
         parameters: {
             query?: never;
@@ -2204,6 +2409,9 @@ export enum ApiPaths {
     authorizeCliSession = "/cli-auth/authorize",
     exchangeCliGrant = "/cli-auth/exchange",
     getCliTokenOwner = "/cli-auth/whoami",
+    listApiTokens = "/api-tokens",
+    createApiToken = "/api-tokens",
+    revokeApiToken = "/api-tokens/{tokenId}",
     createUploadSession = "/uploads/sessions",
     uploadRevisionAsset = "/uploads/{uploadId}/assets/{kind}",
     finalizeUploadRevision = "/uploads/finalize",

@@ -256,6 +256,16 @@ export const createApiClient = (config: ApiClientConfig) => {
         }
       },
     },
+    apiTokens: {
+      list: () => unwrapFetchResult(fetchClient.GET(ApiPaths.listApiTokens)),
+      create: () => unwrapFetchResult(fetchClient.POST(ApiPaths.createApiToken)),
+      revoke: (tokenId: string) =>
+        unwrapFetchResult(
+          fetchClient.DELETE(ApiPaths.revokeApiToken, {
+            params: { path: { tokenId } },
+          }),
+        ),
+    },
     cliAuth: {
       authorize: (body: {
         callbackUrl: string

@@ -1,4 +1,5 @@
 import { apiReference } from '@scalar/hono-api-reference'
+import apiTokensRoutes from './routes/apiTokens'
 import authRoutes from './routes/auth'
 import cliAuthRoutes from './routes/cliAuth'
 import conversationsRoutes from './routes/conversations'
@@ -25,6 +26,7 @@ export const createApp = () => {
   app.route('/', healthRoutes)
   app.route('/', authRoutes)
   app.route('/', cliAuthRoutes)
+  app.route('/', apiTokensRoutes)
   app.route('/', uploadsRoutes)
   app.route('/', conversationsRoutes)
   app.route('/', pricingRoutes)
@@ -54,6 +56,10 @@ export const createApp = () => {
       {
         name: 'CLI Auth',
         description: 'Browser-to-CLI authentication flows that mint bearer tokens for the CLI.',
+      },
+      {
+        name: 'API Tokens',
+        description: "User-facing API-token CRUD for the settings page. Tokens are minted in plaintext once and stored as SHA-256 hashes; revocation is soft.",
       },
       {
         name: 'Uploads',

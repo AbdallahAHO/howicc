@@ -21,6 +21,10 @@
       "description": "Browser-to-CLI authentication flows that mint bearer tokens for the CLI."
     },
     {
+      "name": "API Tokens",
+      "description": "User-facing API-token CRUD for the settings page. Tokens are minted in plaintext once and stored as SHA-256 hashes; revocation is soft."
+    },
+    {
       "name": "Uploads",
       "description": "Draft upload, asset transfer, and revision finalization endpoints used during sync."
     },
@@ -255,6 +259,100 @@
         "required": [
           "success",
           "user"
+        ]
+      },
+      "ListApiTokensResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiTokenSummary"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "tokens"
+        ]
+      },
+      "ApiTokenSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tokenPrefix": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "tokenPrefix",
+          "createdAt"
+        ]
+      },
+      "CreateApiTokenResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "token": {
+            "$ref": "#/components/schemas/ApiTokenSummary"
+          },
+          "secret": {
+            "type": "string",
+            "description": "The plaintext bearer token. Returned once at creation time; the server only stores a SHA-256 hash. The caller must capture this value immediately — it cannot be retrieved later."
+          }
+        },
+        "required": [
+          "success",
+          "token",
+          "secret"
+        ]
+      },
+      "RevokeApiTokenResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "id",
+          "revokedAt"
         ]
       },
       "UploadAssetKind": {
@@ -2535,6 +2633,174 @@
           },
           "401": {
             "description": "Missing or invalid CLI token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-tokens": {
+      "get": {
+        "tags": [
+          "API Tokens"
+        ],
+        "summary": "List API tokens for the authenticated user",
+        "description": "Returns the caller's API tokens with opaque metadata (id, 12-char prefix, createdAt, revokedAt). Tokens are never returned in plaintext after creation.",
+        "operationId": "listApiTokens",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token summaries, ordered newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListApiTokensResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "API Tokens"
+        ],
+        "summary": "Mint a new API token for the authenticated user",
+        "description": "Generates a new `hwi_*` bearer token for the caller. The plaintext `secret` is returned once in this response; the server only stores a SHA-256 hash. Pair the new token with the CLI (`howicc login` or a manual config entry) to authenticate subsequent requests.",
+        "operationId": "createApiToken",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token created; secret returned once",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApiTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-tokens/{tokenId}": {
+      "delete": {
+        "tags": [
+          "API Tokens"
+        ],
+        "summary": "Revoke an API token owned by the caller",
+        "description": "Sets `revokedAt` on the caller's token. Revoked tokens remain in the list (marked revoked) so the UI can surface audit history; they stop authenticating immediately. Returns 404 when the token does not exist or belongs to a different user — the 404 is deliberate so non-owners can't probe for token ids.",
+        "operationId": "revokeApiToken",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "tokenId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token was revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeApiTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Token not found or not owned by the caller",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
             "content": {
               "application/json": {
                 "schema": {

@@ -1,4 +1,9 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
+import {
+  createApiTokenRoute,
+  listApiTokensRoute,
+  revokeApiTokenRoute,
+} from './api-tokens'
 import { cliAuthAuthorizeRoute, cliAuthExchangeRoute, cliAuthWhoamiRoute } from './cli-auth'
 import {
   getArtifactRoute,
@@ -31,6 +36,7 @@ export * from './uploads'
 export * from './conversations'
 export * from './pricing'
 export * from './cli-auth'
+export * from './api-tokens'
 export * from './profile'
 export * from './repo'
 export * from './viewer'
@@ -71,6 +77,9 @@ export const routes = app
   .openapi(cliAuthAuthorizeRoute, contractHandler)
   .openapi(cliAuthExchangeRoute, contractHandler)
   .openapi(cliAuthWhoamiRoute, contractHandler)
+  .openapi(listApiTokensRoute, contractHandler)
+  .openapi(createApiTokenRoute, contractHandler)
+  .openapi(revokeApiTokenRoute, contractHandler)
   .openapi(getProfileRoute, contractHandler)
   .openapi(getProfileStatsRoute, contractHandler)
   .openapi(getProfileActivityRoute, contractHandler)
