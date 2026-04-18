@@ -213,6 +213,13 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   links and the session-meta summary. `prefers-reduced-motion`-aware
   `scroll-behavior: smooth` on `html` keeps anchor navigation gentle
   without forcing motion on visitors who've opted out.
+- **Archival print styles** (2026-04-19): `/s/:slug` prints as a
+  readable document. Header, mobile phase bar, visibility menu, and
+  desktop phase rail carry `data-print="hide"` so they drop from the
+  print layout; backdrop blurs flatten, every `<details>` force-opens
+  via `details:not([open]) > :not(summary) { display: block }`, blocks
+  and cards carry `break-inside: avoid`, and external links append
+  their href in parentheses so the printed copy stays self-contained.
 - ~~**Artifact drilldown**~~ ✓ shipped 2026-04-19. Tool runs with an
   `artifactId` now render an inline `ArtifactDrawerIsland` — first click
   opens + fetches `GET /conversations/:id/artifacts/:id`, subsequent

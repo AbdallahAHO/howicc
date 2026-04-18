@@ -101,7 +101,10 @@ const phaseGroups = doc
 
 <Layout title={title}>
   <div class="isolate min-h-dvh">
-    <header class="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <header
+      data-print="hide"
+      class="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70"
+    >
       <div class="mx-auto flex w-full max-w-5xl items-center gap-3 px-4 py-3 sm:px-6">
         <a
           href="/"
@@ -153,12 +156,14 @@ const phaseGroups = doc
               </p>
             </div>
             {doc.sharedMeta.isOwner ? (
-              <VisibilityMenuIsland
-                client:load
-                apiUrl={locals.authApiUrl}
-                conversationId={doc.sharedMeta.conversationId}
-                initialVisibility={doc.sharedMeta.visibility}
-              />
+              <div data-print="hide">
+                <VisibilityMenuIsland
+                  client:load
+                  apiUrl={locals.authApiUrl}
+                  conversationId={doc.sharedMeta.conversationId}
+                  initialVisibility={doc.sharedMeta.visibility}
+                />
+              </div>
             ) : null}
           </div>
         </section>
@@ -166,6 +171,7 @@ const phaseGroups = doc
         {phaseGroups.length > 1 ? (
           <nav
             aria-label="Phases"
+            data-print="hide"
             class="border-border/60 bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-14 z-30 -mx-4 flex gap-2 overflow-x-auto border-b px-4 py-2 backdrop-blur lg:hidden"
           >
             <ul role="list" class="flex items-center gap-2 text-xs">
@@ -189,7 +195,7 @@ const phaseGroups = doc
         ) : null}
 
         <section class="grid gap-8 md:grid-cols-[minmax(0,1fr)_18rem] md:items-start lg:grid-cols-[12rem_minmax(0,1fr)_18rem]">
-          <div class="hidden lg:block">
+          <div data-print="hide" class="hidden lg:block">
             <PhaseSpine groups={phaseGroups} />
           </div>
 

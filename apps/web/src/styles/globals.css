@@ -37,3 +37,70 @@
     scroll-behavior: smooth;
   }
 }
+
+/**
+ * Print styles for /s/:slug and any other page that wants to export
+ * as a readable archive.
+ *
+ * Interactive chrome — sticky header, mobile phase chip bar, visibility
+ * toggle, collapsibles — drops out. Backdrop filters and shadows flatten
+ * to white. All <details> force-open so every collapsed tool run and
+ * activity group prints in full. Blocks honour page breaks so no
+ * conversation turn splits awkwardly across pages.
+ *
+ * Elements that should not appear in print carry `data-print="hide"`.
+ */
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  [data-print='hide'] {
+    display: none !important;
+  }
+
+  .sticky,
+  .fixed {
+    position: static !important;
+    top: auto !important;
+    backdrop-filter: none !important;
+  }
+
+  details[data-responsive-details],
+  details {
+    open: true;
+  }
+
+  details > summary {
+    list-style: none;
+  }
+
+  details:not([open]) > :not(summary) {
+    display: block !important;
+  }
+
+  article,
+  section,
+  [data-slot='card'] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.75rem;
+    color: #666;
+  }
+}
