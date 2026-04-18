@@ -12,9 +12,12 @@ import {
 import { Separator } from '@howicc/ui-web/separator'
 import { Skeleton } from '@howicc/ui-web/skeleton'
 import AccountAvatar from '../components/home/AccountAvatar'
+import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
 import CopyCommandIsland from '../components/home/CopyCommandIsland'
 import MobileNavIsland from '../components/home/MobileNavIsland'
 import UserMenuIsland from '../components/home/UserMenuIsland'
+import type { ActivityItem, StatsSnapshot } from '../components/home/activity-types'
+import { formatCost, formatDuration, formatRelative } from '../components/home/format'
 import { createServerApiClient } from '../lib/api/client'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
@@ -37,39 +40,6 @@ const api = createServerApiClient({
   cookie: Astro.request.headers.get('cookie'),
 })
 
-type ActivityItem = {
-  conversationId: string
-  slug: string
-  title: string
-  visibility: 'private' | 'unlisted' | 'public'
-  provider: string
-  projectKey: string
-  projectPath?: string
-  sessionCreatedAt: string
-  syncedAt: string
-  durationMs?: number
-  estimatedCostUsd?: number
-  toolRunCount: number
-  turnCount: number
-  messageCount: number
-  sessionType: 'building' | 'debugging' | 'exploring' | 'investigating' | 'mixed'
-  hasPlan: boolean
-  models: string[]
-  repository: { fullName: string; source: string } | null
-}
-
-type StatsSnapshot = {
-  digestCount: number
-  totalSessions: number
-  totalDurationMs: number
-  totalCostUsd: number
-  activeDays: number
-  currentStreak: number
-  longestStreak: number
-  firstSessionAt?: string
-  lastSessionAt?: string
-}
-
 const [statsResult, activityResult] = await Promise.all([
   api.profile.stats().catch(() => null),
   api.profile.activity({ limit: 10 }).catch(() => null),
@@ -90,59 +60,10 @@ const totalSessions =
     ? (activityResult.total as number)
     : 0
 
-const formatDuration = (durationMs?: number): string => {
-  if (!durationMs || durationMs < 1000) return '—'
-  const totalSeconds = Math.round(durationMs / 1000)
-  const hours = Math.floor(totalSeconds / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`
-  if (hours > 0) return `${hours}h`
-  if (minutes > 0) return `${minutes}m`
-  return `${totalSeconds}s`
-}
-
-const formatCost = (cost?: number): string => {
-  if (cost === undefined || cost === null) return '—'
-  if (cost === 0) return '$0'
-  if (cost < 0.01) return '<$0.01'
-  return `$${cost.toFixed(2)}`
-}
-
-const formatRelative = (iso: string): string => {
-  const then = new Date(iso)
-  if (Number.isNaN(then.valueOf())) return iso
-  const diffMs = Date.now() - then.valueOf()
-  const diffMin = Math.round(diffMs / 60_000)
-  if (diffMin < 1) return 'just now'
-  if (diffMin < 60) return `${diffMin}m ago`
-  const diffHr = Math.round(diffMin / 60)
-  if (diffHr < 24) return `${diffHr}h ago`
-  const diffDay = Math.round(diffHr / 24)
-  if (diffDay < 30) return `${diffDay}d ago`
-  return then.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-}
-
-const sessionTypeLabel: Record<ActivityItem['sessionType'], string> = {
-  building: 'Building',
-  debugging: 'Debugging',
-  exploring: 'Exploring',
-  investigating: 'Investigating',
-  mixed: 'Mixed',
-}
-
-const sessionTypeTone: Record<ActivityItem['sessionType'], 'default' | 'secondary' | 'outline'> = {
-  building: 'default',
-  debugging: 'secondary',
-  exploring: 'secondary',
-  investigating: 'secondary',
-  mixed: 'outline',
-}
-
-const visibilityLabel: Record<ActivityItem['visibility'], string> = {
-  private: 'Private',
-  unlisted: 'Unlisted',
-  public: 'Public',
-}
+const initialCursor: string | undefined =
+  activityResult && 'success' in activityResult && activityResult.success === true
+    ? ((activityResult as { nextCursor?: string }).nextCursor ?? undefined)
+    : undefined
 
 const statCards = stats
   ? [
@@ -276,99 +197,13 @@ const navItems = [
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             {activityItems.length > 0 ? (
-              <>
-                <ol role="list" class="flex flex-col">
-                  {activityItems.map((item, index) => (
-                    <li
-                      class:list={[
-                        'flex flex-col gap-2 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6',
-                        index > 0 ? 'border-border/60 border-t' : '',
-                      ]}
-                    >
-                      <div class="flex min-w-0 flex-col gap-1.5">
-                        <div class="flex flex-wrap items-center gap-2">
-                          <Badge variant={sessionTypeTone[item.sessionType]}>
-                            {sessionTypeLabel[item.sessionType]}
-                          </Badge>
-                          <a
-                            href={`/s/${item.slug}`}
-                            class="text-foreground hover:text-primary min-w-0 truncate text-sm font-medium transition-colors"
-                          >
-                            {item.title}
-                          </a>
-                          {item.hasPlan ? (
-                            <Badge variant="outline" className="text-[0.6875rem]">Plan</Badge>
-                          ) : null}
-                          {item.visibility !== 'private' ? (
-                            <Badge variant="outline" className="text-[0.6875rem]">
-                              {visibilityLabel[item.visibility]}
-                            </Badge>
-                          ) : null}
-                        </div>
-                        <p class="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
-                          {item.repository ? (
-                            <>
-                              <span class="font-mono">{item.repository.fullName}</span>
-                              <span aria-hidden="true">·</span>
-                            </>
-                          ) : (
-                            <>
-                              <span class="font-mono truncate max-w-[24ch]">{item.projectKey}</span>
-                              <span aria-hidden="true">·</span>
-                            </>
-                          )}
-                          {item.models.length > 0 ? (
-                            <>
-                              <span class="font-mono">{item.models[0]}</span>
-                              <span aria-hidden="true">·</span>
-                            </>
-                          ) : null}
-                          <span class="tabular-nums">{item.toolRunCount} tool runs</span>
-                          <span aria-hidden="true">·</span>
-                          <span class="tabular-nums">{item.turnCount} turns</span>
-                        </p>
-                      </div>
-                      <dl class="flex shrink-0 flex-wrap items-baseline gap-x-4 gap-y-1 text-xs sm:flex-col sm:items-end sm:gap-y-1 sm:text-right">
-                        <div class="flex items-baseline gap-1.5 sm:justify-end">
-                          <dt class="text-muted-foreground sr-only">Duration</dt>
-                          <dd class="tabular-nums text-foreground font-medium">
-                            {formatDuration(item.durationMs)}
-                          </dd>
-                          <span class="text-muted-foreground" aria-hidden="true">·</span>
-                          <dt class="text-muted-foreground sr-only">Cost</dt>
-                          <dd class="text-muted-foreground tabular-nums">
-                            {formatCost(item.estimatedCostUsd)}
-                          </dd>
-                        </div>
-                        <div class="text-muted-foreground text-xs">
-                          <dt class="sr-only">Synced</dt>
-                          <dd>
-                            Synced <time datetime={item.syncedAt}>{formatRelative(item.syncedAt)}</time>
-                          </dd>
-                        </div>
-                      </dl>
-                    </li>
-                  ))}
-                </ol>
-
-                {totalSessions > activityItems.length ? (
-                  <footer class="text-muted-foreground flex items-center justify-between text-xs">
-                    <p>
-                      Showing <span class="tabular-nums">{activityItems.length}</span> of
-                      <span class="tabular-nums"> {totalSessions}</span>.
-                    </p>
-                    <Button
-                      variant="link"
-                      disabled
-                      aria-disabled="true"
-                      title="Full list lands in Wave B"
-                      className="h-auto p-0"
-                    >
-                      Browse all → Wave B
-                    </Button>
-                  </footer>
-                ) : null}
-              </>
+              <ActivityFeedIsland
+                client:load
+                apiUrl={locals.authApiUrl}
+                initialItems={activityItems}
+                initialCursor={initialCursor}
+                total={totalSessions}
+              />
             ) : (
               <>
                 <div class="flex flex-col gap-3">
