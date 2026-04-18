@@ -194,7 +194,9 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
 - **Mobile-first polish for public view** — doc 17 calls this the most
   important mobile surface; current layout is desktop-leaning.
 - **Artifact drilldown** — `GET /conversations/:id/artifacts/:artifactId`
-  exists but isn't wired from `/s/:slug` yet.
+  exists but isn't wired from `/s/:slug` yet. Placeholder labels live
+  inside `BlockActivityGroup.ToolRun` and `BlockResource` and reference
+  "Wave 5" of the block kit plan (doc 22).
 - **"Load more" feed pagination** on `/home` — cursor is returned by the API
   but no UI consumes it.
 
@@ -224,6 +226,8 @@ into Wave A so the sharing loop has its landing surface at the same time.
 - Page wireframes and copy: doc 17 (`17-web-app-pages-and-screens.md`).
 - API contracts per page: doc 18 (`18-data-and-api-per-page.md`).
 - Visual system: doc 20 (`20-design-md-the-archive.md`).
+- **Block UI kit: doc 22 (`22-block-ui-kit.md`)** — per-block components,
+  shared primitives, dispatcher spec.
 - Roadmap phases: doc 11 (`11-execution-roadmap.md`).
 - UX flows: doc 15 (`15-jtbd-ux-flows-and-user-journey.md`).
 - Repo grouping: doc 14. GitHub team access: doc 16.

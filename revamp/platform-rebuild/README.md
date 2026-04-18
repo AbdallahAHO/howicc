@@ -47,6 +47,8 @@ The new platform should be designed around:
   current critical-path blockers for the sharing loop. Read this first; it
   reconciles docs 17, 18, and 20 with the actual `apps/web/` and `apps/api/`
   surface.
+- `22-block-ui-kit.md` — per-block UI kit spec (one component per render
+  block type, atomic primitives, exhaustive dispatcher).
 
 ### Product and UX
 - `14-repositories-and-project-grouping.md` — repo grouping data model
