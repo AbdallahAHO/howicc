@@ -42,6 +42,12 @@ The new platform should be designed around:
 - `12-risks-and-open-questions.md`
 - `13-environment-and-runtime-configuration.md`
 
+### Live status
+- `21-implementation-status.md` — **the audit.** What's built, what's missing,
+  current critical-path blockers for the sharing loop. Read this first; it
+  reconciles docs 17, 18, and 20 with the actual `apps/web/` and `apps/api/`
+  surface.
+
 ### Product and UX
 - `14-repositories-and-project-grouping.md` — repo grouping data model
 - `15-jtbd-ux-flows-and-user-journey.md` — user journey CLI → shared session

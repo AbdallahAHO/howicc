@@ -16,6 +16,14 @@ Derived from:
 > references to UPPERCASE labels and `[STATUS]` brackets have been updated to
 > sentence case and natural language.
 
+> **Implementation status:** the live audit lives in
+> [doc 21](21-implementation-status.md). As of 2026-04-18, `/login`,
+> `/cli/login`, `/home` (with live feed + stats linking to `/s/:slug`), and
+> `/s/:slug` (owner + public views with visibility toggle + block renderer)
+> are all built end-to-end; `/dashboard` redirects 301 to `/home`. `/` is
+> a stub. Pages 5, 6, 8, 9, 10, 11 are not yet built. Per-page section
+> headings below carry a ✓/◐/+ badge mirroring doc 21.
+
 ---
 
 ## Design Principles
@@ -95,7 +103,7 @@ with icon nodes and connector lines. See doc 20 for the full spec.
 
 ---
 
-## Page 1: Landing (`/`)
+## Page 1: Landing (`/`) — ◐ stub
 
 **Auth:** None
 **Context:** First-time visitor understanding what HowiCC is
@@ -195,7 +203,7 @@ This is the single best demo of what the product does.
 
 ---
 
-## Page 2: Login (`/login`)
+## Page 2: Login (`/login`) — ✓ built
 
 **Auth:** None (initiates OAuth)
 **Context:** OAuth entry point
@@ -219,13 +227,13 @@ This is the single best demo of what the product does.
 
 ---
 
-## Page 3: CLI Auth Bridge (`/cli/login`)
+## Page 3: CLI Auth Bridge (`/cli/login`) — ✓ built
 
 Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 4: Home (`/home`)
+## Page 4: Home (`/home`) — ◐ shell built on shadcn; feed + stats wait on wave-A endpoints
 
 **Auth:** Required
 **Replaces:** Previous `/dashboard`
@@ -344,7 +352,7 @@ Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 5: Insights (`/insights`)
+## Page 5: Insights (`/insights`) — + not built
 
 **Auth:** Required
 **New page** — splits out analytics from the home feed
@@ -407,7 +415,7 @@ Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 6: Sessions (`/sessions`)
+## Page 6: Sessions (`/sessions`) — + not built
 
 **Auth:** Required
 **Replaces:** Previous `/dashboard/sessions`
@@ -482,7 +490,7 @@ Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 7: Conversation Detail (`/s/:slug`) — THE PRODUCT
+## Page 7: Conversation Detail (`/s/:slug`) — THE PRODUCT — ◐ owner + public views live; phase spine / mobile polish / artifact drilldown pending
 
 **The most important page. Invest design effort here.**
 
@@ -736,7 +744,7 @@ Mobile is the primary context for public shared conversations. This view must be
 
 ---
 
-## Page 8: Repository Page (`/r/:owner/:name`)
+## Page 8: Repository Page (`/r/:owner/:name`) — + not built (public aggregate endpoint live, not GH-gated, no UI)
 
 **Auth:** Required. GitHub permission checked on view.
 **Structure:** Stats-led, with contributors as a prominent expandable panel
@@ -879,7 +887,7 @@ Same layout, plus:
 
 ---
 
-## Page 9: Repository Settings (`/r/:owner/:name/settings`)
+## Page 9: Repository Settings (`/r/:owner/:name/settings`) — + not built
 
 **Auth:** Required. Admin/maintainer only (GitHub verified).
 **Changes from v1:** Removed "Danger Zone" section (over-engineered for one button).
@@ -926,7 +934,7 @@ Same layout, plus:
 
 ---
 
-## Page 10: Settings (`/settings`)
+## Page 10: Settings (`/settings`) — + not built
 
 **Auth:** Required
 **Changes from v1:** Merged account and CLI tokens into one page with stacked sections (no sidebar — 2 sections don't need one).
@@ -962,7 +970,7 @@ Same layout, plus:
 
 ---
 
-## Page 11: Public Profile (`/@:username`)
+## Page 11: Public Profile (`/@:username`) — + not built
 
 **Auth:** None (public, opt-in by owner)
 **Context:** The viral, shareable version of your HowiCC identity
@@ -1375,19 +1383,25 @@ GET /og/profile/:username.png (OG image generation, edge-cached)
 
 ## Page Summary
 
-| # | Route | Auth | Primary context |
-|---|-------|------|-----------------|
-| 1 | `/` | None | Desktop + mobile — landing |
-| 2 | `/login` | None | Desktop + mobile — OAuth |
-| 3 | `/cli/login` | Session | Desktop (CLI bridge) |
-| 4 | `/home` | Required | Desktop primary, mobile supported |
-| 5 | `/insights` | Required | Desktop primary |
-| 6 | `/sessions` | Required | Desktop primary, mobile supported |
-| 7 | `/s/:slug` | Conditional | **Mobile-first for public**, desktop for owner |
-| 8 | `/r/:owner/:name` | GH-gated | Desktop primary, mobile supported |
-| 9 | `/r/.../settings` | Admin+GH | Desktop primary |
-| 10 | `/settings` | Required | Desktop primary |
-| 11 | `/@:username` | None (opt-in) | **Mobile-first viral profile** (shareable) |
+> **Implementation status:** see [doc 21](21-implementation-status.md) for the
+> live audit. The status column below is a snapshot — `✓` built, `◐` partial,
+> `+` not built. Update doc 21 when a row changes; treat that doc as the
+> source of truth.
+
+| # | Route | Auth | Status | Primary context |
+|---|-------|------|--------|-----------------|
+| 1 | `/` | None | ◐ | Desktop + mobile — landing (current page is a stub) |
+| 2 | `/login` | None | ✓ | Desktop + mobile — OAuth |
+| 3 | `/cli/login` | Session | ✓ | Desktop (CLI bridge) |
+| 4 | `/home` | Required | ◐ | Desktop primary, mobile supported. Shell built on shadcn (`@howicc/ui-web`) with welcome block, two-column layout, account card, stats placeholder, and wave-status cards. Feed awaits `GET /profile/activity`; stats await `GET /profile/stats`. `/dashboard` issues a 301 redirect to `/home`. |
+| 5 | `/insights` | Required | + | Desktop primary |
+| 6 | `/sessions` | Required | + | Desktop primary, mobile supported |
+| 7 | `/s/:slug` | Conditional | ◐ | **Mobile-first for public**, desktop for owner. Route + owner/public views + visibility toggle (`VisibilityMenuIsland`) + block renderer shipped 2026-04-18. Remaining: phase spine, mobile-first polish for the public read, artifact drilldown. |
+| 8 | `/r/:owner/:name` | GH-gated | + | Desktop primary, mobile supported. `GET /repo/:owner/:name` exists today but is public/un-gated; UI is not built. |
+| 9 | `/r/.../settings` | Admin+GH | + | Desktop primary |
+| 10 | `/settings` | Required | + | Desktop primary |
+| 11 | `/@:username` | None (opt-in) | + | **Mobile-first viral profile** (shareable) |
+| — | `/debug/auth` | Either | ✓ | Internal diagnostic page, not part of the user-facing surface. |
 
 ### Responsive Strategy By Page
 
@@ -1408,22 +1422,31 @@ PAGE             DESKTOP          TABLET           MOBILE
 
 ### Build Order (Revised)
 
+> **Status as of 2026-04-18:** waves below are not yet started. Phases 1–5 of
+> the platform roadmap (schemas, parser, CLI, contracts, API + storage) are
+> complete; this section is the next-up sequence for the web surface. See
+> [doc 21](21-implementation-status.md) for the full status board and the
+> wave-by-wave dependency graph.
+
 ```
-PHASE 1: The sharing loop (mobile-first public view)
+PHASE 1 / WAVE A: The sharing loop (mobile-first public view)
   /s/:slug public  — with phase spine, full mobile adaptation
   /s/:slug owner   — visibility toggle to enable sharing
-  /home            — basic feed to land after login
+  /home            — replaces the current /dashboard stub; basic feed
+                     so owners can find the session they want to share
 
-PHASE 2: Own your data
+PHASE 2 / WAVE B: Own your data
   /sessions        — find specific sessions
   /settings        — account + tokens (stacked, no sidebar)
 
-PHASE 3: Team features
+PHASE 3 / WAVE C: Team features
   /r/:owner/:name  — contributor cards as hero
   /r/.../settings  — visibility + hide moderation
+  (also: GitHub-gated variant of the existing /repo/:owner/:name endpoint)
 
-PHASE 4: Insights depth
+PHASE 4 / WAVE D: Insights depth
   /insights        — analytics deep-dive
+  /@:username      — public profile + OG image
   /                — polished landing with embedded example
 ```
 

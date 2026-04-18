@@ -1036,6 +1036,17 @@ Notes:         Debounced per session+IP to prevent inflation.
 
 ## Endpoint Status (Existing vs New)
 
+> **Cross-cutting status:** [doc 21](21-implementation-status.md) carries the
+> live page + design-system + sharing-loop audit alongside this endpoint
+> table. Update doc 21 when an endpoint flips status.
+
+> **Verified 2026-04-18:** the legacy `/repo/:owner/:name` endpoint is
+> mounted at the singular path with a `WEB_APP_URL` CORS allowance. It is
+> already visibility-aware (returns `null` profile when no public digests
+> exist) but is **not** GitHub-gated and does not check viewer identity.
+> The rename to plural `/repos/` should land paired with the GH-gated
+> variant so both ship together.
+
 ```
 LEGEND
 ──────

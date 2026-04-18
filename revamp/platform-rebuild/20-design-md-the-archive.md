@@ -5,6 +5,17 @@ density, but humanized — in the spirit of Claude's own web surfaces. This is
 for developers who want their tools to feel like a well-lit library, not a
 dark terminal.
 
+> **Implementation status (2026-04-18):** see [doc 21](21-implementation-status.md)
+> for the live audit. Today the web app uses the `@howicc/ui-web` shadcn
+> primitives + a tweakcn-derived theme: a warm-orange primary
+> (`oklch(0.6387 0.2151 36.46)`, hue ≈ 36° — close in spirit to the planned
+> terracotta `#C15F3C`) on a pure-white base. **Not yet adopted:** the warm
+> cream surfaces (`#FAF9F6` / `#F5F2EC` / `#EDE9DF`), the serif/sans/mono
+> font stack (Source Serif 4, Inter, JetBrains Mono), the warm shadow tokens,
+> and the Timeline / Phase Spine components called out below as signature.
+> Voice and casing already match the spec where copy exists. Treat the
+> sections below as the target; the tracker shows the gap.
+
 ---
 
 ## 1. Overview & Creative North Star

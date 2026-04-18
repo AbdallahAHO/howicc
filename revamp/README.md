@@ -4,6 +4,16 @@ This folder captures the reset plan for HowiCC.
 
 The current product proved the basic idea, but it was built before we understood how Claude Code actually stores sessions on disk. These docs replace the old assumptions with a Claude Code-aware foundation that we can build against with confidence.
 
+> **Where things stand (2026-04-18):** the core sharing loop is live —
+> schemas, parser, CLI, contracts, DB, upload path, profile aggregation,
+> CLI auth bridge, `/home` (with live feed + stats), and `/s/:slug` (owner
+> visibility toggle + public view) are all built end-to-end. `/dashboard`
+> 301-redirects to `/home`; `/` is a stub; doc-17 pages 5, 6, 8, 9, 10, 11
+> are not yet started. See
+> [`platform-rebuild/21-implementation-status.md`](platform-rebuild/21-implementation-status.md)
+> for the full audit and residual work (slug collisions, timeline component,
+> mobile polish, load-more island, repo/team pages, settings, insights, …).
+
 ## Goals
 
 - Preserve what Claude Code really saves instead of flattening it too early.
@@ -81,6 +91,7 @@ Folder: `revamp/platform-rebuild/`
 - `18-data-and-api-per-page.md`: API response shapes and data contracts mapped to each page
 - `19-developer-brutalism-prd.md`: **(alternative)** dark terminal brutalism design direction
 - `20-design-md-the-archive.md`: **canonical** warm Claude-style design system for the web app
+- `21-implementation-status.md`: **live audit** — what's built vs. what these docs describe; pages, endpoints, design system, and the sharing-loop critical path
 
 ## Existing Repo Note
 
