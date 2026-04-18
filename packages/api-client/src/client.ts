@@ -1,4 +1,4 @@
-import { ApiPaths, UploadAssetKind } from './generated/openapi'
+import { ApiPaths, ConversationVisibility, UploadAssetKind } from './generated/openapi'
 import {
   createApiFetchClient,
   type ApiClientConfig,
@@ -21,6 +21,11 @@ export type ApiHtmlResult = {
 }
 
 type UploadAssetKindValue = `${UploadAssetKind}`
+
+type ConversationVisibilityValue = `${ConversationVisibility}`
+
+const toConversationVisibility = (value: ConversationVisibilityValue) =>
+  value as ConversationVisibility
 
 const settleFetchResult = async <TData, TError>(
   request: FetchResult<TData, TError>,
@@ -151,6 +156,26 @@ export const createApiClient = (config: ApiClientConfig) => {
             },
           }),
         ),
+      getShared: (slug: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getSharedRenderDocument, {
+            params: {
+              path: { slug },
+            },
+          }),
+        ),
+      updateVisibility: (
+        conversationId: string,
+        visibility: ConversationVisibilityValue,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.PATCH(ApiPaths.updateConversationVisibility, {
+            params: {
+              path: { conversationId },
+            },
+            body: { visibility: toConversationVisibility(visibility) },
+          }),
+        ),
       getArtifact: (conversationId: string, artifactId: string) =>
         unwrapFetchResult(
           fetchClient.GET(ApiPaths.getConversationArtifact, {
@@ -168,6 +193,18 @@ export const createApiClient = (config: ApiClientConfig) => {
     },
     profile: {
       get: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getProfile)),
+      stats: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getProfileStats)),
+      activity: (query?: { cursor?: string; limit?: number }) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getProfileActivity, {
+            params: {
+              query: {
+                ...(query?.cursor !== undefined ? { cursor: query.cursor } : {}),
+                ...(query?.limit !== undefined ? { limit: String(query.limit) } : {}),
+              },
+            },
+          }),
+        ),
       recompute: () =>
         unwrapFetchResult(fetchClient.POST(ApiPaths.recomputeProfile)),
     },

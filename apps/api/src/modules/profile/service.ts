@@ -1,6 +1,11 @@
-import { and, eq, sql } from 'drizzle-orm'
+import { and, eq, lt, sql } from 'drizzle-orm'
 import { sessionDigests, userProfiles, conversations } from '@howicc/db/schema'
-import type { SessionDigest, UserProfile } from '@howicc/canonical'
+import type {
+  ProviderId,
+  SessionDigest,
+  SessionType,
+  UserProfile,
+} from '@howicc/canonical'
 import { buildUserProfile } from '@howicc/profile'
 import type { ApiRuntime } from '../../runtime'
 import { getRuntimeDatabase } from '../../lib/runtime-resources'
@@ -150,6 +155,173 @@ export const getDigestCount = async (
     .where(eq(sessionDigests.ownerUserId, userId))
 
   return result[0]?.count ?? 0
+}
+
+export type ProfileStats = {
+  digestCount: number
+  totalSessions: number
+  totalDurationMs: number
+  totalCostUsd: number
+  activeDays: number
+  currentStreak: number
+  longestStreak: number
+  firstSessionAt?: string
+  lastSessionAt?: string
+}
+
+/**
+ * Lightweight header stats derived from the materialized UserProfile.
+ *
+ * Used by dashboards that only need a handful of aggregates — reading the
+ * cached profile and cherry-picking fields avoids serializing the full
+ * profile JSON (~100–500 KB) over the wire.
+ *
+ * @example
+ * const stats = await getUserProfileStats(runtime, userId)
+ */
+export const getUserProfileStats = async (
+  runtime: ApiRuntime,
+  userId: string,
+): Promise<ProfileStats | null> => {
+  const digestCount = await getDigestCount(runtime, userId)
+  if (digestCount === 0) return null
+
+  const profile = await getOrComputeUserProfile(runtime, userId)
+
+  return {
+    digestCount: profile.digestCount,
+    totalSessions: profile.activity.totalSessions,
+    totalDurationMs: profile.activity.totalDurationMs,
+    totalCostUsd: profile.cost.totalUsd,
+    activeDays: profile.activity.activeDays,
+    currentStreak: profile.activity.currentStreak,
+    longestStreak: profile.activity.longestStreak,
+    firstSessionAt: profile.activity.firstSessionAt,
+    lastSessionAt: profile.activity.lastSessionAt,
+  }
+}
+
+export type ProfileActivityItem = {
+  conversationId: string
+  slug: string
+  title: string
+  visibility: 'private' | 'unlisted' | 'public'
+  provider: ProviderId
+  projectKey: string
+  projectPath?: string
+  sessionCreatedAt: string
+  syncedAt: string
+  durationMs?: number
+  estimatedCostUsd?: number
+  toolRunCount: number
+  turnCount: number
+  messageCount: number
+  sessionType: SessionType
+  hasPlan: boolean
+  models: string[]
+  repository: { fullName: string; source: 'git_remote' | 'pr_link' | 'cwd_derived' } | null
+}
+
+export type ProfileActivityPage = {
+  items: ProfileActivityItem[]
+  nextCursor?: string
+  total: number
+}
+
+export const DEFAULT_ACTIVITY_LIMIT = 20
+export const MAX_ACTIVITY_LIMIT = 50
+
+/**
+ * Cursor-paginated activity feed for the authenticated user.
+ *
+ * Sorts by the digest's `createdAt` (ingestion time), newest first, so
+ * freshly synced sessions surface at the top. The cursor is the previous
+ * page's oldest `syncedAt` — items strictly before it are returned next.
+ *
+ * @example
+ * const firstPage = await listUserProfileActivity(runtime, userId, { limit: 20 })
+ * const secondPage = await listUserProfileActivity(runtime, userId, {
+ *   limit: 20,
+ *   cursor: firstPage.nextCursor,
+ * })
+ */
+export const listUserProfileActivity = async (
+  runtime: ApiRuntime,
+  userId: string,
+  options: { cursor?: string; limit?: number } = {},
+): Promise<ProfileActivityPage> => {
+  const db = getRuntimeDatabase(runtime)
+  const limit = Math.min(
+    Math.max(options.limit ?? DEFAULT_ACTIVITY_LIMIT, 1),
+    MAX_ACTIVITY_LIMIT,
+  )
+
+  const cursorDate = options.cursor ? new Date(options.cursor) : null
+  const cursorValid = cursorDate && !Number.isNaN(cursorDate.valueOf())
+
+  const ownerFilter = eq(sessionDigests.ownerUserId, userId)
+  const whereClause = cursorValid
+    ? and(ownerFilter, lt(sessionDigests.createdAt, cursorDate))
+    : ownerFilter
+
+  const rows = await db
+    .select({
+      conversationId: sessionDigests.conversationId,
+      digestJson: sessionDigests.digestJson,
+      digestCreatedAt: sessionDigests.createdAt,
+      conversationSlug: conversations.slug,
+      conversationTitle: conversations.title,
+      conversationVisibility: conversations.visibility,
+    })
+    .from(sessionDigests)
+    .innerJoin(conversations, currentRevisionJoin)
+    .where(whereClause)
+    .orderBy(sql`${sessionDigests.createdAt} desc`)
+    .limit(limit + 1)
+
+  const totalResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(sessionDigests)
+    .innerJoin(conversations, currentRevisionJoin)
+    .where(ownerFilter)
+  const total = totalResult[0]?.count ?? 0
+
+  const hasMore = rows.length > limit
+  const pageRows = hasMore ? rows.slice(0, limit) : rows
+
+  const items: ProfileActivityItem[] = pageRows.map(row => {
+    const digest = JSON.parse(row.digestJson) as SessionDigest
+    const syncedAt = new Date(row.digestCreatedAt).toISOString()
+
+    return {
+      conversationId: row.conversationId,
+      slug: row.conversationSlug,
+      title: row.conversationTitle,
+      visibility: row.conversationVisibility,
+      provider: digest.provider,
+      projectKey: digest.projectKey,
+      projectPath: digest.projectPath,
+      sessionCreatedAt: digest.createdAt,
+      syncedAt,
+      durationMs: digest.durationMs,
+      estimatedCostUsd: digest.estimatedCostUsd,
+      toolRunCount: digest.toolRunCount,
+      turnCount: digest.turnCount,
+      messageCount: digest.messageCount,
+      sessionType: digest.sessionType,
+      hasPlan: digest.hasPlan,
+      models: digest.models.map(model => model.model),
+      repository: digest.repository
+        ? { fullName: digest.repository.fullName, source: digest.repository.source }
+        : null,
+    }
+  })
+
+  const nextCursor = hasMore
+    ? new Date(pageRows[pageRows.length - 1]!.digestCreatedAt).toISOString()
+    : undefined
+
+  return { items, nextCursor, total }
 }
 
 // ---------------------------------------------------------------------------

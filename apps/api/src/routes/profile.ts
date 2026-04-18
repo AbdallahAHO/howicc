@@ -1,10 +1,17 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
-import { getProfileRoute, recomputeProfileRoute } from '@howicc/contracts'
 import {
-  getOrComputeUserProfile,
-  recomputeUserProfile,
+  getProfileActivityRoute,
+  getProfileRoute,
+  getProfileStatsRoute,
+  recomputeProfileRoute,
+} from '@howicc/contracts'
+import {
   getDigestCount,
+  getOrComputeUserProfile,
+  getUserProfileStats,
+  listUserProfileActivity,
+  recomputeUserProfile,
 } from '../modules/profile/service'
 import { toApiErrorPayload, toApiErrorResponse } from '../lib/api-error'
 import { createApiRuntime } from '../runtime'
@@ -88,6 +95,106 @@ app.openapi(getProfileRoute, async c => {
         success: true as const,
         profile,
         digestCount,
+      },
+      200,
+    )
+  } catch (error) {
+    const response = toApiErrorResponse(error, 'internalError')
+    return c.json(
+      {
+        success: false,
+        code: response.code,
+        error: response.error,
+      },
+      response.status === 401 ? 401 : 500,
+    )
+  }
+})
+
+app.openapi(getProfileStatsRoute, async c => {
+  try {
+    const runtimeEnv = c.env as unknown as ProfileRouteEnv
+    const runtime = getRuntime(runtimeEnv)
+    const userId = await resolveAuthenticatedUserId(
+      runtimeEnv,
+      runtime,
+      c.req.header('Authorization'),
+      c.req.raw.headers,
+    )
+
+    if (!userId) {
+      return c.json(toApiErrorPayload('authRequired', 'Authentication required.'), 401)
+    }
+
+    const digestCount = await getDigestCount(runtime, userId)
+
+    if (digestCount === 0) {
+      return c.json(
+        {
+          success: true as const,
+          stats: null,
+          digestCount: 0,
+          message: noSyncedSessionsMessage,
+        },
+        200,
+      )
+    }
+
+    const stats = await getUserProfileStats(runtime, userId)
+
+    return c.json(
+      {
+        success: true as const,
+        stats,
+        digestCount,
+      },
+      200,
+    )
+  } catch (error) {
+    const response = toApiErrorResponse(error, 'internalError')
+    return c.json(
+      {
+        success: false,
+        code: response.code,
+        error: response.error,
+      },
+      response.status === 401 ? 401 : 500,
+    )
+  }
+})
+
+app.openapi(getProfileActivityRoute, async c => {
+  try {
+    const runtimeEnv = c.env as unknown as ProfileRouteEnv
+    const runtime = getRuntime(runtimeEnv)
+    const userId = await resolveAuthenticatedUserId(
+      runtimeEnv,
+      runtime,
+      c.req.header('Authorization'),
+      c.req.raw.headers,
+    )
+
+    if (!userId) {
+      return c.json(toApiErrorPayload('authRequired', 'Authentication required.'), 401)
+    }
+
+    const cursor = c.req.query('cursor') || undefined
+    const rawLimit = c.req.query('limit')
+    const parsedLimit =
+      typeof rawLimit === 'string' && rawLimit.length > 0
+        ? Number.parseInt(rawLimit, 10)
+        : undefined
+    const page = await listUserProfileActivity(runtime, userId, {
+      cursor,
+      limit: Number.isFinite(parsedLimit) ? parsedLimit : undefined,
+    })
+
+    return c.json(
+      {
+        success: true as const,
+        items: page.items,
+        nextCursor: page.nextCursor,
+        total: page.total,
       },
       200,
     )

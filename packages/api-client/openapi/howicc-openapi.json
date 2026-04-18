@@ -1066,6 +1066,80 @@
           "text"
         ]
       },
+      "SharedConversationMeta": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "conversationId": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "ownerUserId": {
+            "type": "string"
+          },
+          "isOwner": {
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "slug",
+          "conversationId",
+          "visibility",
+          "ownerUserId",
+          "isOwner",
+          "updatedAt"
+        ]
+      },
+      "UpdateConversationVisibilityResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "success",
+          "conversationId",
+          "slug",
+          "visibility",
+          "updatedAt"
+        ]
+      },
+      "UpdateConversationVisibilityBody": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          }
+        },
+        "required": [
+          "visibility"
+        ]
+      },
       "ProfileResponse": {
         "type": "object",
         "properties": {
@@ -1864,6 +1938,230 @@
         "required": [
           "thinkingVisibleRate",
           "avgTurnsPerSession"
+        ]
+      },
+      "ProfileStatsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "stats": {
+            "$ref": "#/components/schemas/ProfileStats"
+          },
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "stats",
+          "digestCount"
+        ]
+      },
+      "ProfileStats": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalSessions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalCostUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "activeDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "longestStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "firstSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "lastSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "digestCount",
+          "totalSessions",
+          "totalDurationMs",
+          "totalCostUsd",
+          "activeDays",
+          "currentStreak",
+          "longestStreak"
+        ]
+      },
+      "ProfileActivityResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileActivityItem"
+            }
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "success",
+          "items",
+          "total"
+        ]
+      },
+      "ProfileActivityItem": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "projectKey": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string"
+          },
+          "sessionCreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "toolRunCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "turnCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "messageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sessionType": {
+            "$ref": "#/components/schemas/SessionType"
+          },
+          "hasPlan": {
+            "type": "boolean"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repository": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "fullName": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "git_remote",
+                  "pr_link",
+                  "cwd_derived"
+                ]
+              }
+            },
+            "required": [
+              "fullName",
+              "source"
+            ]
+          }
+        },
+        "required": [
+          "conversationId",
+          "slug",
+          "title",
+          "visibility",
+          "provider",
+          "projectKey",
+          "sessionCreatedAt",
+          "syncedAt",
+          "toolRunCount",
+          "turnCount",
+          "messageCount",
+          "sessionType",
+          "hasPlan",
+          "models",
+          "repository"
+        ]
+      },
+      "SessionType": {
+        "type": "string",
+        "enum": [
+          "building",
+          "debugging",
+          "exploring",
+          "investigating",
+          "mixed"
         ]
       },
       "ProfileRecomputeResponse": {
@@ -2811,6 +3109,164 @@
         }
       }
     },
+    "/shared/{slug}": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Fetch a conversation render document by public slug",
+        "description": "Returns the normalized render document for a conversation identified by its share slug. Private conversations are only visible to the owner (authenticated via CLI bearer token or Better Auth session cookie); unlisted and public conversations are readable without auth. When multiple conversations share the same slug — a historical collision pending schema-level uniqueness — the most-recently-updated match is returned.",
+        "operationId": "getSharedRenderDocument",
+        "security": [
+          {},
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Render document plus share metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RenderDocument"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sharedMeta": {
+                          "$ref": "#/components/schemas/SharedConversationMeta"
+                        }
+                      },
+                      "required": [
+                        "sharedMeta"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Slug does not resolve to a visible conversation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Shared render document resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/visibility": {
+      "patch": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Update the visibility of a conversation",
+        "description": "Flips a conversation between `private`, `unlisted`, and `public`. Only the owner may make this change. Accepts either a CLI bearer token or a Better Auth session cookie.",
+        "operationId": "updateConversationVisibility",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConversationVisibilityBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visibility was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateConversationVisibilityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation does not exist or is not owned by the caller",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Visibility update failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/conversations/{conversationId}/artifacts/{artifactId}": {
       "get": {
         "tags": [
@@ -3034,6 +3490,130 @@
           },
           "500": {
             "description": "Profile resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/stats": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Get lightweight stats for the authenticated user",
+        "description": "Returns a compact snapshot of the current user's profile — session count, total cost, total duration, active days, and current streak. Designed for dashboard headers where the full `/profile` payload is too heavy. If no digests exist yet, `stats` is `null` with `digestCount: 0`.",
+        "operationId": "getProfileStats",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile stats snapshot or an empty state when no synced sessions exist yet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileStatsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated with either bearer token or browser session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Profile stats resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/activity": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Paginated activity feed for the authenticated user",
+        "description": "Returns the authenticated user's synced sessions ordered by session creation time (newest first). Used by the web dashboard feed and the `/sessions` list. Pagination is cursor-based: pass the previous response's `nextCursor` to continue.",
+        "operationId": "getProfileActivity",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Pass `nextCursor` from the previous response. ISO 8601 timestamp — items strictly before it are returned."
+            },
+            "required": false,
+            "description": "Pass `nextCursor` from the previous response. ISO 8601 timestamp — items strictly before it are returned.",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Number of items to return (1–50). Defaults to 20.",
+              "example": "20"
+            },
+            "required": false,
+            "description": "Number of items to return (1–50). Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of activity items plus an optional `nextCursor` for the next page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileActivityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated with either bearer token or browser session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Activity feed resolution failed unexpectedly",
             "content": {
               "application/json": {
                 "schema": {

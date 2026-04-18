@@ -138,6 +138,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    [path: `/conversations/${string}/visibility`]: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update the visibility of a conversation
+         * @description Flips a conversation between `private`, `unlisted`, and `public`. Only the owner may make this change. Accepts either a CLI bearer token or a Better Auth session cookie.
+         */
+        patch: operations["updateConversationVisibility"];
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -198,6 +218,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/profile/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Paginated activity feed for the authenticated user
+         * @description Returns the authenticated user's synced sessions ordered by session creation time (newest first). Used by the web dashboard feed and the `/sessions` list. Pagination is cursor-based: pass the previous response's `nextCursor` to continue.
+         */
+        get: operations["getProfileActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/profile/recompute": {
         parameters: {
             query?: never;
@@ -218,6 +258,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/profile/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get lightweight stats for the authenticated user
+         * @description Returns a compact snapshot of the current user's profile — session count, total cost, total duration, active days, and current streak. Designed for dashboard headers where the full `/profile` payload is too heavy. If no digests exist yet, `stats` is `null` with `digestCount: 0`.
+         */
+        get: operations["getProfileStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     [path: `/repo/${string}/${string}`]: {
         parameters: {
             query?: never;
@@ -230,6 +290,26 @@ export interface paths {
          * @description Aggregates the current public conversation digests for the requested repository across all users. Only conversations whose current revision is publicly visible are included in the result.
          */
         get: operations["getRepoProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    [path: `/shared/${string}`]: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch a conversation render document by public slug
+         * @description Returns the normalized render document for a conversation identified by its share slug. Private conversations are only visible to the owner (authenticated via CLI bearer token or Better Auth session cookie); unlisted and public conversations are readable without auth. When multiple conversations share the same slug — a historical collision pending schema-level uniqueness — the most-recently-updated match is returned.
+         */
+        get: operations["getSharedRenderDocument"];
         put?: never;
         post?: never;
         delete?: never;
@@ -413,6 +493,45 @@ export interface components {
             /** @enum {boolean} */
             success: true;
         };
+        ProfileActivityItem: {
+            conversationId: string;
+            durationMs?: number;
+            estimatedCostUsd?: number;
+            hasPlan: boolean;
+            messageCount: number;
+            models: string[];
+            projectKey: string;
+            projectPath?: string;
+            provider: components["schemas"]["ProviderId"];
+            repository: {
+                fullName: string;
+                /** @enum {string} */
+                source: ProfileActivityItemRepositorySource;
+            } | null;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            sessionCreatedAt: string;
+            sessionType: components["schemas"]["SessionType"];
+            slug: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            syncedAt: string;
+            title: string;
+            toolRunCount: number;
+            turnCount: number;
+            visibility: components["schemas"]["ConversationVisibility"];
+        };
+        ProfileActivityResponse: {
+            items: components["schemas"]["ProfileActivityItem"][];
+            nextCursor?: string;
+            /** @enum {boolean} */
+            success: true;
+            total: number;
+        };
         ProfileLanguageBreakdown: {
             [key: string]: number;
         };
@@ -433,6 +552,32 @@ export interface components {
             digestCount: number;
             message?: string;
             profile: components["schemas"]["UserProfile"];
+            /** @enum {boolean} */
+            success: true;
+        };
+        ProfileStats: {
+            activeDays: number;
+            currentStreak: number;
+            digestCount: number;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            firstSessionAt?: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            lastSessionAt?: string;
+            longestStreak: number;
+            totalCostUsd: number;
+            totalDurationMs: number;
+            totalSessions: number;
+        } | null;
+        ProfileStatsResponse: {
+            digestCount: number;
+            message?: string;
+            stats: components["schemas"]["ProfileStats"];
             /** @enum {boolean} */
             success: true;
         };
@@ -650,12 +795,23 @@ export interface components {
             /** @enum {boolean} */
             success: true;
         };
+        /** @enum {string} */
+        SessionType: SessionType;
         SessionTypeDistribution: {
             building: number;
             debugging: number;
             exploring: number;
             investigating: number;
             mixed: number;
+        };
+        SharedConversationMeta: {
+            conversationId: string;
+            isOwner: boolean;
+            ownerUserId: string;
+            slug: string;
+            /** Format: date-time */
+            updatedAt: string;
+            visibility: components["schemas"]["ConversationVisibility"];
         };
         ToolCategoryBreakdown: {
             agent: number;
@@ -669,6 +825,18 @@ export interface components {
             task: number;
             web: number;
             write: number;
+        };
+        UpdateConversationVisibilityBody: {
+            visibility: components["schemas"]["ConversationVisibility"];
+        };
+        UpdateConversationVisibilityResponse: {
+            conversationId: string;
+            slug: string;
+            /** @enum {boolean} */
+            success: true;
+            /** Format: date-time */
+            updatedAt: string;
+            visibility: components["schemas"]["ConversationVisibility"];
         };
         UploadAsset: {
             bytes: number;
@@ -1126,6 +1294,59 @@ export interface operations {
             };
         };
     };
+    updateConversationVisibility: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateConversationVisibilityBody"];
+            };
+        };
+        responses: {
+            /** @description Visibility was updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateConversationVisibilityResponse"];
+                };
+            };
+            /** @description The caller is not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conversation does not exist or is not owned by the caller */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Visibility update failed unexpectedly */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getHealth: {
         parameters: {
             query?: never;
@@ -1231,6 +1452,49 @@ export interface operations {
             };
         };
     };
+    getProfileActivity: {
+        parameters: {
+            query?: {
+                /** @description Pass `nextCursor` from the previous response. ISO 8601 timestamp — items strictly before it are returned. */
+                cursor?: string;
+                /** @description Number of items to return (1–50). Defaults to 20. */
+                limit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of activity items plus an optional `nextCursor` for the next page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileActivityResponse"];
+                };
+            };
+            /** @description The caller is not authenticated with either bearer token or browser session cookie */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Activity feed resolution failed unexpectedly */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     recomputeProfile: {
         parameters: {
             query?: never;
@@ -1259,6 +1523,44 @@ export interface operations {
                 };
             };
             /** @description Profile recomputation failed unexpectedly */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getProfileStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Profile stats snapshot or an empty state when no synced sessions exist yet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileStatsResponse"];
+                };
+            };
+            /** @description The caller is not authenticated with either bearer token or browser session cookie */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Profile stats resolution failed unexpectedly */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -1302,6 +1604,48 @@ export interface operations {
                 };
             };
             /** @description Repository profile aggregation failed unexpectedly */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getSharedRenderDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Render document plus share metadata */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RenderDocument"] & {
+                        sharedMeta: components["schemas"]["SharedConversationMeta"];
+                    };
+                };
+            };
+            /** @description Slug does not resolve to a visible conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Shared render document resolution failed unexpectedly */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -1662,6 +2006,11 @@ export enum ConversationVisibility {
 export enum HealthResponseStatus {
     ok = "ok"
 }
+export enum ProfileActivityItemRepositorySource {
+    git_remote = "git_remote",
+    pr_link = "pr_link",
+    cwd_derived = "cwd_derived"
+}
 export enum ProfileRepositorySummarySource {
     git_remote = "git_remote",
     pr_link = "pr_link",
@@ -1750,6 +2099,13 @@ export enum RenderToolRunActivityStatus {
 export enum RenderToolRunActivityType {
     tool_run = "tool_run"
 }
+export enum SessionType {
+    building = "building",
+    debugging = "debugging",
+    exploring = "exploring",
+    investigating = "investigating",
+    mixed = "mixed"
+}
 export enum UploadAssetKind {
     source_bundle = "source_bundle",
     canonical_json = "canonical_json",
@@ -1765,9 +2121,13 @@ export enum ApiPaths {
     finalizeUploadRevision = "/uploads/finalize",
     listConversations = "/conversations",
     getConversationRenderDocument = "/conversations/{conversationId}/render",
+    getSharedRenderDocument = "/shared/{slug}",
+    updateConversationVisibility = "/conversations/{conversationId}/visibility",
     getConversationArtifact = "/conversations/{conversationId}/artifacts/{artifactId}",
     listPricingModels = "/pricing/models",
     getProfile = "/profile",
+    getProfileStats = "/profile/stats",
+    getProfileActivity = "/profile/activity",
     recomputeProfile = "/profile/recompute",
     getRepoProfile = "/repo/{owner}/{name}",
     getViewerSession = "/viewer/session",

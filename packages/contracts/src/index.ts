@@ -1,9 +1,20 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cliAuthAuthorizeRoute, cliAuthExchangeRoute, cliAuthWhoamiRoute } from './cli-auth'
-import { getArtifactRoute, getRenderDocumentRoute, listConversationsRoute } from './conversations'
+import {
+  getArtifactRoute,
+  getRenderDocumentRoute,
+  getSharedRenderDocumentRoute,
+  listConversationsRoute,
+  updateConversationVisibilityRoute,
+} from './conversations'
 import { healthRoute } from './health'
 import { openRouterModelsRoute } from './pricing'
-import { getProfileRoute, recomputeProfileRoute } from './profile'
+import {
+  getProfileActivityRoute,
+  getProfileRoute,
+  getProfileStatsRoute,
+  recomputeProfileRoute,
+} from './profile'
 import { getRepoProfileRoute } from './repo'
 import {
   createUploadSessionRoute,
@@ -51,12 +62,16 @@ export const routes = app
   .openapi(finalizeRevisionRoute, contractHandler)
   .openapi(listConversationsRoute, contractHandler)
   .openapi(getRenderDocumentRoute, contractHandler)
+  .openapi(getSharedRenderDocumentRoute, contractHandler)
+  .openapi(updateConversationVisibilityRoute, contractHandler)
   .openapi(getArtifactRoute, contractHandler)
   .openapi(openRouterModelsRoute, contractHandler)
   .openapi(cliAuthAuthorizeRoute, contractHandler)
   .openapi(cliAuthExchangeRoute, contractHandler)
   .openapi(cliAuthWhoamiRoute, contractHandler)
   .openapi(getProfileRoute, contractHandler)
+  .openapi(getProfileStatsRoute, contractHandler)
+  .openapi(getProfileActivityRoute, contractHandler)
   .openapi(recomputeProfileRoute, contractHandler)
   .openapi(getRepoProfileRoute, contractHandler)
   .openapi(getViewerSessionRoute, contractHandler)
