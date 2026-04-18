@@ -181,16 +181,22 @@ JTBD (doc 15). **As of 2026-04-18 it works end-to-end.** The pieces:
   backfills existing duplicates by appending `-${last6(id)}` to all but the
   oldest row per slug. The `getSharedRenderDocumentBySlug` service dropped
   its `ORDER BY updatedAt DESC` workaround.
-- ~~**Phase spine / timeline component**~~ ◐ heuristic MVP shipped
-  2026-04-18. `classifyPhases` groups blocks into Investigating → Planning
-  → Building → Validating → Summary using positional signals (first plan
-  marker, first / last write-tool run, final assistant message). Desktop
-  renders a vertical sticky rail via `PhaseSpine.astro`; mobile/tablet
-  gets a horizontal sticky chip bar inlined at the top of the article.
-  Each phase section carries an anchor so the spine is a real TOC. Single-
-  phase sessions render unwrapped. Still to do: Claude-style connector
-  lines between blocks within a phase, scrollspy-active state, and moving
-  the heuristic into `@howicc/render` once it stabilises.
+- ~~**Phase spine / timeline component**~~ ✓ shipped 2026-04-18 (heuristic
+  MVP) + 2026-04-19 (scrollspy). `classifyPhases` groups blocks into
+  Investigating → Planning → Building → Validating → Summary using
+  positional signals (first plan marker, first / last write-tool run,
+  final assistant message). Desktop renders a vertical sticky rail via
+  `PhaseSpine.astro`; mobile/tablet gets a horizontal sticky chip bar
+  inlined at the top of the article. Each phase section carries an
+  anchor so the spine is a real TOC. A `wirePhaseSpine()` progressive-
+  enhancement script attaches an `IntersectionObserver` to the phase
+  sections and toggles `data-active="true"` on whichever spine link is
+  currently topmost in the reading band — pure-Tailwind `data-[active=true]:`
+  styling paints the active dot / label / chip without JS touching
+  classNames. SSR renders the spine without active state so no-JS
+  visitors still see the TOC. Residual: Claude-style connector lines
+  between blocks within a phase, and moving the heuristic into
+  `@howicc/render` once it stabilises.
 - **Mobile-first polish for public view** — doc 17 calls this the most
   important mobile surface; current layout is desktop-leaning.
 - ~~**Artifact drilldown**~~ ✓ shipped 2026-04-19. Tool runs with an

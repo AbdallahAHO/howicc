@@ -490,7 +490,7 @@ Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 7: Conversation Detail (`/s/:slug`) — THE PRODUCT — ◐ owner + public views live with phase spine; mobile polish / artifact drilldown / scrollspy pending
+## Page 7: Conversation Detail (`/s/:slug`) — THE PRODUCT — ◐ owner + public views live with phase spine, scrollspy, and artifact drilldown; mobile polish pending
 
 **The most important page. Invest design effort here.**
 
