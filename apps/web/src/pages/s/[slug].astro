@@ -3,8 +3,10 @@ import Layout from '../../components/Layout.astro'
 import { Badge } from '@howicc/ui-web/badge'
 import { buttonVariants } from '@howicc/ui-web/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@howicc/ui-web/card'
+import PhaseSpine from '../../components/session/PhaseSpine.astro'
 import RenderBlocks from '../../components/session/RenderBlocks.astro'
 import VisibilityMenuIsland from '../../components/session/VisibilityMenuIsland'
+import { classifyPhases } from '../../components/session/classifyPhases'
 import { createServerApiClient } from '../../lib/api/client'
 import { getRuntimeWebConfig } from '../../lib/runtime/web-config.server'
 import type { WebLocals } from '../../lib/auth/types'
@@ -87,6 +89,13 @@ const visibilityTone: Record<SharedMeta['visibility'], 'default' | 'secondary' |
 
 const formatDateTime = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+
+const phaseGroups = doc
+  ? classifyPhases(
+      doc.blocks as Parameters<typeof classifyPhases>[0],
+      Boolean(doc.context?.currentPlan),
+    )
+  : []
 ---
 
 <Layout title={title}>
@@ -153,8 +162,35 @@ const formatDateTime = (iso: string) =>
           </div>
         </section>
 
-        <section class="grid gap-8 md:grid-cols-[minmax(0,1fr)_18rem] md:items-start">
-          <div class="flex min-w-0 flex-col gap-6">
+        {phaseGroups.length > 1 ? (
+          <nav
+            aria-label="Phases"
+            class="border-border/60 bg-background/90 supports-[backdrop-filter]:bg-background/70 -mx-4 flex gap-2 overflow-x-auto border-y px-4 py-2 backdrop-blur lg:hidden"
+          >
+            <ul role="list" class="flex items-center gap-2 text-xs">
+              {phaseGroups.map((group, index) => (
+                <li class="shrink-0">
+                  <a
+                    href={`#${group.anchor}`}
+                    class="border-border/60 bg-muted/30 text-muted-foreground hover:text-foreground hover:border-border flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors"
+                  >
+                    <span class="bg-muted-foreground/70 text-background tabular-nums inline-flex size-4 items-center justify-center rounded-full text-[0.6875rem] font-medium">
+                      {index + 1}
+                    </span>
+                    <span class="font-medium">{group.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
+
+        <section class="grid gap-8 md:grid-cols-[minmax(0,1fr)_18rem] md:items-start lg:grid-cols-[12rem_minmax(0,1fr)_18rem]">
+          <div class="hidden lg:block">
+            <PhaseSpine groups={phaseGroups} />
+          </div>
+
+          <div class="flex min-w-0 flex-col gap-8">
             {doc.context?.currentPlan ? (
               <Card>
                 <CardHeader>
@@ -170,7 +206,36 @@ const formatDateTime = (iso: string) =>
             ) : null}
 
             {doc.blocks.length > 0 ? (
-              <RenderBlocks blocks={doc.blocks} />
+              phaseGroups.length > 1 ? (
+                phaseGroups.map((group, index) => (
+                  <section
+                    id={group.anchor}
+                    aria-labelledby={`${group.anchor}-heading`}
+                    class="scroll-mt-24 flex flex-col gap-4"
+                  >
+                    <header class="flex items-baseline gap-3 border-b border-border/60 pb-2">
+                      <span
+                        class="text-muted-foreground tabular-nums text-[0.6875rem] font-medium tracking-wide uppercase"
+                        aria-hidden="true"
+                      >
+                        Phase {index + 1}
+                      </span>
+                      <h2
+                        id={`${group.anchor}-heading`}
+                        class="text-foreground text-base font-medium tracking-tight"
+                      >
+                        {group.label}
+                      </h2>
+                      <span class="text-muted-foreground text-[0.6875rem]">
+                        {group.blocks.length} {group.blocks.length === 1 ? 'block' : 'blocks'}
+                      </span>
+                    </header>
+                    <RenderBlocks blocks={group.blocks as unknown[]} />
+                  </section>
+                ))
+              ) : (
+                <RenderBlocks blocks={doc.blocks} />
+              )
             ) : (
               <Card>
                 <CardContent>

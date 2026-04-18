@@ -164,11 +164,12 @@ waves to match doc 17's "Build Order (Revised)":
   `/s/:slug`. `/dashboard` 301-redirects to `/home`.
 - ✓ API: `PATCH /conversations/:id/visibility`, `GET /shared/:slug`,
   `GET /profile/stats`, `GET /profile/activity`.
-- Residual: mobile-first polish for public view, phase spine / timeline
-  component, artifact drilldown, "load more" feed island, and a dedicated
-  `GET /conversations/:id` metadata endpoint if owner-view ever needs
-  fields outside the render document. (Slug uniqueness resolved
-  2026-04-18 via migration `0002_slug_unique.sql`.)
+- Residual: mobile-first polish for public view, artifact drilldown,
+  "load more" feed island, scrollspy-active state on the phase spine, and
+  a dedicated `GET /conversations/:id` metadata endpoint if owner-view
+  ever needs fields outside the render document. (Slug uniqueness
+  resolved 2026-04-18 via migration `0002_slug_unique.sql`; phase-spine
+  MVP with classifier + desktop rail + mobile chip bar shipped same day.)
 - Foundation: ship the Timeline / Phase Spine component (or interim list)
   and the warm cream + serif typography rollout from doc 20
 
