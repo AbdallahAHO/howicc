@@ -810,6 +810,7 @@ export interface components {
             /** @enum {boolean} */
             success: true;
         };
+<<<<<<< HEAD
         HideRepoConversationResponse: {
             conversationId: string;
             /**
@@ -820,6 +821,8 @@ export interface components {
             /** @enum {boolean} */
             success: true;
         };
+=======
+>>>>>>> 17bbfe5 (feat(api): API tokens CRUD for the settings page)
         ListApiTokensResponse: {
             /** @enum {boolean} */
             success: true;
@@ -1344,6 +1347,16 @@ export interface components {
             success: true;
             targetVisibility: components["schemas"]["RepoVisibility"];
             wouldAggregateCount: number;
+        };
+        RevokeApiTokenResponse: {
+            id: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            revokedAt: string;
+            /** @enum {boolean} */
+            success: true;
         };
         RevokeApiTokenResponse: {
             id: string;
