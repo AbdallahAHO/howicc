@@ -28,8 +28,6 @@ if (result instanceof Response) {
   return result
 }
 
-const user = result
-
 const owner = Astro.params.owner ?? ''
 const name = Astro.params.name ?? ''
 
@@ -51,48 +49,31 @@ const settings = unwrapSuccess<RepoSettingsResponse>(response)
 if (!settings) {
   // 403 means not admin; 404 is returned for non-existent paths. Both map
   // to a graceful "access denied" screen so we never 500 the page.
-  return new Response(
-    renderAccessDenied({
-      owner,
-      name,
-      userName: user.name,
-      productName: locals.productName,
-    }),
-    {
-      status: 403,
-      headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    },
-  )
+  return new Response(`<!doctype html>
+<html lang="en" class="h-full antialiased">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Access denied · ${locals.productName}</title>
+</head>
+<body style="font-family:system-ui;padding:3rem;max-width:40rem;margin:auto;">
+  <h1>Access denied</h1>
+  <p>You don't have admin access to <code>${owner}/${name}</code>.
+  Repo settings on HowiCC require at least <strong>maintain</strong> access
+  on GitHub.</p>
+  <p><a href="/r/${owner}/${name}">← Back to the repo page</a></p>
+</body>
+</html>`, {
+    status: 403,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  })
 }
 
 const viewerIsAdmin =
   settings.viewerPermission === 'admin' || settings.viewerPermission === 'maintain'
 
 const canonicalUrl = `${config.siteUrl.replace(/\/+$/, '')}/r/${owner}/${name}/settings`
-
-function renderAccessDenied(input: {
-  owner: string
-  name: string
-  userName: string
-  productName: string
-}) {
-  return `<!doctype html>
-<html lang="en" class="h-full antialiased">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex" />
-  <title>Access denied · ${input.productName}</title>
-</head>
-<body style="font-family:system-ui;padding:3rem;max-width:40rem;margin:auto;">
-  <h1>Access denied</h1>
-  <p>You don't have admin access to <code>${input.owner}/${input.name}</code>.
-  Repo settings on HowiCC require at least <strong>maintain</strong> access
-  on GitHub.</p>
-  <p><a href="/r/${input.owner}/${input.name}">← Back to the repo page</a></p>
-</body>
-</html>`
-}
 ---
 
 <Layout
