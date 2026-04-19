@@ -1,9 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
-  accounts,
   conversations,
   conversationViews,
-  userProfiles,
   users,
 } from '@howicc/db/schema'
 import type { SessionDigest } from '@howicc/canonical'
@@ -85,8 +83,8 @@ const createDigest = (input: {
 })
 
 describe('public profile service', () => {
-  it('derives aggregates from public digests instead of the materialized user profile blob', async () => {
-    let queriedUserProfiles = false
+  it('derives aggregates and recent cards from a single public-only rowset', async () => {
+    let publicConversationQueryCount = 0
 
     const publicDigest = createDigest({
       sessionId: 'sess_public',
@@ -124,55 +122,17 @@ describe('public profile service', () => {
             }
           }
 
-          if (table === userProfiles) {
-            queriedUserProfiles = true
-            return {
-              where: () => ({
-                limit: async () => [
-                  {
-                    profileJson: JSON.stringify({
-                      activity: { totalSessions: 99 },
-                    }),
-                  },
-                ],
-              }),
-            }
-          }
-
-          if (table === accounts) {
-            return {
-              where: () => ({
-                limit: async () => [],
-              }),
-            }
-          }
-
-          if (
-            table === conversations &&
-            selection &&
-            'digestJson' in selection &&
-            !('conv' in selection)
-          ) {
-            return {
-              innerJoin: () => ({
-                where: async () => [
-                  { digestJson: JSON.stringify(publicDigest) },
-                ],
-              }),
-            }
-          }
-
           if (
             table === conversations &&
             selection &&
             'conv' in selection &&
             'digest' in selection
           ) {
+            publicConversationQueryCount += 1
             return {
               innerJoin: () => ({
                 where: () => ({
-                  orderBy: () => ({
-                    limit: async () => [
+                  orderBy: async () => [
                       {
                         conv: {
                           id: 'conv_public',
@@ -184,7 +144,6 @@ describe('public profile service', () => {
                         },
                       },
                     ],
-                  }),
                 }),
               }),
             }
@@ -222,6 +181,6 @@ describe('public profile service', () => {
         repository: 'acme/public-repo',
       }),
     ])
-    expect(queriedUserProfiles).toBe(false)
+    expect(publicConversationQueryCount).toBe(1)
   })
 })

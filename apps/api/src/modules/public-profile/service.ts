@@ -1,6 +1,5 @@
 import { and, desc, eq, inArray, sql } from 'drizzle-orm'
 import {
-  accounts,
   conversations,
   conversationViews,
   profileViews,
@@ -220,8 +219,11 @@ export const getPublicProfile = async (
 
   const settings = parseSettings(user.publicProfileSettings)
 
-  const publicDigestRows = await db
-    .select({ digestJson: sessionDigests.digestJson })
+  const publicConversationRows = await db
+    .select({
+      conv: conversations,
+      digest: sessionDigests,
+    })
     .from(conversations)
     .innerJoin(
       sessionDigests,
@@ -236,19 +238,21 @@ export const getPublicProfile = async (
         eq(conversations.visibility, 'public'),
       ),
     )
+    .orderBy(desc(conversations.updatedAt))
 
-  const publicProfile = publicDigestRows.length
+  const publicConversationEntries = publicConversationRows.map(row => ({
+    conversation: row.conv,
+    digest: JSON.parse(row.digest.digestJson) as SessionDigest,
+  }))
+
+  // The public profile must be derived from the same filtered rowset we expose
+  // on the page so private/unlisted digests never bleed into public aggregates.
+  const publicProfile = publicConversationEntries.length
     ? buildUserProfile(
         user.id,
-        publicDigestRows.map(row => JSON.parse(row.digestJson) as SessionDigest),
+        publicConversationEntries.map(entry => entry.digest),
       )
     : null
-
-  const githubAccount = await db
-    .select({ accountId: accounts.accountId })
-    .from(accounts)
-    .where(and(eq(accounts.userId, user.id), eq(accounts.providerId, 'github')))
-    .limit(1)
 
   const stats = publicProfile
     ? {
@@ -274,29 +278,8 @@ export const getPublicProfile = async (
       ? { badges: [] as PublicProfileBadge[] }
       : {}
 
-  const publicConversationRows = await db
-    .select({
-      conv: conversations,
-      digest: sessionDigests,
-    })
-    .from(conversations)
-    .innerJoin(
-      sessionDigests,
-      and(
-        eq(sessionDigests.conversationId, conversations.id),
-        eq(sessionDigests.revisionId, conversations.currentRevisionId),
-      ),
-    )
-    .where(
-      and(
-        eq(conversations.ownerUserId, user.id),
-        eq(conversations.visibility, 'public'),
-      ),
-    )
-    .orderBy(desc(conversations.updatedAt))
-    .limit(12)
-
-  const conversationIds = publicConversationRows.map(r => r.conv.id)
+  const recentPublicEntries = publicConversationEntries.slice(0, 12)
+  const conversationIds = recentPublicEntries.map(entry => entry.conversation.id)
 
   const viewCounts = conversationIds.length
     ? await db
@@ -313,20 +296,15 @@ export const getPublicProfile = async (
     viewCounts.map(v => [v.conversationId, Number(v.count)]),
   )
 
-  const publicSessions: PublicProfileSessionCard[] = publicConversationRows.map(
-    row => {
-      const digest = JSON.parse(row.digest.digestJson) as SessionDigest
+  const publicSessions: PublicProfileSessionCard[] = recentPublicEntries.map(
+    entry => {
       return mapDigestToCard(
-        row.conv,
-        digest,
-        viewCountByConversation.get(row.conv.id) ?? 0,
+        entry.conversation,
+        entry.digest,
+        viewCountByConversation.get(entry.conversation.id) ?? 0,
       )
     },
   )
-
-  const githubLogin = githubAccount[0]?.accountId
-    ? undefined
-    : undefined
 
   return {
     success: true as const,
@@ -346,7 +324,7 @@ export const getPublicProfile = async (
     stats,
     publicSessions,
     ...filtered,
-  } satisfies PublicProfileResponse & { _unused?: typeof githubLogin }
+  } satisfies PublicProfileResponse
 }
 
 export const getCallerPublicProfile = async (

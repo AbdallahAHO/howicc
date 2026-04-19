@@ -42,6 +42,7 @@ const metaDescription = description ?? undefined
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* The Archive is intentionally light-only until a dedicated dark palette exists. */}
     <meta name="color-scheme" content="light" />
     <title>{fullTitle}</title>
     {metaDescription ? <meta name="description" content={metaDescription} /> : null}

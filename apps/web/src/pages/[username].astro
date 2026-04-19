@@ -167,7 +167,7 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
   noindex={!profile}
   jsonLd={jsonLd}
 >
-  <div class="isolate min-h-dvh">
+  <div class="archive-glow isolate min-h-dvh">
     <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
       <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
         <a
@@ -385,7 +385,7 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
           {sessions.length > 0 ? (
             <section class="flex flex-col gap-4">
               <div class="flex items-baseline justify-between">
-                <h2 class="text-xl font-semibold tracking-tight">Public sessions</h2>
+                <h2 class="archive-section-title text-2xl">Public sessions</h2>
                 <span class="text-muted-foreground text-sm">{sessions.length} visible</span>
               </div>
               <ul role="list" class="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -475,7 +475,7 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
 
           {!viewerUser ? (
             <section class="border-border/60 bg-muted/30 rounded-xl border p-8 text-center">
-              <h2 class="text-xl font-semibold tracking-tight">
+              <h2 class="archive-section-title text-2xl">
                 Create your own HowiCC profile
               </h2>
               <p class="text-muted-foreground mx-auto mt-2 max-w-[50ch] text-pretty">

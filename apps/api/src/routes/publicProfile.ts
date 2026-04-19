@@ -157,7 +157,11 @@ app.openapi(recordPublicProfileViewRoute, async c => {
     const session = await auth.api.getSession({ headers: c.req.raw.headers }).catch(
       () => null,
     )
-    const viewerKey = await deriveViewerKey(c.req.raw, runtimeEnv)
+    const viewerKey = await deriveViewerKey(
+      c.req.raw,
+      runtimeEnv,
+      session?.user.id ?? null,
+    )
     const outcome = await recordPublicProfileView(runtime, {
       username,
       viewerKey,

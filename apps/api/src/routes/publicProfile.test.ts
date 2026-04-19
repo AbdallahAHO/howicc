@@ -91,6 +91,11 @@ describe('public profile routes', () => {
       success: true,
       recorded: false,
     })
+    expect(mocks.deriveViewerKey).toHaveBeenCalledWith(
+      expect.any(Request),
+      runtimeEnv,
+      'user_1',
+    )
     expect(mocks.recordPublicProfileView).toHaveBeenCalledWith(
       { env: 'runtime' },
       {

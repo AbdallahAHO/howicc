@@ -85,7 +85,7 @@ app.openapi(recordSessionViewRoute, async c => {
       )
     }
 
-    const viewerKey = await deriveViewerKey(c.req.raw, runtimeEnv)
+    const viewerKey = await deriveViewerKey(c.req.raw, runtimeEnv, viewerUserId)
     const now = new Date()
     const day = now.toISOString().slice(0, 10)
 

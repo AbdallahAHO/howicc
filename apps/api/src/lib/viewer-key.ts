@@ -1,8 +1,7 @@
 /**
  * Hashed viewer identifier used to debounce view-counter endpoints without
- * storing raw IPs. Falls back to a per-day salt so the same visitor on the
- * same day yields the same key but different days produce different keys —
- * keeps per-day dedup cheap without tracking identity across days.
+ * storing raw IPs. Signed-in viewers dedupe by account id; anonymous viewers
+ * fall back to an IP + user-agent fingerprint.
  */
 import type { ApiAuthRuntimeEnv } from './auth'
 
@@ -34,9 +33,15 @@ const extractClientIp = (request: Request): string => {
 export const deriveViewerKey = async (
   request: Request,
   runtimeEnv: Partial<ApiAuthRuntimeEnv>,
+  viewerUserId?: string | null,
 ): Promise<string> => {
+  const salt = runtimeEnv.BETTER_AUTH_SECRET ?? 'howicc-views'
+
+  if (viewerUserId) {
+    return hashString(`${salt}:user:${viewerUserId}`)
+  }
+
   const ip = extractClientIp(request)
   const userAgent = request.headers.get('user-agent') ?? ''
-  const salt = runtimeEnv.BETTER_AUTH_SECRET ?? 'howicc-views'
-  return hashString(`${salt}:${ip}:${userAgent}`)
+  return hashString(`${salt}:anon:${ip}:${userAgent}`)
 }

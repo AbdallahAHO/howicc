@@ -268,6 +268,9 @@ app.openapi(previewRepoVisibilityRoute, async c => {
       )
     }
 
+    // Consent is only required when the repo is already private. Public and
+    // members repos rely on the preview-token review step so first-time admins
+    // can still change visibility without being dead-ended by a missing consent row.
     const current = await getRepoSettingsRow(runtime, owner, name)
     const items = await previewAggregatedConversations(runtime, {
       owner,

@@ -13,7 +13,9 @@ dark terminal.
 > cream surfaces (`#FAF9F6` / `#F5F2EC` / `#EDE9DF`), the serif/sans/mono
 > font stack (Source Serif 4, Inter, JetBrains Mono), the warm shadow tokens,
 > and the Timeline / Phase Spine components called out below as signature.
-> Voice and casing already match the spec where copy exists. Treat the
+> The Archive is intentionally light-mode-only unless a separate dark palette
+> is designed; do not rely on automatic token inversion. Voice and casing
+> already match the spec where copy exists. Treat the
 > sections below as the target; the tracker shows the gap.
 
 ---
