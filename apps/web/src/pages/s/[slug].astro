@@ -1,0 +1,366 @@
+---
+import Layout from '../../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import { buttonVariants } from '@howicc/ui-web/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@howicc/ui-web/card'
+import BlockRenderer from '../../components/blocks/BlockRenderer.astro'
+import PhaseSpine from '../../components/session/PhaseSpine.astro'
+import SessionViewRecorderIsland from '../../components/session/SessionViewRecorderIsland'
+import VisibilityMenuIsland from '../../components/session/VisibilityMenuIsland'
+import { classifyPhases } from '../../components/session/classifyPhases'
+import type {
+  RenderBlock,
+  SharedConversationMeta,
+  SharedRenderDocumentResponse,
+} from '@howicc/contracts'
+import { createServerApiClient } from '../../lib/api/client'
+import { getRuntimeWebConfig } from '../../lib/runtime/web-config.server'
+import type { WebLocals } from '../../lib/auth/types'
+
+const locals = Astro.locals as WebLocals
+const slug = Astro.params.slug ?? ''
+
+if (!slug) {
+  return new Response(null, { status: 404 })
+}
+
+const isSharedResponse = (value: unknown): value is SharedRenderDocumentResponse =>
+  Boolean(value) &&
+  typeof value === 'object' &&
+  value !== null &&
+  'kind' in value &&
+  (value as { kind?: unknown }).kind === 'render_document' &&
+  'sharedMeta' in value
+
+const api = createServerApiClient({
+  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const sharedResponse = await api.conversations.getShared(slug).catch(() => null)
+const doc: SharedRenderDocumentResponse | null = isSharedResponse(sharedResponse)
+  ? sharedResponse
+  : null
+
+if (!doc) {
+  Astro.response.status = 404
+}
+const title = doc ? doc.session.title : 'Conversation not found'
+const viewerIsAuthenticated = Boolean(locals.auth.user)
+
+const visibilityLabel: Record<SharedConversationMeta['visibility'], string> = {
+  private: 'Private',
+  unlisted: 'Unlisted',
+  public: 'Public',
+}
+
+const visibilityTone: Record<SharedConversationMeta['visibility'], 'default' | 'secondary' | 'outline'> = {
+  private: 'secondary',
+  unlisted: 'outline',
+  public: 'default',
+}
+
+const formatDateTime = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+
+const phaseGroups = doc
+  ? classifyPhases(
+      doc.blocks as Parameters<typeof classifyPhases>[0],
+      Boolean(doc.context?.currentPlan),
+    )
+  : []
+---
+
+<Layout title={title}>
+  <div class="archive-glow isolate min-h-dvh">
+    <header
+      data-print="hide"
+      class="border-border/60 bg-background/88 sticky top-0 z-40 border-b backdrop-blur supports-[backdrop-filter]:bg-background/76"
+    >
+      <div class="mx-auto flex w-full max-w-5xl items-center gap-3 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+        <div class="ml-auto flex items-center gap-2 text-sm">
+          {viewerIsAuthenticated ? (
+            <a
+              href="/home"
+              class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
+            >
+              ← Home
+            </a>
+          ) : (
+            <a
+              href="/login"
+              class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-8 items-center rounded-md px-3 font-medium"
+            >
+              Sign in
+            </a>
+          )}
+        </div>
+      </div>
+    </header>
+
+    {doc ? (
+      <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+        <section class="flex flex-col gap-3">
+          <SessionViewRecorderIsland
+            client:idle
+            apiUrl={locals.authApiUrl}
+            conversationId={doc.sharedMeta.conversationId}
+          />
+          <div class="flex flex-wrap items-center gap-2">
+            <Badge variant={visibilityTone[doc.sharedMeta.visibility]}>
+              {visibilityLabel[doc.sharedMeta.visibility]}
+            </Badge>
+            {doc.sharedMeta.isOwner ? <Badge variant="outline">Owner view</Badge> : null}
+              {doc.session.tag ? <Badge variant="secondary">{doc.session.tag}</Badge> : null}
+          </div>
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
+            <div class="flex min-w-0 flex-col gap-1">
+              <h1 class="archive-page-title text-4xl sm:text-5xl">
+                {doc.session.title}
+              </h1>
+              <p class="text-ink-secondary text-sm">
+                <span class="tabular-nums">{doc.session.stats.messageCount}</span> messages ·
+                <span class="tabular-nums"> {doc.session.stats.toolRunCount}</span> tool runs ·
+                <span class="tabular-nums"> {doc.session.stats.activityGroupCount}</span> activity groups
+              </p>
+            </div>
+            {doc.sharedMeta.isOwner ? (
+              <div data-print="hide">
+                <VisibilityMenuIsland
+                  client:load
+                  apiUrl={locals.authApiUrl}
+                  conversationId={doc.sharedMeta.conversationId}
+                  initialVisibility={doc.sharedMeta.visibility}
+                />
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        {phaseGroups.length > 1 ? (
+          <nav
+            aria-label="Phases"
+            data-print="hide"
+            class="border-border/60 bg-background/95 shadow-subtle supports-[backdrop-filter]:bg-background/84 sticky top-14 z-30 -mx-4 flex gap-2 overflow-x-auto border-b px-4 py-2 backdrop-blur lg:hidden"
+          >
+            <ul role="list" class="flex items-center gap-2 text-xs">
+              {phaseGroups.map((group, index) => (
+                <li class="shrink-0">
+                  <a
+                    href={`#${group.anchor}`}
+                    data-phase-link={group.anchor}
+                    data-active="false"
+                    class="group/phase-chip border-border/70 bg-card/95 text-ink-secondary shadow-subtle hover:text-primary hover:border-border data-[active=true]:border-primary/20 data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:shadow-default focus-visible:ring-primary/20 touch-target flex items-center gap-2 rounded-pill border px-3 py-1.5 outline-none transition-all focus-visible:ring-2"
+                  >
+                    <span class="bg-surface-sunk text-ink-secondary group-data-[active=true]/phase-chip:bg-primary group-data-[active=true]/phase-chip:text-primary-foreground tabular-nums inline-flex size-5 items-center justify-center rounded-pill text-[0.6875rem] font-medium transition-colors">
+                      {index + 1}
+                    </span>
+                    <span class="font-medium">{group.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
+
+        <section class="grid gap-8 md:grid-cols-[minmax(0,1fr)_18rem] md:items-start lg:grid-cols-[12rem_minmax(0,1fr)_18rem]">
+          <div data-print="hide" class="hidden lg:block">
+            <PhaseSpine groups={phaseGroups} />
+          </div>
+
+          <div class="flex min-w-0 flex-col gap-8">
+            {doc.context?.currentPlan ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Badge variant="secondary">Plan</Badge>
+                    <span>{doc.context.currentPlan.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre class="text-foreground whitespace-pre-wrap font-mono text-sm leading-relaxed">{doc.context.currentPlan.body}</pre>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {doc.blocks.length > 0 ? (
+              phaseGroups.length > 1 ? (
+                phaseGroups.map((group, index) => (
+                  <section
+                    id={group.anchor}
+                    aria-labelledby={`${group.anchor}-heading`}
+                    class="scroll-mt-24 flex flex-col gap-4"
+                  >
+                    <header class="border-border/70 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b pb-2">
+                      <span
+                        class="text-ink-secondary tabular-nums text-[0.6875rem] font-medium"
+                        aria-hidden="true"
+                      >
+                        Phase {index + 1}
+                      </span>
+                      <h2
+                        id={`${group.anchor}-heading`}
+                        class="archive-section-title text-xl"
+                      >
+                        {group.label}
+                      </h2>
+                      <span class="text-ink-tertiary text-[0.6875rem] tabular-nums">
+                        {group.blocks.length} {group.blocks.length === 1 ? 'block' : 'blocks'}
+                      </span>
+                    </header>
+                    <BlockRenderer
+                      blocks={group.blocks as unknown as RenderBlock[]}
+                      conversationId={doc.sharedMeta.conversationId}
+                      apiUrl={locals.authApiUrl}
+                    />
+                  </section>
+                ))
+              ) : (
+                <BlockRenderer
+                  blocks={doc.blocks as unknown as RenderBlock[]}
+                  conversationId={doc.sharedMeta.conversationId}
+                  apiUrl={locals.authApiUrl}
+                />
+              )
+            ) : (
+              <Card>
+                <CardContent>
+                  <p class="text-muted-foreground py-6 text-center text-sm">
+                    Nothing rendered for this one yet. Re-sync and it should fill in.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <details
+            open
+            data-responsive-details
+            data-breakpoint="768"
+            class="group/meta border-border/70 bg-card/95 shadow-subtle overflow-hidden rounded-lg border md:sticky md:top-24 md:self-start md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:shadow-none"
+          >
+            <summary class="focus-visible:ring-ring/50 touch-target flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 outline-none focus-visible:ring-2 md:hidden [&::-webkit-details-marker]:hidden">
+              <span class="text-foreground text-sm font-medium">Session info</span>
+              <svg
+                class="text-muted-foreground size-4 transition-transform group-open/meta:rotate-180"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 6l4 4 4-4" />
+              </svg>
+            </summary>
+
+            <div class="border-border/70 flex flex-col gap-4 border-t p-4 md:border-0 md:p-0">
+              <Card size="sm">
+                <CardHeader>
+                  <CardTitle>Session</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <dl class="text-sm">
+                    <div class="flex items-baseline justify-between gap-3 py-1.5">
+                      <dt class="text-muted-foreground">Provider</dt>
+                      <dd class="text-xs" title={doc.session.provider}>
+                        {doc.session.provider === 'claude-code'
+                          ? 'Claude Code'
+                          : doc.session.provider === 'codex'
+                            ? 'Codex'
+                            : doc.session.provider}
+                      </dd>
+                    </div>
+                    {doc.session.gitBranch ? (
+                      <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                        <dt class="text-muted-foreground">Branch</dt>
+                        <dd class="max-w-[60%] truncate font-mono text-xs">{doc.session.gitBranch}</dd>
+                      </div>
+                    ) : null}
+                    <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                      <dt class="text-muted-foreground">Created</dt>
+                      <dd class="tabular-nums text-xs">{formatDateTime(doc.session.createdAt)}</dd>
+                    </div>
+                    <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                      <dt class="text-muted-foreground">Updated</dt>
+                      <dd class="tabular-nums text-xs">{formatDateTime(doc.session.updatedAt)}</dd>
+                    </div>
+                  </dl>
+                </CardContent>
+              </Card>
+
+              {!doc.sharedMeta.isOwner && viewerIsAuthenticated ? (
+                <Card size="sm">
+                  <CardHeader>
+                    <CardTitle>Shared with you</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p class="text-muted-foreground text-sm text-pretty">
+                      This conversation was shared by another HowiCC user. Only the owner can change its visibility.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : null}
+
+              {!viewerIsAuthenticated ? (
+                <Card size="sm">
+                  <CardHeader>
+                    <CardTitle>Like what you're reading?</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-3">
+                    <p class="text-muted-foreground text-sm text-pretty">
+                      Sign in to sync your own sessions and share them like this.
+                    </p>
+                    <a href="/login" class={buttonVariants({ variant: 'default' })}>
+                      Sign in with GitHub
+                    </a>
+                  </CardContent>
+                </Card>
+              ) : null}
+            </div>
+          </details>
+        </section>
+      </main>
+    ) : (
+      <main class="mx-auto flex w-full max-w-2xl flex-col items-start gap-6 px-4 py-20 sm:px-6">
+        <Badge variant="outline">404</Badge>
+        <h1 class="archive-page-title text-4xl">
+          We couldn't find that conversation.
+        </h1>
+        <p class="text-ink-secondary text-base text-pretty">
+          It may be private, unpublished, or the link is wrong. Private conversations are only visible to the owner when signed in.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          {viewerIsAuthenticated ? (
+            <a href="/home" class={buttonVariants({ variant: 'default' })}>
+              Back to home
+            </a>
+          ) : (
+            <a href="/login" class={buttonVariants({ variant: 'default' })}>
+              Sign in
+            </a>
+          )}
+          <a href="/" class={buttonVariants({ variant: 'outline' })}>
+            Home
+          </a>
+        </div>
+      </main>
+    )}
+  </div>
+
+  <script>
+    import { wirePhaseSpine } from '../../components/session/wirePhaseSpine'
+    import { wireResponsiveDetails } from '../../components/session/wireResponsiveDetails'
+    wirePhaseSpine()
+    wireResponsiveDetails()
+  </script>
+</Layout>

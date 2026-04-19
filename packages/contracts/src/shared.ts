@@ -93,7 +93,7 @@ export const conversationSummarySchema = z
   })
   .openapi('ConversationSummary')
 
-const questionOptionSchema = z
+export const questionOptionSchema = z
   .object({
     label: z.string(),
     description: z.string(),
@@ -101,7 +101,7 @@ const questionOptionSchema = z
   })
   .openapi('RenderQuestionOption')
 
-const questionItemSchema = z
+export const questionItemSchema = z
   .object({
     question: z.string(),
     header: z.string(),
@@ -113,7 +113,7 @@ const questionItemSchema = z
   })
   .openapi('RenderQuestionItem')
 
-const toolRunActivitySchema = z
+export const toolRunActivitySchema = z
   .object({
     type: z.literal('tool_run'),
     id: z.string(),
@@ -128,7 +128,7 @@ const toolRunActivitySchema = z
   })
   .openapi('RenderToolRunActivity')
 
-const hookActivitySchema = z
+export const hookActivitySchema = z
   .object({
     type: z.literal('hook_event'),
     id: z.string(),
@@ -138,7 +138,7 @@ const hookActivitySchema = z
   })
   .openapi('RenderHookActivity')
 
-const messageBlockSchema = z
+export const messageBlockSchema = z
   .object({
     type: z.literal('message'),
     id: z.string(),
@@ -147,7 +147,7 @@ const messageBlockSchema = z
   })
   .openapi('RenderMessageBlock')
 
-const questionBlockSchema = z
+export const questionBlockSchema = z
   .object({
     type: z.literal('question'),
     id: z.string(),
@@ -159,7 +159,7 @@ const questionBlockSchema = z
   })
   .openapi('RenderQuestionBlock')
 
-const activityGroupBlockSchema = z
+export const activityGroupBlockSchema = z
   .object({
     type: z.literal('activity_group'),
     id: z.string(),
@@ -170,7 +170,7 @@ const activityGroupBlockSchema = z
   })
   .openapi('RenderActivityGroupBlock')
 
-const calloutBlockSchema = z
+export const calloutBlockSchema = z
   .object({
     type: z.literal('callout'),
     id: z.string(),
@@ -180,7 +180,7 @@ const calloutBlockSchema = z
   })
   .openapi('RenderCalloutBlock')
 
-const todoSnapshotItemSchema = z
+export const todoSnapshotItemSchema = z
   .object({
     content: z.string(),
     status: z.string(),
@@ -188,7 +188,7 @@ const todoSnapshotItemSchema = z
   })
   .openapi('RenderTodoItem')
 
-const todoSnapshotBlockSchema = z
+export const todoSnapshotBlockSchema = z
   .object({
     type: z.literal('todo_snapshot'),
     id: z.string(),
@@ -198,7 +198,7 @@ const todoSnapshotBlockSchema = z
   })
   .openapi('RenderTodoSnapshotBlock')
 
-const taskTimelineEntrySchema = z
+export const taskTimelineEntrySchema = z
   .object({
     taskId: z.string(),
     status: z.string(),
@@ -207,7 +207,7 @@ const taskTimelineEntrySchema = z
   })
   .openapi('RenderTaskTimelineEntry')
 
-const taskTimelineBlockSchema = z
+export const taskTimelineBlockSchema = z
   .object({
     type: z.literal('task_timeline'),
     id: z.string(),
@@ -217,7 +217,7 @@ const taskTimelineBlockSchema = z
   })
   .openapi('RenderTaskTimelineBlock')
 
-const resourceBlockSchema = z
+export const resourceBlockSchema = z
   .object({
     type: z.literal('resource'),
     id: z.string(),
@@ -230,7 +230,7 @@ const resourceBlockSchema = z
   })
   .openapi('RenderResourceBlock')
 
-const structuredDataBlockSchema = z
+export const structuredDataBlockSchema = z
   .object({
     type: z.literal('structured_data'),
     id: z.string(),
@@ -240,7 +240,7 @@ const structuredDataBlockSchema = z
   })
   .openapi('RenderStructuredDataBlock')
 
-const briefDeliveryAttachmentSchema = z
+export const briefDeliveryAttachmentSchema = z
   .object({
     label: z.string(),
     assetId: z.string().optional(),
@@ -248,7 +248,7 @@ const briefDeliveryAttachmentSchema = z
   })
   .openapi('RenderBriefDeliveryAttachment')
 
-const briefDeliveryBlockSchema = z
+export const briefDeliveryBlockSchema = z
   .object({
     type: z.literal('brief_delivery'),
     id: z.string(),
@@ -259,7 +259,7 @@ const briefDeliveryBlockSchema = z
   })
   .openapi('RenderBriefDeliveryBlock')
 
-const subagentThreadBlockSchema = z
+export const subagentThreadBlockSchema = z
   .object({
     type: z.literal('subagent_thread'),
     id: z.string(),
@@ -274,7 +274,7 @@ const subagentThreadBlockSchema = z
   })
   .openapi('RenderSubagentThreadBlock')
 
-const compactBoundaryBlockSchema = z
+export const compactBoundaryBlockSchema = z
   .object({
     type: z.literal('compact_boundary'),
     id: z.string(),
@@ -282,7 +282,7 @@ const compactBoundaryBlockSchema = z
   })
   .openapi('RenderCompactBoundaryBlock')
 
-const renderBlockSchema = z.union([
+export const renderBlockSchema = z.union([
   messageBlockSchema,
   questionBlockSchema,
   activityGroupBlockSchema,
@@ -296,7 +296,7 @@ const renderBlockSchema = z.union([
   compactBoundaryBlockSchema,
 ])
 
-const renderDocumentContextSchema = z
+export const renderDocumentContextSchema = z
   .object({
     currentPlan: z
       .object({
@@ -338,6 +338,54 @@ export const renderDocumentSummarySchema = z
   .openapi('RenderDocument')
 
 export type RenderDocumentSummary = z.infer<typeof renderDocumentSummarySchema>
+
+// -----------------------------------------------------------------------
+// Render block type exports — narrow each member of the discriminated
+// union so UI components can import exactly the shape they render.
+// -----------------------------------------------------------------------
+
+export type RenderBlock = z.infer<typeof renderBlockSchema>
+export type RenderMessageBlock = z.infer<typeof messageBlockSchema>
+export type RenderQuestionBlock = z.infer<typeof questionBlockSchema>
+export type RenderQuestionItem = z.infer<typeof questionItemSchema>
+export type RenderQuestionOption = z.infer<typeof questionOptionSchema>
+export type RenderActivityGroupBlock = z.infer<typeof activityGroupBlockSchema>
+export type RenderToolRunActivity = z.infer<typeof toolRunActivitySchema>
+export type RenderHookActivity = z.infer<typeof hookActivitySchema>
+export type RenderCalloutBlock = z.infer<typeof calloutBlockSchema>
+export type RenderTodoSnapshotBlock = z.infer<typeof todoSnapshotBlockSchema>
+export type RenderTodoItem = z.infer<typeof todoSnapshotItemSchema>
+export type RenderTaskTimelineBlock = z.infer<typeof taskTimelineBlockSchema>
+export type RenderTaskTimelineEntry = z.infer<typeof taskTimelineEntrySchema>
+export type RenderResourceBlock = z.infer<typeof resourceBlockSchema>
+export type RenderStructuredDataBlock = z.infer<typeof structuredDataBlockSchema>
+export type RenderBriefDeliveryBlock = z.infer<typeof briefDeliveryBlockSchema>
+export type RenderBriefDeliveryAttachment = z.infer<typeof briefDeliveryAttachmentSchema>
+export type RenderSubagentThreadBlock = z.infer<typeof subagentThreadBlockSchema>
+export type RenderCompactBoundaryBlock = z.infer<typeof compactBoundaryBlockSchema>
+
+// -----------------------------------------------------------------------
+// Profile type exports. Dashboards, /insights, and the public profile
+// page all render narrowed slices of these; exporting the inferred union
+// once keeps every consumer on the same source of truth.
+// -----------------------------------------------------------------------
+
+export type UserProfile = z.infer<typeof userProfileSchema>
+export type UserProfileActivity = z.infer<typeof userProfileActivitySchema>
+export type UserProfileDailyActivity = z.infer<typeof userProfileDailyActivitySchema>
+export type UserProfileProject = z.infer<typeof userProfileProjectSchema>
+export type UserProfileToolcraft = z.infer<typeof userProfileToolcraftSchema>
+export type UserProfileProductivity = z.infer<typeof userProfileProductivitySchema>
+export type UserProfileModel = z.infer<typeof userProfileModelSchema>
+export type UserProfileCost = z.infer<typeof userProfileCostSchema>
+export type UserProfileIntegrations = z.infer<typeof userProfileIntegrationsSchema>
+export type UserProfileMcpServer = z.infer<typeof userProfileMcpServerSchema>
+export type UserProfileSkill = z.infer<typeof userProfileSkillSchema>
+export type UserProfileProvider = z.infer<typeof userProfileProviderSchema>
+export type ProjectLanguages = z.infer<typeof projectLanguagesSchema>
+export type RepoProfile = z.infer<typeof repoProfileSchema>
+export type ConversationSummary = z.infer<typeof conversationSummarySchema>
+export type ConversationVisibility = z.infer<typeof visibilitySchema>
 
 export const cliAuthAuthorizeBodySchema = z
   .object({

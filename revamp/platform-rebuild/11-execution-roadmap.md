@@ -4,6 +4,16 @@ This document translates the revamp into a realistic build sequence.
 
 The goal is to avoid trying to rebuild everything in one chaotic step.
 
+> **Status as of 2026-04-18:** phases 0–5 are done; phase 6 (web app on render
+> documents) covers the full sharing loop — `/login`, `/cli/login`, `/home`
+> (with live feed + stats), and `/s/:slug` (owner visibility toggle + public
+> view) are all built end-to-end. `/dashboard` redirects 301 to `/home`.
+> Phases 7–9 are partially scaffolded (auth + tokens shipped via CLI bridge;
+> jobs worker exists but no consumers; legacy transition not started). See
+> [doc 21](21-implementation-status.md) for the live status board and
+> [doc 17](17-web-app-pages-and-screens.md) "Build Order (Revised)" for the
+> page-level wave plan.
+
 ## Guiding Strategy
 
 Build the revamp from the inside out:
@@ -18,7 +28,7 @@ Build the revamp from the inside out:
 
 That lets the most foundational pieces settle first.
 
-## Phase 0: Lock The Design
+## Phase 0: Lock The Design — ✓ done
 
 Outcome:
 
@@ -35,7 +45,7 @@ Acceptance:
 
 - no major schema ambiguity remains
 
-## Phase 1: Create Core Packages
+## Phase 1: Create Core Packages — ✓ done
 
 Outcome:
 
@@ -54,7 +64,7 @@ Acceptance:
 
 - canonical and render schemas validate example documents
 
-## Phase 2: Build The Claude Code Adapter
+## Phase 2: Build The Claude Code Adapter — ✓ done
 
 Outcome:
 
@@ -78,7 +88,7 @@ Acceptance:
 
 - fixture-driven tests pass for first-wave Claude Code imports
 
-## Phase 3: Produce Canonical And Render Outputs Locally
+## Phase 3: Produce Canonical And Render Outputs Locally — ✓ done
 
 Outcome:
 
@@ -94,7 +104,7 @@ Acceptance:
 
 - local import of anonymized fixtures produces stable canonical and render outputs
 
-## Phase 4: Add Contracts And Database Layer
+## Phase 4: Add Contracts And Database Layer — ✓ done
 
 Outcome:
 
@@ -111,7 +121,7 @@ Acceptance:
 
 - contract schemas and DB schema compile and validate in CI
 
-## Phase 5: Build API And Storage Path
+## Phase 5: Build API And Storage Path — ✓ done (with gaps tracked in doc 18 §"Endpoint Status" and doc 21)
 
 Outcome:
 
@@ -133,24 +143,57 @@ Acceptance:
 - CLI can upload canonical, render, and bundle artifacts successfully
 - API can return a stored render document from the latest revision without reparsing local source data
 
-## Phase 6: Build The Web App On Render Documents
+## Phase 6: Build The Web App On Render Documents — ◐ in progress
 
 Outcome:
 
 - `apps/web` reads `render_document` instead of markdown-first data
 
-Tasks:
+Today: only `/login` and `/cli/login` are built end-to-end. `/` and
+`/dashboard` are stubs. No render-document UI ships yet. Re-sequenced into
+waves to match doc 17's "Build Order (Revised)":
 
-- implement public conversation page
-- implement block renderers
-- implement plan context and question blocks
-- implement expandable artifact output
+### Wave A — Sharing loop (mostly shipped 2026-04-18)
 
-Acceptance:
+- ✓ `/s/:slug` owner: render-document viewer with copy-link +
+  `VisibilityMenuIsland` radio-toggle dropdown that `PATCH`es visibility.
+- ✓ `/s/:slug` public: same route, visibility-gated; CTA for logged-out
+  visitors to sign in.
+- ✓ `/home`: shadcn shell + server-fetched `GET /profile/stats` and
+  `GET /profile/activity` render real data; activity titles link to
+  `/s/:slug`. `/dashboard` 301-redirects to `/home`.
+- ✓ API: `PATCH /conversations/:id/visibility`, `GET /shared/:slug`,
+  `GET /profile/stats`, `GET /profile/activity`.
+- Residual: mobile-first polish for public view, artifact drilldown,
+  "load more" feed island, scrollspy-active state on the phase spine, and
+  a dedicated `GET /conversations/:id` metadata endpoint if owner-view
+  ever needs fields outside the render document. (Slug uniqueness
+  resolved 2026-04-18 via migration `0002_slug_unique.sql`; phase-spine
+  MVP with classifier + desktop rail + mobile chip bar shipped same day.)
+- Foundation: ship the Timeline / Phase Spine component (or interim list)
+  and the warm cream + serif typography rollout from doc 20
 
-- a real imported Claude Code conversation renders correctly from render JSON only
+Acceptance: a real imported Claude Code conversation renders correctly from
+render JSON only, both for the owner and via a public share link.
 
-## Phase 7: Add Auth, Tokens, And User Flows
+### Wave B — Own your data
+
+- `/sessions`, `/settings`
+- API: `/api-tokens` CRUD, `PATCH /profile/settings`
+
+### Wave C — Team features
+
+- `/r/:owner/:name` page (replaces the un-gated `/repo/:owner/:name` shell),
+  `/r/:owner/:name/settings`
+- API: GitHub-gated `/repos/*` family + visibility/hide endpoints
+
+### Wave D — Insights and virality
+
+- `/insights`, `/@:username`, polished `/`
+- API: `/profile/public/:username`, `/og/profile/:username.png`,
+  `POST /sessions/:id/view`
+
+## Phase 7: Add Auth, Tokens, And User Flows — ◐ partial
 
 Outcome:
 
@@ -168,7 +211,12 @@ Acceptance:
 
 - authenticated sync works with CLI tokens
 
-## Phase 8: Post-Upload Processing And Ops
+Status: GitHub OAuth + Better Auth session cookie + CLI bridge with
+`POST /cli-auth/authorize` / `exchange` and `GET /cli-auth/whoami` are all
+shipped. Token management UI (Wave B above) and owner-only revision/publish
+flows (Wave A) are still pending.
+
+## Phase 8: Post-Upload Processing And Ops — + scaffolded only
 
 Outcome:
 
@@ -187,7 +235,11 @@ Acceptance:
 
 - revision processing is observable and recoverable
 
-## Phase 9: Legacy Transition
+Status: `apps/jobs` worker scaffold exists (env, runtime, bindings) but no
+queue consumers, no privacy revalidation, no summary generation. Profile
+recompute is currently lazy on `GET /profile`.
+
+## Phase 9: Legacy Transition — + not started
 
 Outcome:
 

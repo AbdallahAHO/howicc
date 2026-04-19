@@ -1,0 +1,104 @@
+---
+import Layout from '../components/Layout.astro'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
+import SyncFirstSession from '../components/home/SyncFirstSession.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
+import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+import type {
+  ProfileActivityItem,
+  ProfileActivityResponse,
+  PublicProfileMineResponse,
+} from '@howicc/contracts'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const api = createServerApiClient({
+  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const INITIAL_PAGE_SIZE = 25
+
+const [activityResponse, publicProfileResponse] = await Promise.all([
+  api.profile.activity({ limit: INITIAL_PAGE_SIZE }).catch(() => null),
+  api.publicProfile.mine().catch(() => null),
+])
+const activityEnvelope = unwrapSuccess<ProfileActivityResponse>(activityResponse)
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(publicProfileResponse)
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
+
+const activityItems: ProfileActivityItem[] = activityEnvelope?.items ?? []
+const totalSessions = activityEnvelope?.total ?? 0
+const initialCursor: string | undefined = activityEnvelope?.nextCursor
+
+---
+
+<Layout title="Sessions">
+  <div class="archive-glow isolate min-h-dvh">
+    <AppTopBar active="sessions" publicProfileUrl={publicProfileUrl} />
+
+    <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-2">
+        <h1 class="archive-page-title text-4xl sm:text-5xl">
+          {totalSessions > 0
+            ? `${totalSessions.toLocaleString()} ${totalSessions === 1 ? 'session' : 'sessions'}`
+            : 'No sessions yet'}
+        </h1>
+        <p class="text-ink-secondary max-w-[58ch] text-base text-pretty">
+          {totalSessions > 0 ? (
+            'Newest first. Open one to read it or change who can see it.'
+          ) : (
+            <>
+              One <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code> mirrors your local Claude Code sessions. They stay yours — private until you say otherwise.
+            </>
+          )}
+        </p>
+      </section>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="archive-section-title text-xl">Recent activity</CardTitle>
+          <CardDescription>
+            {activityItems.length > 0
+              ? `${activityItems.length} of ${totalSessions.toLocaleString()}. Load more below.`
+              : 'Run the CLI once and they show up here.'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {activityItems.length > 0 ? (
+            <ActivityFeedIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              initialItems={activityItems}
+              initialCursor={initialCursor}
+              total={totalSessions}
+              pageSize={INITIAL_PAGE_SIZE}
+              showFilters
+            />
+          ) : (
+            <SyncFirstSession headline="No sessions to show yet." />
+          )}
+        </CardContent>
+      </Card>
+    </main>
+  </div>
+</Layout>

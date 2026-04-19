@@ -7,5 +7,7 @@ export * from './conversations'
 export * from './assets'
 export * from './uploads'
 export * from './digests'
+export * from './repos'
+export * from './views'
 
 export * as schema from './index'

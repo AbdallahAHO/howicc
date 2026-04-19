@@ -512,11 +512,17 @@ const findOrCreateConversation = async (
       sourceSessionId: input.sourceSessionId,
     })
 
+  const slug = await resolveUniqueSlug(
+    db,
+    buildConversationSlug(input.title, input.sourceSessionId),
+    conversationId,
+  )
+
   try {
     await db.insert(conversations).values({
       id: conversationId,
       ownerUserId: user.id,
-      slug: buildConversationSlug(input.title, input.sourceSessionId),
+      slug,
       title: input.title,
       visibility: 'private',
       status: 'draft',
@@ -916,6 +922,51 @@ const buildConversationSlug = (title: string, fallback: string) => {
     .slice(0, 64)
 
   return slug || fallback.toLowerCase()
+}
+
+/**
+ * Resolves a slug that does not collide with any existing conversation.
+ *
+ * If the base slug is free — or already owned by the conversation we're about
+ * to upsert — it is returned as-is. Otherwise a stable suffix derived from
+ * the conversation id is appended, making the final slug deterministic for
+ * a given (user, source session) pair.
+ *
+ * @example
+ * const slug = await resolveUniqueSlug(db, 'welcome-refactor', 'conv_abc123456789')
+ * // → 'welcome-refactor' or 'welcome-refactor-456789' on collision
+ */
+const resolveUniqueSlug = async (
+  db: UploadDatabase,
+  baseSlug: string,
+  conversationId: string,
+): Promise<string> => {
+  const suffix = conversationId.slice(-6)
+
+  const existing = await db
+    .select({ id: conversations.id })
+    .from(conversations)
+    .where(eq(conversations.slug, baseSlug))
+    .limit(1)
+
+  if (existing.length === 0) return baseSlug
+  if (existing[0]!.id === conversationId) return baseSlug
+
+  const candidate = `${baseSlug}-${suffix}`
+  const collidingCandidate = await db
+    .select({ id: conversations.id })
+    .from(conversations)
+    .where(eq(conversations.slug, candidate))
+    .limit(1)
+
+  if (collidingCandidate.length === 0 || collidingCandidate[0]!.id === conversationId) {
+    return candidate
+  }
+
+  // Extremely unlikely — both the base slug and the deterministic suffix are
+  // taken by different conversations. Fall back to a timestamp-suffixed slug
+  // so the insert still succeeds.
+  return `${baseSlug}-${suffix}-${Date.now().toString(36)}`
 }
 
 const createStableHash = (value: string) => {

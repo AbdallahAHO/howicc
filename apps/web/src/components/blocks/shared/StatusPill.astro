@@ -1,0 +1,27 @@
+---
+type Status = 'ok' | 'error' | 'partial'
+
+type Props = {
+  status: Status
+  class?: string
+}
+
+const { status, class: className } = Astro.props
+
+const label: Record<Status, string> = {
+  ok: 'Ok',
+  error: 'Error',
+  partial: 'Partial',
+}
+
+const toneClass: Record<Status, string> = {
+  ok: 'bg-success',
+  partial: 'bg-warning',
+  error: 'bg-destructive',
+}
+---
+
+<span class:list={['text-ink-secondary inline-flex items-center gap-1.5 text-[0.75rem] font-medium', className]}>
+  <span class:list={['inline-flex size-1.5 rounded-pill', toneClass[status]]}></span>
+  <span>{label[status]}</span>
+</span>

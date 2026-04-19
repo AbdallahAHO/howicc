@@ -3,6 +3,7 @@ import {
   conversationSummarySchema,
   errorResponseSchema,
   renderDocumentSummarySchema,
+  visibilitySchema,
 } from './shared'
 
 export const listConversationsRoute = createRoute({
@@ -70,6 +71,199 @@ export const getRenderDocumentRoute = createRoute({
     },
     404: {
       description: 'Conversation not found',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    500: {
+      description: 'Internal error',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+  },
+})
+
+export const sharedRenderDocumentResponseSchema = renderDocumentSummarySchema.extend({
+  sharedMeta: z
+    .object({
+      slug: z.string(),
+      conversationId: z.string(),
+      visibility: visibilitySchema,
+      ownerUserId: z.string(),
+      isOwner: z.boolean(),
+      updatedAt: z.string().openapi({ format: 'date-time' }),
+    })
+    .openapi('SharedConversationMeta'),
+})
+
+export const getSharedRenderDocumentRoute = createRoute({
+  method: 'get',
+  path: '/shared/{slug}',
+  tags: ['Conversations'],
+  summary: 'Fetch a conversation render document by public slug',
+  description:
+    "Returns the normalized render document for a conversation identified by its share slug. Private conversations are only visible to the owner (authenticated via CLI bearer token or Better Auth session cookie); unlisted and public conversations are readable without auth. When multiple conversations share the same slug — a historical collision pending schema-level uniqueness — the most-recently-updated match is returned.",
+  operationId: 'getSharedRenderDocument',
+  security: [{}, { BearerAuth: [] }, { BrowserSession: [] }],
+  request: {
+    params: z.object({
+      slug: z.string().min(1).max(120),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Render document plus share metadata',
+      content: {
+        'application/json': {
+          schema: sharedRenderDocumentResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: 'Slug does not resolve to a visible conversation',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    500: {
+      description: 'Shared render document resolution failed unexpectedly',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+  },
+})
+
+export const updateConversationVisibilityBodySchema = z
+  .object({
+    visibility: visibilitySchema,
+  })
+  .openapi('UpdateConversationVisibilityBody')
+
+export const updateConversationVisibilityResponseSchema = z
+  .object({
+    success: z.literal(true),
+    conversationId: z.string(),
+    slug: z.string(),
+    visibility: visibilitySchema,
+    updatedAt: z.string().openapi({ format: 'date-time' }),
+  })
+  .openapi('UpdateConversationVisibilityResponse')
+
+export const updateConversationVisibilityRoute = createRoute({
+  method: 'patch',
+  path: '/conversations/{conversationId}/visibility',
+  tags: ['Conversations'],
+  summary: 'Update the visibility of a conversation',
+  description:
+    "Flips a conversation between `private`, `unlisted`, and `public`. Only the owner may make this change. Accepts either a CLI bearer token or a Better Auth session cookie.",
+  operationId: 'updateConversationVisibility',
+  security: [{ BearerAuth: [] }, { BrowserSession: [] }],
+  request: {
+    params: z.object({
+      conversationId: z.string(),
+    }),
+    body: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: updateConversationVisibilityBodySchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Visibility was updated',
+      content: {
+        'application/json': {
+          schema: updateConversationVisibilityResponseSchema,
+        },
+      },
+    },
+    401: {
+      description: 'The caller is not authenticated',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: 'Conversation does not exist or is not owned by the caller',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    500: {
+      description: 'Visibility update failed unexpectedly',
+      content: {
+        'application/json': {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+  },
+})
+
+export type SharedRenderDocumentResponse = z.infer<typeof sharedRenderDocumentResponseSchema>
+export type SharedConversationMeta = SharedRenderDocumentResponse['sharedMeta']
+export type UpdateConversationVisibilityBody = z.infer<typeof updateConversationVisibilityBodySchema>
+export type UpdateConversationVisibilityResponse = z.infer<typeof updateConversationVisibilityResponseSchema>
+
+export const getAssetPreviewRoute = createRoute({
+  method: 'get',
+  path: '/conversations/{conversationId}/assets/{assetId}',
+  tags: ['Artifacts'],
+  summary: 'Fetch a text preview for an asset referenced by a render block',
+  description:
+    "Returns the stored text preview and metadata for an `AssetRef` captured in the canonical session (source file, tool output, plan file, brief attachment, MCP blob). Visibility-gated against the owning conversation: private conversations require the owner bearer token or cookie. Callers that just want the session's render document should use `/shared/:slug` or `/conversations/:id/render` instead.",
+  operationId: 'getConversationAsset',
+  security: [{}, { BearerAuth: [] }, { BrowserSession: [] }],
+  request: {
+    params: z.object({
+      conversationId: z.string(),
+      assetId: z.string(),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Asset metadata and text preview',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            assetId: z.string(),
+            kind: z.enum([
+              'source_file',
+              'tool_output',
+              'plan_file',
+              'brief_attachment',
+              'mcp_blob',
+              'unknown',
+            ]),
+            storage: z.enum(['bundle', 'inline', 'remote']),
+            mimeType: z.string().optional(),
+            bytes: z.number().int().nonnegative().optional(),
+            relPath: z.string().optional(),
+            content: z.string(),
+          }),
+        },
+      },
+    },
+    404: {
+      description: 'Conversation or asset not found',
       content: {
         'application/json': {
           schema: errorResponseSchema,

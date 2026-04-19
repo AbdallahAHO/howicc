@@ -1,0 +1,36 @@
+---
+/**
+ * Horizontal bar for distribution/ranking cards on /insights.
+ *
+ * One line: label (left), tabular-nums value (right), a soft bg bar
+ * behind them both sized to `ratio`. Zero-JS, theme tokens only.
+ *
+ * @example
+ * <StatBar label="TypeScript" value="48" ratio={0.8} />
+ */
+type Props = {
+  label: string
+  value: string
+  ratio: number
+  class?: string
+  tone?: 'primary' | 'muted'
+}
+
+const { label, value, ratio, class: className, tone = 'primary' } = Astro.props
+
+const safeRatio = Math.max(0, Math.min(1, Number.isFinite(ratio) ? ratio : 0))
+const widthPct = `${(safeRatio * 100).toFixed(1)}%`
+
+const fillClass =
+  tone === 'primary' ? 'bg-primary/15' : 'bg-muted-foreground/10'
+---
+
+<div class:list={['group/stat-bar relative flex items-baseline justify-between gap-3 py-1.5 text-sm', className]}>
+  <div
+    class:list={['absolute inset-y-1 left-0 rounded-sm transition-[width]', fillClass]}
+    style={`width: ${widthPct}`}
+    aria-hidden="true"
+  ></div>
+  <span class="text-foreground relative z-10 min-w-0 truncate px-2">{label}</span>
+  <span class="text-muted-foreground relative z-10 tabular-nums px-2 text-xs">{value}</span>
+</div>

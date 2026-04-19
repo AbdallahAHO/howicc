@@ -1,0 +1,70 @@
+---
+import type { RenderTaskTimelineBlock } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import BlockHeader from './shared/BlockHeader.astro'
+import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+
+type Props = {
+  block: RenderTaskTimelineBlock
+}
+
+const { block } = Astro.props
+
+const statusVariant = (status: string): 'default' | 'secondary' | 'outline' => {
+  const normalized = status.toLowerCase().replace(/[\s_-]+/g, '_')
+  if (normalized === 'completed' || normalized === 'done') return 'default'
+  if (normalized === 'in_progress' || normalized === 'active') return 'secondary'
+  return 'outline'
+}
+
+const humaniseStatus = (status: string) =>
+  status.replace(/[_-]+/g, ' ').toLowerCase()
+---
+
+<CollapsibleBlockShell
+  defaultOpen={!block.defaultCollapsed}
+  ariaLabel={block.title}
+>
+  <BlockHeader
+    slot="summary"
+    title={block.title}
+    count={block.entries.length}
+  />
+
+  {block.entries.length === 0 ? (
+    <p class="text-muted-foreground text-sm">No timeline entries yet.</p>
+  ) : (
+    <ol role="list" class="relative flex flex-col">
+      <div
+        class="bg-border absolute top-2 bottom-2 left-[0.4375rem] w-px"
+        aria-hidden="true"
+      ></div>
+      {block.entries.map((entry, index) => (
+        <li class="relative flex items-start gap-3 py-2">
+          <span
+            class="bg-background border-border relative z-10 mt-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded-full border-2"
+            aria-hidden="true"
+          >
+            <span class="bg-primary size-1.5 rounded-full"></span>
+          </span>
+          <div class="flex min-w-0 flex-1 flex-col gap-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <Badge variant={statusVariant(entry.status)}>
+                {humaniseStatus(entry.status)}
+              </Badge>
+              <p class="text-foreground min-w-0 text-sm font-medium text-pretty">
+                {entry.description}
+              </p>
+            </div>
+            {entry.deltaSummary ? (
+              <p class="text-muted-foreground text-xs italic text-pretty">
+                {entry.deltaSummary}
+              </p>
+            ) : null}
+          </div>
+          {index === block.entries.length - 1 ? null : null}
+        </li>
+      ))}
+    </ol>
+  )}
+</CollapsibleBlockShell>

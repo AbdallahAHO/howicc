@@ -1,0 +1,88 @@
+---
+import type { RenderToolRunActivity } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import ContentDrawerIsland from './shared/ContentDrawerIsland'
+import MonoChip from './shared/MonoChip.astro'
+import StatusPill from './shared/StatusPill.astro'
+import TimelineRail from './shared/TimelineRail.astro'
+import ToolRunPreview from './shared/ToolRunPreview.astro'
+
+type Props = {
+  item: RenderToolRunActivity
+  conversationId?: string
+  apiUrl?: string
+  first?: boolean
+  last?: boolean
+}
+
+const {
+  item,
+  conversationId,
+  apiUrl,
+  first = false,
+  last = false,
+} = Astro.props
+
+const canDrillDown =
+  Boolean(item.artifactId) && Boolean(conversationId) && Boolean(apiUrl)
+
+const toolName = item.toolName.toLowerCase()
+
+const glyph =
+  item.status === 'error'
+    ? '✕'
+    : toolName.includes('bash') || toolName.includes('powershell')
+      ? '$'
+      : toolName.includes('askuserquestion')
+        ? '?'
+        : '▸'
+
+const tone =
+  item.status === 'error'
+    ? 'error'
+    : item.source === 'mcp'
+      ? 'info'
+      : 'default'
+---
+
+<li>
+  <TimelineRail first={first} last={last} glyph={glyph} tone={tone}>
+    <div class="flex flex-col gap-3 rounded-lg border border-border/70 bg-background/75 px-4 py-3 shadow-subtle">
+      <div class="flex flex-wrap items-center gap-2">
+        <MonoChip label={item.toolName} />
+        {item.source === 'mcp' ? (
+          <Badge variant="outline" className="text-[0.6875rem]">MCP</Badge>
+        ) : null}
+        <p class="text-foreground min-w-0 flex-1 text-sm font-medium text-pretty">
+          {item.title}
+        </p>
+        {item.status === 'ok' ? null : <StatusPill status={item.status} />}
+      </div>
+
+      {item.inputPreview ? (
+        <ToolRunPreview label="input" body={item.inputPreview} />
+      ) : null}
+
+      {item.outputPreview ? (
+        <ToolRunPreview label="output" body={item.outputPreview} />
+      ) : null}
+
+      {canDrillDown && item.artifactId ? (
+        <ContentDrawerIsland
+          client:load
+          apiUrl={apiUrl!}
+          conversationId={conversationId!}
+          kind="artifact"
+          id={item.artifactId}
+          label={item.toolName}
+        />
+      ) : item.artifactId ? (
+        <p class="text-ink-secondary text-xs">
+          Artifact
+          <MonoChip label={item.artifactId} class="ml-1" />
+          <span class="text-ink-tertiary ml-1">— drilldown needs a conversation context.</span>
+        </p>
+      ) : null}
+    </div>
+  </TimelineRail>
+</li>

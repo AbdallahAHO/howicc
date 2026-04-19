@@ -1,6 +1,16 @@
-import { and, eq, sql } from 'drizzle-orm'
-import { sessionDigests, userProfiles, conversations } from '@howicc/db/schema'
-import type { SessionDigest, UserProfile } from '@howicc/canonical'
+import { and, eq, like, lt, notInArray, or, sql, type SQL } from 'drizzle-orm'
+import {
+  conversations,
+  repoHiddenConversations,
+  sessionDigests,
+  userProfiles,
+} from '@howicc/db/schema'
+import type {
+  ProviderId,
+  SessionDigest,
+  SessionType,
+  UserProfile,
+} from '@howicc/canonical'
 import { buildUserProfile } from '@howicc/profile'
 import type { ApiRuntime } from '../../runtime'
 import { getRuntimeDatabase } from '../../lib/runtime-resources'
@@ -152,6 +162,211 @@ export const getDigestCount = async (
   return result[0]?.count ?? 0
 }
 
+export type ProfileStats = {
+  digestCount: number
+  totalSessions: number
+  totalDurationMs: number
+  totalCostUsd: number
+  activeDays: number
+  currentStreak: number
+  longestStreak: number
+  firstSessionAt?: string
+  lastSessionAt?: string
+}
+
+/**
+ * Lightweight header stats derived from the materialized UserProfile.
+ *
+ * Used by dashboards that only need a handful of aggregates — reading the
+ * cached profile and cherry-picking fields avoids serializing the full
+ * profile JSON (~100–500 KB) over the wire.
+ *
+ * @example
+ * const stats = await getUserProfileStats(runtime, userId)
+ */
+export const getUserProfileStats = async (
+  runtime: ApiRuntime,
+  userId: string,
+): Promise<ProfileStats | null> => {
+  const digestCount = await getDigestCount(runtime, userId)
+  if (digestCount === 0) return null
+
+  const profile = await getOrComputeUserProfile(runtime, userId)
+
+  return {
+    digestCount: profile.digestCount,
+    totalSessions: profile.activity.totalSessions,
+    totalDurationMs: profile.activity.totalDurationMs,
+    totalCostUsd: profile.cost.totalUsd,
+    activeDays: profile.activity.activeDays,
+    currentStreak: profile.activity.currentStreak,
+    longestStreak: profile.activity.longestStreak,
+    firstSessionAt: profile.activity.firstSessionAt,
+    lastSessionAt: profile.activity.lastSessionAt,
+  }
+}
+
+export type ProfileActivityItem = {
+  conversationId: string
+  slug: string
+  title: string
+  visibility: 'private' | 'unlisted' | 'public'
+  provider: ProviderId
+  projectKey: string
+  projectPath?: string
+  sessionCreatedAt: string
+  syncedAt: string
+  durationMs?: number
+  estimatedCostUsd?: number
+  toolRunCount: number
+  turnCount: number
+  messageCount: number
+  sessionType: SessionType
+  hasPlan: boolean
+  models: string[]
+  repository: { fullName: string; source: 'git_remote' | 'pr_link' | 'cwd_derived' } | null
+}
+
+export type ProfileActivityPage = {
+  items: ProfileActivityItem[]
+  nextCursor?: string
+  total: number
+}
+
+export const DEFAULT_ACTIVITY_LIMIT = 20
+export const MAX_ACTIVITY_LIMIT = 50
+
+/**
+ * Cursor-paginated activity feed for the authenticated user.
+ *
+ * Sorts by the digest's `createdAt` (ingestion time), newest first, so
+ * freshly synced sessions surface at the top. The cursor is the previous
+ * page's oldest `syncedAt` — items strictly before it are returned next.
+ *
+ * @example
+ * const firstPage = await listUserProfileActivity(runtime, userId, { limit: 20 })
+ * const secondPage = await listUserProfileActivity(runtime, userId, {
+ *   limit: 20,
+ *   cursor: firstPage.nextCursor,
+ * })
+ */
+export type ActivityVisibility = 'private' | 'unlisted' | 'public'
+
+const escapeLikePattern = (value: string) =>
+  value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
+
+export const listUserProfileActivity = async (
+  runtime: ApiRuntime,
+  userId: string,
+  options: {
+    cursor?: string
+    limit?: number
+    visibility?: ActivityVisibility
+    q?: string
+    repository?: string
+  } = {},
+): Promise<ProfileActivityPage> => {
+  const db = getRuntimeDatabase(runtime)
+  const limit = Math.min(
+    Math.max(options.limit ?? DEFAULT_ACTIVITY_LIMIT, 1),
+    MAX_ACTIVITY_LIMIT,
+  )
+
+  const cursorDate = options.cursor ? new Date(options.cursor) : null
+  const cursorValid = cursorDate && !Number.isNaN(cursorDate.valueOf())
+
+  const ownerFilter = eq(sessionDigests.ownerUserId, userId)
+
+  // Base filters apply to both the page query and the total count so the
+  // UI never shows "Showing N of M" where M isn't in-filter.
+  const baseConditions: SQL[] = [ownerFilter]
+  if (options.visibility) {
+    baseConditions.push(eq(conversations.visibility, options.visibility))
+  }
+  if (options.repository) {
+    baseConditions.push(eq(sessionDigests.repository, options.repository))
+  }
+  const trimmedQuery = options.q?.trim()
+  if (trimmedQuery && trimmedQuery.length > 0) {
+    const pattern = `%${escapeLikePattern(trimmedQuery)}%`
+    const titleLike = like(sql`lower(${conversations.title})`, pattern.toLowerCase())
+    const projectLike = like(
+      sql`lower(${sessionDigests.projectKey})`,
+      pattern.toLowerCase(),
+    )
+    const searchCondition = or(titleLike, projectLike)
+    if (searchCondition) baseConditions.push(searchCondition)
+  }
+
+  const pageConditions = cursorValid
+    ? [...baseConditions, lt(sessionDigests.createdAt, cursorDate)]
+    : baseConditions
+
+  const pageWhereClause =
+    pageConditions.length === 1 ? pageConditions[0] : and(...pageConditions)
+  const totalWhereClause =
+    baseConditions.length === 1 ? baseConditions[0] : and(...baseConditions)
+
+  const rows = await db
+    .select({
+      conversationId: sessionDigests.conversationId,
+      digestJson: sessionDigests.digestJson,
+      digestCreatedAt: sessionDigests.createdAt,
+      conversationSlug: conversations.slug,
+      conversationTitle: conversations.title,
+      conversationVisibility: conversations.visibility,
+    })
+    .from(sessionDigests)
+    .innerJoin(conversations, currentRevisionJoin)
+    .where(pageWhereClause)
+    .orderBy(sql`${sessionDigests.createdAt} desc`)
+    .limit(limit + 1)
+
+  const totalResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(sessionDigests)
+    .innerJoin(conversations, currentRevisionJoin)
+    .where(totalWhereClause)
+  const total = totalResult[0]?.count ?? 0
+
+  const hasMore = rows.length > limit
+  const pageRows = hasMore ? rows.slice(0, limit) : rows
+
+  const items: ProfileActivityItem[] = pageRows.map(row => {
+    const digest = JSON.parse(row.digestJson) as SessionDigest
+    const syncedAt = new Date(row.digestCreatedAt).toISOString()
+
+    return {
+      conversationId: row.conversationId,
+      slug: row.conversationSlug,
+      title: row.conversationTitle,
+      visibility: row.conversationVisibility,
+      provider: digest.provider,
+      projectKey: digest.projectKey,
+      projectPath: digest.projectPath,
+      sessionCreatedAt: digest.createdAt,
+      syncedAt,
+      durationMs: digest.durationMs,
+      estimatedCostUsd: digest.estimatedCostUsd,
+      toolRunCount: digest.toolRunCount,
+      turnCount: digest.turnCount,
+      messageCount: digest.messageCount,
+      sessionType: digest.sessionType,
+      hasPlan: digest.hasPlan,
+      models: digest.models.map(model => model.model),
+      repository: digest.repository
+        ? { fullName: digest.repository.fullName, source: digest.repository.source }
+        : null,
+    }
+  })
+
+  const nextCursor = hasMore
+    ? new Date(pageRows[pageRows.length - 1]!.digestCreatedAt).toISOString()
+    : undefined
+
+  return { items, nextCursor, total }
+}
+
 // ---------------------------------------------------------------------------
 // Repository-level aggregation (cross-user)
 // ---------------------------------------------------------------------------
@@ -162,14 +377,53 @@ export type RepoProfile = UserProfile & {
   contributors: Array<{ userId: string; name?: string; sessionCount: number }>
 }
 
+const loadHiddenConversationIds = async (
+  runtime: ApiRuntime,
+  owner: string,
+  name: string,
+): Promise<string[]> => {
+  const db = getRuntimeDatabase(runtime)
+  const rows = await db
+    .select({ conversationId: repoHiddenConversations.conversationId })
+    .from(repoHiddenConversations)
+    .where(
+      and(
+        eq(repoHiddenConversations.owner, owner),
+        eq(repoHiddenConversations.name, name),
+      ),
+    )
+  return rows.map(r => r.conversationId)
+}
+
+const parseRepositoryIdentifier = (
+  repositoryFullName: string,
+): { owner: string; name: string } | null => {
+  const [owner, name] = repositoryFullName.split('/')
+  if (!owner || !name) return null
+  return { owner, name }
+}
+
 export const getRepoProfile = async (
   runtime: ApiRuntime,
   repositoryFullName: string,
 ): Promise<RepoProfile | null> => {
   const db = getRuntimeDatabase(runtime)
+  const parsed = parseRepositoryIdentifier(repositoryFullName)
+
+  const hiddenIds = parsed
+    ? await loadHiddenConversationIds(runtime, parsed.owner, parsed.name)
+    : []
 
   // Get public digests for this repo, limited to prevent OOM on popular repos
   const MAX_REPO_DIGESTS = 500
+
+  const conditions: SQL[] = [
+    eq(sessionDigests.repository, repositoryFullName),
+    eq(conversations.visibility, 'public'),
+  ]
+  if (hiddenIds.length > 0) {
+    conditions.push(notInArray(sessionDigests.conversationId, hiddenIds))
+  }
 
   const rows = await db
     .select({
@@ -178,12 +432,7 @@ export const getRepoProfile = async (
     })
     .from(sessionDigests)
     .innerJoin(conversations, currentRevisionJoin)
-    .where(
-      and(
-        eq(sessionDigests.repository, repositoryFullName),
-        eq(conversations.visibility, 'public'),
-      ),
-    )
+    .where(and(...conditions))
     .limit(MAX_REPO_DIGESTS)
 
   if (rows.length === 0) return null
@@ -216,17 +465,24 @@ export const getPublicRepoDigestCount = async (
   repositoryFullName: string,
 ): Promise<number> => {
   const db = getRuntimeDatabase(runtime)
+  const parsed = parseRepositoryIdentifier(repositoryFullName)
+  const hiddenIds = parsed
+    ? await loadHiddenConversationIds(runtime, parsed.owner, parsed.name)
+    : []
+
+  const conditions: SQL[] = [
+    eq(sessionDigests.repository, repositoryFullName),
+    eq(conversations.visibility, 'public'),
+  ]
+  if (hiddenIds.length > 0) {
+    conditions.push(notInArray(sessionDigests.conversationId, hiddenIds))
+  }
 
   const result = await db
     .select({ count: sql<number>`count(*)` })
     .from(sessionDigests)
     .innerJoin(conversations, currentRevisionJoin)
-    .where(
-      and(
-        eq(sessionDigests.repository, repositoryFullName),
-        eq(conversations.visibility, 'public'),
-      ),
-    )
+    .where(and(...conditions))
 
   return result[0]?.count ?? 0
 }

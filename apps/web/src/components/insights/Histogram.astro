@@ -1,0 +1,54 @@
+---
+/**
+ * Compact vertical-bar histogram for hourly and weekday distributions.
+ *
+ * Pure CSS: each bar is a flex child that grows to the available width,
+ * with an inner div anchored to the bottom at a percentage height of
+ * the max bucket value. Hover shows a native tooltip with the label
+ * and count.
+ *
+ * @example
+ * <Histogram values={hourly} labels={Array.from({length: 24}, (_, h) => `${h}:00`)} />
+ */
+type Props = {
+  values: number[]
+  labels?: string[]
+  ariaLabel?: string
+  emptyMessage?: string
+}
+
+const { values, labels, ariaLabel, emptyMessage = 'No activity recorded yet.' } = Astro.props
+
+const max = values.reduce((peak, value) => (value > peak ? value : peak), 0)
+const total = values.reduce((sum, value) => sum + value, 0)
+---
+
+{total === 0 ? (
+  <p class="text-muted-foreground py-2 text-sm">{emptyMessage}</p>
+) : (
+  <div
+    class="border-border/60 bg-muted/10 flex h-20 items-end gap-[2px] rounded-md border p-2"
+    role="img"
+    aria-label={ariaLabel}
+  >
+    {values.map((value, index) => {
+      const ratio = max > 0 ? (value / max) * 100 : 0
+      const label = labels?.[index]
+      const hoverTitle = label ? `${label} · ${value}` : `${index}: ${value}`
+      return (
+        <div
+          class="group/bar relative flex min-w-[2px] flex-1 items-end"
+          title={hoverTitle}
+        >
+          <div
+            class:list={[
+              'w-full rounded-sm transition-colors',
+              value > 0 ? 'bg-primary/70 group-hover/bar:bg-primary' : 'bg-muted-foreground/10',
+            ]}
+            style={`height: ${Math.max(ratio, value > 0 ? 4 : 0)}%`}
+          ></div>
+        </div>
+      )
+    })}
+  </div>
+)}

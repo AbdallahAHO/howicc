@@ -1,0 +1,31 @@
+---
+import type { RenderHookActivity } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import TimelineRail from './shared/TimelineRail.astro'
+import TonePill from './shared/TonePill.astro'
+
+type Props = {
+  item: RenderHookActivity
+  first?: boolean
+  last?: boolean
+}
+
+const { item, first = false, last = false } = Astro.props
+
+const glyph = item.tone === 'error' ? '✕' : '!'
+---
+
+<li>
+  <TimelineRail first={first} last={last} glyph={glyph} tone={item.tone}>
+    <div class="flex flex-col gap-2 rounded-lg border border-border/70 bg-surface-raised/85 px-4 py-3 shadow-subtle">
+      <div class="flex flex-wrap items-center gap-2">
+        <Badge variant="outline">Hook</Badge>
+        <TonePill tone={item.tone} />
+        <p class="text-foreground min-w-0 flex-1 text-sm font-medium text-pretty">{item.title}</p>
+      </div>
+      {item.body ? (
+        <p class="text-ink-secondary text-sm text-pretty">{item.body}</p>
+      ) : null}
+    </div>
+  </TimelineRail>
+</li>

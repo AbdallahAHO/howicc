@@ -1,0 +1,26 @@
+---
+import type { RenderMessageBlock } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import BlockShell from './shared/BlockShell.astro'
+
+type Props = {
+  block: RenderMessageBlock
+}
+
+const { block } = Astro.props
+
+const isUser = block.role === 'user'
+const label = isUser ? 'You' : 'Claude'
+---
+
+<BlockShell
+  tone={isUser ? 'muted' : 'default'}
+  ariaLabel={`Message from ${label}`}
+>
+  <header class="mb-3 flex items-center gap-2">
+    <Badge variant={isUser ? 'secondary' : 'outline'}>{label}</Badge>
+  </header>
+  <div class="text-foreground text-sm text-pretty whitespace-pre-wrap">
+    {block.text}
+  </div>
+</BlockShell>

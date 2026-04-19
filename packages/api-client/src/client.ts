@@ -1,4 +1,10 @@
-import { ApiPaths, UploadAssetKind } from './generated/openapi'
+import {
+  ApiPaths,
+  ConversationVisibility,
+  PathsProfileActivityGetParametersQueryVisibility,
+  RepoVisibility,
+  UploadAssetKind,
+} from './generated/openapi'
 import {
   createApiFetchClient,
   type ApiClientConfig,
@@ -21,6 +27,15 @@ export type ApiHtmlResult = {
 }
 
 type UploadAssetKindValue = `${UploadAssetKind}`
+
+type ConversationVisibilityValue = `${ConversationVisibility}`
+
+type RepoVisibilityValue = `${RepoVisibility}`
+
+const toConversationVisibility = (value: ConversationVisibilityValue) =>
+  value as ConversationVisibility
+
+const toRepoVisibility = (value: RepoVisibilityValue) => value as RepoVisibility
 
 const settleFetchResult = async <TData, TError>(
   request: FetchResult<TData, TError>,
@@ -151,6 +166,26 @@ export const createApiClient = (config: ApiClientConfig) => {
             },
           }),
         ),
+      getShared: (slug: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getSharedRenderDocument, {
+            params: {
+              path: { slug },
+            },
+          }),
+        ),
+      updateVisibility: (
+        conversationId: string,
+        visibility: ConversationVisibilityValue,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.PATCH(ApiPaths.updateConversationVisibility, {
+            params: {
+              path: { conversationId },
+            },
+            body: { visibility: toConversationVisibility(visibility) },
+          }),
+        ),
       getArtifact: (conversationId: string, artifactId: string) =>
         unwrapFetchResult(
           fetchClient.GET(ApiPaths.getConversationArtifact, {
@@ -162,12 +197,51 @@ export const createApiClient = (config: ApiClientConfig) => {
             },
           }),
         ),
+      getAsset: (conversationId: string, assetId: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getConversationAsset, {
+            params: {
+              path: {
+                assetId,
+                conversationId,
+              },
+            },
+          }),
+        ),
     },
     pricing: {
       getModels: () => unwrapFetchResult(fetchClient.GET(ApiPaths.listPricingModels)),
     },
     profile: {
       get: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getProfile)),
+      stats: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getProfileStats)),
+      activity: (query?: {
+        cursor?: string
+        limit?: number
+        visibility?: 'private' | 'unlisted' | 'public'
+        q?: string
+        repository?: string
+      }) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getProfileActivity, {
+            params: {
+              query: {
+                ...(query?.cursor !== undefined ? { cursor: query.cursor } : {}),
+                ...(query?.limit !== undefined ? { limit: String(query.limit) } : {}),
+                ...(query?.visibility !== undefined
+                  ? {
+                      visibility:
+                        query.visibility as PathsProfileActivityGetParametersQueryVisibility,
+                    }
+                  : {}),
+                ...(query?.q !== undefined && query.q.length > 0 ? { q: query.q } : {}),
+                ...(query?.repository !== undefined && query.repository.length > 0
+                  ? { repository: query.repository }
+                  : {}),
+              },
+            },
+          }),
+        ),
       recompute: () =>
         unwrapFetchResult(fetchClient.POST(ApiPaths.recomputeProfile)),
     },
@@ -183,6 +257,117 @@ export const createApiClient = (config: ApiClientConfig) => {
             },
           }),
         ),
+      settings: (owner: string, name: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getRepoSettings, {
+            params: { path: { owner, name } },
+          }),
+        ),
+      consentStatus: (owner: string, name: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getRepoConsentStatus, {
+            params: { path: { owner, name } },
+          }),
+        ),
+      recordConsent: (owner: string, name: string) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.recordRepoConsent, {
+            params: { path: { owner, name } },
+            body: { acknowledged: true as const },
+          }),
+        ),
+      previewVisibility: (
+        owner: string,
+        name: string,
+        target: RepoVisibilityValue,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.previewRepoVisibility, {
+            params: {
+              path: { owner, name },
+              query: { target: toRepoVisibility(target) },
+            },
+          }),
+        ),
+      updateVisibility: (
+        owner: string,
+        name: string,
+        body: { visibility: RepoVisibilityValue; previewToken: string },
+      ) =>
+        unwrapFetchResult(
+          fetchClient.PATCH(ApiPaths.updateRepoVisibility, {
+            params: { path: { owner, name } },
+            body: {
+              visibility: toRepoVisibility(body.visibility),
+              previewToken: body.previewToken,
+            },
+          }),
+        ),
+      hideConversation: (
+        owner: string,
+        name: string,
+        conversationId: string,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.hideRepoConversation, {
+            params: { path: { owner, name, conversationId } },
+          }),
+        ),
+      unhideConversation: (
+        owner: string,
+        name: string,
+        conversationId: string,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.DELETE(ApiPaths.unhideRepoConversation, {
+            params: { path: { owner, name, conversationId } },
+          }),
+        ),
+    },
+    publicProfile: {
+      get: (username: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getPublicProfile, {
+            params: { path: { username } },
+          }),
+        ),
+      mine: () =>
+        unwrapFetchResult(fetchClient.GET(ApiPaths.getPublicProfileMine)),
+      update: (body: {
+        enabled?: boolean
+        bio?: string | null
+        websiteUrl?: string | null
+        settings?: Partial<{
+          showActivityHeatmap: boolean
+          showCost: boolean
+          showRepositories: boolean
+          showSessionTypes: boolean
+          showToolsLanguages: boolean
+          showBadges: boolean
+        }>
+      }) =>
+        unwrapFetchResult(
+          fetchClient.PATCH(ApiPaths.updatePublicProfileSettings, {
+            body,
+          }),
+        ),
+      recordView: (username: string) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.recordPublicProfileView, {
+            params: { path: { username } },
+          }),
+        ),
+    },
+    views: {
+      recordSessionView: (conversationId: string) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.recordSessionView, {
+            params: { path: { conversationId } },
+          }),
+        ),
+    },
+    sitemap: {
+      getUrls: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getSitemapUrls)),
     },
     viewer: {
       getSession: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getViewerSession)),
@@ -207,6 +392,16 @@ export const createApiClient = (config: ApiClientConfig) => {
           html: result.error ?? '',
         }
       },
+    },
+    apiTokens: {
+      list: () => unwrapFetchResult(fetchClient.GET(ApiPaths.listApiTokens)),
+      create: () => unwrapFetchResult(fetchClient.POST(ApiPaths.createApiToken)),
+      revoke: (tokenId: string) =>
+        unwrapFetchResult(
+          fetchClient.DELETE(ApiPaths.revokeApiToken, {
+            params: { path: { tokenId } },
+          }),
+        ),
     },
     cliAuth: {
       authorize: (body: {

@@ -21,6 +21,10 @@
       "description": "Browser-to-CLI authentication flows that mint bearer tokens for the CLI."
     },
     {
+      "name": "API Tokens",
+      "description": "User-facing API-token CRUD for the settings page. Tokens are minted in plaintext once and stored as SHA-256 hashes; revocation is soft."
+    },
+    {
       "name": "Uploads",
       "description": "Draft upload, asset transfer, and revision finalization endpoints used during sync."
     },
@@ -37,8 +41,20 @@
       "description": "Personal analytics and materialized session profile endpoints."
     },
     {
+      "name": "Public Profile",
+      "description": "Public profile pages at /:username — opt-in, filtered per-section via publicProfileSettings."
+    },
+    {
       "name": "Repositories",
-      "description": "Public aggregate analytics for repositories with shared sessions."
+      "description": "Public aggregate analytics for repositories with shared sessions, plus admin surfaces for GitHub-verified repo admins."
+    },
+    {
+      "name": "Views",
+      "description": "Fire-and-forget view counters for shared conversations and public profiles. Debounced per viewer per day."
+    },
+    {
+      "name": "Open Graph",
+      "description": "Server-rendered social cards for public pages."
     },
     {
       "name": "Viewer",
@@ -147,12 +163,21 @@
           "repo_identifier_invalid",
           "conversation_not_found",
           "artifact_not_found",
+          "asset_not_found",
+          "token_not_found",
           "upload_request_invalid",
           "upload_asset_target_missing",
           "upload_session_not_found",
           "upload_conflict",
           "upload_expired",
           "pricing_catalog_unavailable",
+          "user_not_found",
+          "repo_not_found",
+          "repo_permission_denied",
+          "consent_required",
+          "preview_token_invalid",
+          "conversation_not_in_repo",
+          "hidden_conversation_missing",
           "internal_error"
         ]
       },
@@ -253,6 +278,100 @@
         "required": [
           "success",
           "user"
+        ]
+      },
+      "ListApiTokensResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiTokenSummary"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "tokens"
+        ]
+      },
+      "ApiTokenSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tokenPrefix": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "tokenPrefix",
+          "createdAt"
+        ]
+      },
+      "CreateApiTokenResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "token": {
+            "$ref": "#/components/schemas/ApiTokenSummary"
+          },
+          "secret": {
+            "type": "string",
+            "description": "The plaintext bearer token. Returned once at creation time; the server only stores a SHA-256 hash. The caller must capture this value immediately — it cannot be retrieved later."
+          }
+        },
+        "required": [
+          "success",
+          "token",
+          "secret"
+        ]
+      },
+      "RevokeApiTokenResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "id",
+          "revokedAt"
         ]
       },
       "UploadAssetKind": {
@@ -1066,6 +1185,80 @@
           "text"
         ]
       },
+      "SharedConversationMeta": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "conversationId": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "ownerUserId": {
+            "type": "string"
+          },
+          "isOwner": {
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "slug",
+          "conversationId",
+          "visibility",
+          "ownerUserId",
+          "isOwner",
+          "updatedAt"
+        ]
+      },
+      "UpdateConversationVisibilityResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "success",
+          "conversationId",
+          "slug",
+          "visibility",
+          "updatedAt"
+        ]
+      },
+      "UpdateConversationVisibilityBody": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          }
+        },
+        "required": [
+          "visibility"
+        ]
+      },
       "ProfileResponse": {
         "type": "object",
         "properties": {
@@ -1866,6 +2059,230 @@
           "avgTurnsPerSession"
         ]
       },
+      "ProfileStatsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "stats": {
+            "$ref": "#/components/schemas/ProfileStats"
+          },
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "stats",
+          "digestCount"
+        ]
+      },
+      "ProfileStats": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "digestCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalSessions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalCostUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "activeDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "longestStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "firstSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "lastSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "digestCount",
+          "totalSessions",
+          "totalDurationMs",
+          "totalCostUsd",
+          "activeDays",
+          "currentStreak",
+          "longestStreak"
+        ]
+      },
+      "ProfileActivityResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileActivityItem"
+            }
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "success",
+          "items",
+          "total"
+        ]
+      },
+      "ProfileActivityItem": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "projectKey": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string"
+          },
+          "sessionCreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "toolRunCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "turnCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "messageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sessionType": {
+            "$ref": "#/components/schemas/SessionType"
+          },
+          "hasPlan": {
+            "type": "boolean"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repository": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "fullName": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "git_remote",
+                  "pr_link",
+                  "cwd_derived"
+                ]
+              }
+            },
+            "required": [
+              "fullName",
+              "source"
+            ]
+          }
+        },
+        "required": [
+          "conversationId",
+          "slug",
+          "title",
+          "visibility",
+          "provider",
+          "projectKey",
+          "sessionCreatedAt",
+          "syncedAt",
+          "toolRunCount",
+          "turnCount",
+          "messageCount",
+          "sessionType",
+          "hasPlan",
+          "models",
+          "repository"
+        ]
+      },
+      "SessionType": {
+        "type": "string",
+        "enum": [
+          "building",
+          "debugging",
+          "exploring",
+          "investigating",
+          "mixed"
+        ]
+      },
       "ProfileRecomputeResponse": {
         "type": "object",
         "properties": {
@@ -1891,6 +2308,458 @@
           "recomputed"
         ]
       },
+      "PublicProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "user": {
+            "$ref": "#/components/schemas/PublicProfileUser"
+          },
+          "publicSettings": {
+            "$ref": "#/components/schemas/PublicProfileSettings"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/PublicProfileStats"
+          },
+          "badges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProfileBadge"
+            }
+          },
+          "activity": {
+            "$ref": "#/components/schemas/PublicProfileActivity"
+          },
+          "sessionTypes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "languages": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "topTools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProfileTopTool"
+            }
+          },
+          "publicSessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProfileSessionCard"
+            }
+          },
+          "publicRepos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProfileRepo"
+            }
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "totalUsd": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "totalUsd"
+            ]
+          }
+        },
+        "required": [
+          "success",
+          "user",
+          "publicSettings",
+          "stats",
+          "publicSessions"
+        ]
+      },
+      "PublicProfileUser": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "abdallahali"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string"
+          },
+          "githubUrl": {
+            "type": "string",
+            "example": "https://github.com/abdallahali"
+          },
+          "websiteUrl": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "username",
+          "displayName",
+          "githubUrl",
+          "joinedAt"
+        ]
+      },
+      "PublicProfileSettings": {
+        "type": "object",
+        "properties": {
+          "showActivityHeatmap": {
+            "type": "boolean"
+          },
+          "showCost": {
+            "type": "boolean"
+          },
+          "showRepositories": {
+            "type": "boolean"
+          },
+          "showSessionTypes": {
+            "type": "boolean"
+          },
+          "showToolsLanguages": {
+            "type": "boolean"
+          },
+          "showBadges": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "showActivityHeatmap",
+          "showCost",
+          "showRepositories",
+          "showSessionTypes",
+          "showToolsLanguages",
+          "showBadges"
+        ]
+      },
+      "PublicProfileStats": {
+        "type": "object",
+        "properties": {
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalDurationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activeDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "longestStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "firstSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "lastSessionAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "sessionCount",
+          "totalDurationMs",
+          "activeDays",
+          "currentStreak",
+          "longestStreak"
+        ]
+      },
+      "PublicProfileBadge": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "earnedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description"
+        ]
+      },
+      "PublicProfileActivity": {
+        "type": "object",
+        "properties": {
+          "dailyActivity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProfileDailyActivity"
+            }
+          },
+          "hourlyDistribution": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "weekdayDistribution": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "required": [
+          "dailyActivity",
+          "hourlyDistribution",
+          "weekdayDistribution"
+        ]
+      },
+      "PublicProfileDailyActivity": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-14"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "date",
+          "sessionCount"
+        ]
+      },
+      "PublicProfileTopTool": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "name",
+          "count"
+        ]
+      },
+      "PublicProfileSessionCard": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "sessionType": {
+            "$ref": "#/components/schemas/SessionType"
+          },
+          "projectKey": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "messageCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "toolRunCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "viewCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "firstMessageExcerpt": {
+            "type": "string"
+          },
+          "sessionCreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "conversationId",
+          "slug",
+          "title",
+          "provider",
+          "sessionType",
+          "projectKey",
+          "messageCount",
+          "toolRunCount",
+          "viewCount",
+          "sessionCreatedAt"
+        ]
+      },
+      "PublicProfileRepo": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "fullName",
+          "sessionCount"
+        ]
+      },
+      "PublicProfileMineResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "username": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/PublicProfileSettings"
+          },
+          "profileViewCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "success",
+          "enabled",
+          "username",
+          "settings",
+          "profileViewCount"
+        ]
+      },
+      "UpdatePublicProfileSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 280
+          },
+          "websiteUrl": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 512,
+            "format": "uri"
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "showActivityHeatmap": {
+                "type": "boolean"
+              },
+              "showCost": {
+                "type": "boolean"
+              },
+              "showRepositories": {
+                "type": "boolean"
+              },
+              "showSessionTypes": {
+                "type": "boolean"
+              },
+              "showToolsLanguages": {
+                "type": "boolean"
+              },
+              "showBadges": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "RecordPublicProfileViewResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "recorded": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "recorded"
+        ]
+      },
       "RepoProfileResponse": {
         "type": "object",
         "properties": {
@@ -1911,15 +2780,23 @@
             "type": "integer",
             "minimum": 0
           },
+          "visibility": {
+            "$ref": "#/components/schemas/RepoVisibility"
+          },
           "message": {
             "type": "string"
+          },
+          "adminHiddenCount": {
+            "type": "integer",
+            "minimum": 0
           }
         },
         "required": [
           "success",
           "repository",
           "profile",
-          "sessionCount"
+          "sessionCount",
+          "visibility"
         ]
       },
       "RepoProfile": {
@@ -1971,6 +2848,333 @@
         "required": [
           "userId",
           "sessionCount"
+        ]
+      },
+      "RepoVisibility": {
+        "type": "string",
+        "enum": [
+          "public",
+          "members",
+          "private"
+        ]
+      },
+      "RepoSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/RepoVisibility"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          },
+          "viewerPermission": {
+            "$ref": "#/components/schemas/RepoAdminPermission"
+          },
+          "hidden": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepoHiddenConversation"
+            }
+          },
+          "consentRequired": {
+            "type": "boolean",
+            "description": "True when the caller must re-acknowledge the private-repo notice before editing. Resets every 30 days and after any visibility change by another admin."
+          }
+        },
+        "required": [
+          "success",
+          "repository",
+          "visibility",
+          "viewerPermission",
+          "hidden",
+          "consentRequired"
+        ]
+      },
+      "RepoAdminPermission": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "maintain",
+          "write",
+          "read",
+          "none"
+        ]
+      },
+      "RepoHiddenConversation": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "ownerUserId": {
+            "type": "string"
+          },
+          "ownerName": {
+            "type": "string"
+          },
+          "hiddenBy": {
+            "type": "string"
+          },
+          "hiddenAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "conversationId",
+          "slug",
+          "title",
+          "visibility",
+          "ownerUserId",
+          "hiddenBy",
+          "hiddenAt"
+        ]
+      },
+      "RepoConsentCheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "consentRequired": {
+            "type": "boolean"
+          },
+          "consentedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "consentRequired"
+        ]
+      },
+      "RecordRepoConsentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "consentedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "consentedAt"
+        ]
+      },
+      "RecordRepoConsentRequest": {
+        "type": "object",
+        "properties": {
+          "acknowledged": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "Must be `true` — the client asserts the admin clicked the confirmation button."
+          }
+        },
+        "required": [
+          "acknowledged"
+        ]
+      },
+      "RepoVisibilityPreviewResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "currentVisibility": {
+            "$ref": "#/components/schemas/RepoVisibility"
+          },
+          "targetVisibility": {
+            "$ref": "#/components/schemas/RepoVisibility"
+          },
+          "wouldAggregateCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepoVisibilityPreviewItem"
+            }
+          },
+          "previewToken": {
+            "type": "string",
+            "description": "Opaque token returned alongside the preview. The caller MUST include it in the subsequent PATCH /visibility request as proof the preview was viewed. The server rejects PATCH requests missing a recent preview token to force the two-step review flow."
+          }
+        },
+        "required": [
+          "success",
+          "repository",
+          "currentVisibility",
+          "targetVisibility",
+          "wouldAggregateCount",
+          "items",
+          "previewToken"
+        ]
+      },
+      "RepoVisibilityPreviewItem": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ConversationVisibility"
+          },
+          "ownerUserId": {
+            "type": "string"
+          },
+          "ownerName": {
+            "type": "string"
+          },
+          "sessionCreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "conversationId",
+          "slug",
+          "title",
+          "visibility",
+          "ownerUserId",
+          "sessionCreatedAt"
+        ]
+      },
+      "UpdateRepoVisibilityResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/RepoVisibility"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "repository",
+          "visibility",
+          "updatedAt"
+        ]
+      },
+      "UpdateRepoVisibilityRequest": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "$ref": "#/components/schemas/RepoVisibility"
+          },
+          "previewToken": {
+            "type": "string",
+            "description": "Opaque token returned by GET /repo/:owner/:name/preview?target=... The server validates the token matches the requested visibility and is at most 10 minutes old."
+          }
+        },
+        "required": [
+          "visibility",
+          "previewToken"
+        ]
+      },
+      "HideRepoConversationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "conversationId": {
+            "type": "string"
+          },
+          "hiddenAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "success",
+          "conversationId",
+          "hiddenAt"
+        ]
+      },
+      "UnhideRepoConversationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "conversationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "conversationId"
         ]
       },
       "ViewerSessionResponse": {
@@ -2072,6 +3276,77 @@
           "id",
           "email",
           "name"
+        ]
+      },
+      "RecordSessionViewResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "recorded": {
+            "type": "boolean"
+          },
+          "viewCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "success",
+          "recorded",
+          "viewCount"
+        ]
+      },
+      "SitemapUrlsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapEntry"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "entries"
+        ]
+      },
+      "SitemapEntry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "public_profile",
+              "shared_session",
+              "public_repo"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "example": "/abdallahali",
+            "description": "Site-relative path. Prepend the canonical origin to build an absolute URL."
+          },
+          "lastmod": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "type",
+          "path"
         ]
       }
     },
@@ -2235,6 +3510,174 @@
           },
           "401": {
             "description": "Missing or invalid CLI token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-tokens": {
+      "get": {
+        "tags": [
+          "API Tokens"
+        ],
+        "summary": "List API tokens for the authenticated user",
+        "description": "Returns the caller's API tokens with opaque metadata (id, 12-char prefix, createdAt, revokedAt). Tokens are never returned in plaintext after creation.",
+        "operationId": "listApiTokens",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token summaries, ordered newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListApiTokensResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "API Tokens"
+        ],
+        "summary": "Mint a new API token for the authenticated user",
+        "description": "Generates a new `hwi_*` bearer token for the caller. The plaintext `secret` is returned once in this response; the server only stores a SHA-256 hash. Pair the new token with the CLI (`howicc login` or a manual config entry) to authenticate subsequent requests.",
+        "operationId": "createApiToken",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token created; secret returned once",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApiTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-tokens/{tokenId}": {
+      "delete": {
+        "tags": [
+          "API Tokens"
+        ],
+        "summary": "Revoke an API token owned by the caller",
+        "description": "Sets `revokedAt` on the caller's token. Revoked tokens remain in the list (marked revoked) so the UI can surface audit history; they stop authenticating immediately. Returns 404 when the token does not exist or belongs to a different user — the 404 is deliberate so non-owners can't probe for token ids.",
+        "operationId": "revokeApiToken",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "tokenId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token was revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeApiTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Token not found or not owned by the caller",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
             "content": {
               "application/json": {
                 "schema": {
@@ -2811,6 +4254,283 @@
         }
       }
     },
+    "/shared/{slug}": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Fetch a conversation render document by public slug",
+        "description": "Returns the normalized render document for a conversation identified by its share slug. Private conversations are only visible to the owner (authenticated via CLI bearer token or Better Auth session cookie); unlisted and public conversations are readable without auth. When multiple conversations share the same slug — a historical collision pending schema-level uniqueness — the most-recently-updated match is returned.",
+        "operationId": "getSharedRenderDocument",
+        "security": [
+          {},
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Render document plus share metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/RenderDocument"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "sharedMeta": {
+                          "$ref": "#/components/schemas/SharedConversationMeta"
+                        }
+                      },
+                      "required": [
+                        "sharedMeta"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Slug does not resolve to a visible conversation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Shared render document resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/visibility": {
+      "patch": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Update the visibility of a conversation",
+        "description": "Flips a conversation between `private`, `unlisted`, and `public`. Only the owner may make this change. Accepts either a CLI bearer token or a Better Auth session cookie.",
+        "operationId": "updateConversationVisibility",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConversationVisibilityBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visibility was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateConversationVisibilityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation does not exist or is not owned by the caller",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Visibility update failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/assets/{assetId}": {
+      "get": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Fetch a text preview for an asset referenced by a render block",
+        "description": "Returns the stored text preview and metadata for an `AssetRef` captured in the canonical session (source file, tool output, plan file, brief attachment, MCP blob). Visibility-gated against the owning conversation: private conversations require the owner bearer token or cookie. Callers that just want the session's render document should use `/shared/:slug` or `/conversations/:id/render` instead.",
+        "operationId": "getConversationAsset",
+        "security": [
+          {},
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "assetId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset metadata and text preview",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "assetId": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "source_file",
+                        "tool_output",
+                        "plan_file",
+                        "brief_attachment",
+                        "mcp_blob",
+                        "unknown"
+                      ]
+                    },
+                    "storage": {
+                      "type": "string",
+                      "enum": [
+                        "bundle",
+                        "inline",
+                        "remote"
+                      ]
+                    },
+                    "mimeType": {
+                      "type": "string"
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "relPath": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "assetId",
+                    "kind",
+                    "storage",
+                    "content"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation or asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/conversations/{conversationId}/artifacts/{artifactId}": {
       "get": {
         "tags": [
@@ -3045,6 +4765,166 @@
         }
       }
     },
+    "/profile/stats": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Get lightweight stats for the authenticated user",
+        "description": "Returns a compact snapshot of the current user's profile — session count, total cost, total duration, active days, and current streak. Designed for dashboard headers where the full `/profile` payload is too heavy. If no digests exist yet, `stats` is `null` with `digestCount: 0`.",
+        "operationId": "getProfileStats",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile stats snapshot or an empty state when no synced sessions exist yet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileStatsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated with either bearer token or browser session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Profile stats resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/activity": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Paginated activity feed for the authenticated user",
+        "description": "Returns the authenticated user's synced sessions ordered by session creation time (newest first). Used by the web dashboard feed and the `/sessions` list. Pagination is cursor-based: pass the previous response's `nextCursor` to continue.",
+        "operationId": "getProfileActivity",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Pass `nextCursor` from the previous response. ISO 8601 timestamp — items strictly before it are returned."
+            },
+            "required": false,
+            "description": "Pass `nextCursor` from the previous response. ISO 8601 timestamp — items strictly before it are returned.",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Number of items to return (1–50). Defaults to 20.",
+              "example": "20"
+            },
+            "required": false,
+            "description": "Number of items to return (1–50). Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "private",
+                "unlisted",
+                "public"
+              ],
+              "description": "Limit the feed to a single visibility tier."
+            },
+            "required": false,
+            "description": "Limit the feed to a single visibility tier.",
+            "name": "visibility",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive substring match against conversation title and project key. Trimmed; ignored when empty.",
+              "example": "refactor"
+            },
+            "required": false,
+            "description": "Case-insensitive substring match against conversation title and project key. Trimmed; ignored when empty.",
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Exact-match repository full name (e.g. `owner/name`) from the session digest."
+            },
+            "required": false,
+            "description": "Exact-match repository full name (e.g. `owner/name`) from the session digest.",
+            "name": "repository",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of activity items plus an optional `nextCursor` for the next page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileActivityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The caller is not authenticated with either bearer token or browser session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Activity feed resolution failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/profile/recompute": {
       "post": {
         "tags": [
@@ -3095,13 +4975,238 @@
         }
       }
     },
+    "/profile/public/{username}": {
+      "get": {
+        "tags": [
+          "Public Profile"
+        ],
+        "summary": "Get a public profile by username",
+        "description": "Returns the filtered public aggregate for the requested user. Every optional section respects the owner's visibility flags; disabled sections are omitted from the payload entirely. Returns 404 when the user does not exist or has not opted into a public profile.",
+        "operationId": "getPublicProfile",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "abdallahali",
+              "description": "Lowercased GitHub login. Usernames are the authoritative identifier for public profiles; they mirror GitHub as the source of truth."
+            },
+            "required": true,
+            "description": "Lowercased GitHub login. Usernames are the authoritative identifier for public profiles; they mirror GitHub as the source of truth.",
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public profile payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProfileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown user or profile is not public",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/public-settings": {
+      "get": {
+        "tags": [
+          "Public Profile"
+        ],
+        "summary": "Get the caller’s own public-profile configuration",
+        "description": "Returns the authenticated user's public profile configuration so the settings page can render its initial state without guessing. Mirrors the shape returned by PATCH /profile/public-settings.",
+        "operationId": "getPublicProfileMine",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public profile configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProfileMineResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Public Profile"
+        ],
+        "summary": "Update the caller’s public-profile opt-in and settings",
+        "description": "Updates the authenticated user's public profile configuration: the master enabled flag, optional bio and website, and the six per-section visibility flags. Returns the full canonical settings after the patch so the caller can re-render without a second fetch.",
+        "operationId": "updatePublicProfileSettings",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "BrowserSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicProfileSettingsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated public profile settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProfileMineResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/public/{username}/view": {
+      "post": {
+        "tags": [
+          "Public Profile"
+        ],
+        "summary": "Record a view on a public profile",
+        "description": "Fire-and-forget endpoint that bumps the per-user `profile_view_count`. Debounced per IP per day to prevent inflation. Returns `recorded: false` when the view was debounced.",
+        "operationId": "recordPublicProfileView",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "View was considered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordPublicProfileViewResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown user or profile is not public",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/repo/{owner}/{name}": {
       "get": {
         "tags": [
           "Repositories"
         ],
         "summary": "Get the public aggregate profile for a repository",
-        "description": "Aggregates the current public conversation digests for the requested repository across all users. Only conversations whose current revision is publicly visible are included in the result.",
+        "description": "Aggregates the current public conversation digests for the requested repository across all users. Only conversations whose current revision is publicly visible are included in the result. If the repo is marked `private`, the response omits the profile (sessionCount=0, message set). The `members` tier returns a profile only for viewers who have ≥ read access on GitHub.",
         "operationId": "getRepoProfile",
         "parameters": [
           {
@@ -3150,6 +5255,695 @@
           },
           "500": {
             "description": "Repository profile aggregation failed unexpectedly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/{owner}/{name}/settings": {
+      "get": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Get admin settings for a repository",
+        "description": "Returns repo visibility, hidden-conversation list, and the caller's GitHub permission on the repo. Requires `admin` or `maintain` access verified through the caller's GitHub OAuth token.",
+        "operationId": "getRepoSettings",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Admin settings payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepoSettingsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/{owner}/{name}/consent": {
+      "get": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Check whether the admin must re-acknowledge the private-repo notice",
+        "description": "Returns whether the caller must re-acknowledge the private-repo notice before editing this repo's settings. A fresh consent is required when the repo is private AND the caller has not consented within the last 30 days, or whenever another admin changed the visibility since the caller's last consent.",
+        "operationId": "getRepoConsentStatus",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consent status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepoConsentCheckResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Record an admin’s private-repo acknowledgement",
+        "description": "Records the caller's acknowledgement of the private-repo notice. The acknowledgement unlocks other admin endpoints (visibility change, hide/unhide) for 30 days, or until another admin changes visibility.",
+        "operationId": "recordRepoConsent",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordRepoConsentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consent recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordRepoConsentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/{owner}/{name}/preview": {
+      "get": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Preview which conversations would be aggregated at a target visibility",
+        "description": "Lists the public/unlisted conversations that would appear on the repo page if visibility were changed to `target`. Returns an opaque `previewToken` that must accompany the subsequent PATCH /visibility request to prove the preview was reviewed. Prevents accidental one-click exposure of private aggregation.",
+        "operationId": "previewRepoVisibility",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/RepoVisibility"
+                },
+                {
+                  "description": "The visibility tier the caller is considering."
+                }
+              ]
+            },
+            "required": true,
+            "description": "The visibility tier the caller is considering.",
+            "name": "target",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preview payload + consent token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepoVisibilityPreviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid target visibility",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/{owner}/{name}/visibility": {
+      "patch": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Update the repository visibility tier",
+        "description": "Flips the repo visibility tier. Requires admin consent (POST /consent within 24h) AND a valid preview token (GET /preview within 10 min). Individual conversation visibility is NOT affected — this only changes the aggregation ceiling.",
+        "operationId": "updateRepoVisibility",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRepoVisibilityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visibility updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateRepoVisibilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or stale preview token, or missing/stale consent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/{owner}/{name}/hide/{conversationId}": {
+      "post": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Hide a conversation from the repo aggregation",
+        "description": "Excludes the conversation from `/r/:owner/:name` stats without touching the conversation's own visibility — the owner can still share the `/s/:slug` link directly. Requires admin consent. Idempotent: a repeat call refreshes `hiddenAt`.",
+        "operationId": "hideRepoConversation",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Conversation id to hide or unhide from repo aggregation."
+            },
+            "required": true,
+            "description": "Conversation id to hide or unhide from repo aggregation.",
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation hidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HideRepoConversationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or stale consent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation does not exist or is not linked to this repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Repositories"
+        ],
+        "summary": "Unhide a conversation from the repo aggregation",
+        "description": "Removes a conversation from the hidden-from-aggregation set so it reappears in `/r/:owner/:name` stats. Requires admin consent.",
+        "operationId": "unhideRepoConversation",
+        "security": [
+          {
+            "BrowserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai",
+              "description": "Repository owner or organization slug."
+            },
+            "required": true,
+            "description": "Repository owner or organization slug.",
+            "name": "owner",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "openai-node",
+              "description": "Repository name."
+            },
+            "required": true,
+            "description": "Repository name.",
+            "name": "name",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Conversation id to hide or unhide from repo aggregation."
+            },
+            "required": true,
+            "description": "Conversation id to hide or unhide from repo aggregation.",
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation unhidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnhideRepoConversationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or stale consent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller lacks admin/maintain permission on the repo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation was not hidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
             "content": {
               "application/json": {
                 "schema": {
@@ -3241,6 +6035,137 @@
                 "schema": {
                   "type": "string",
                   "example": "<h2>Protected Content - You're In!</h2>"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{conversationId}/view": {
+      "post": {
+        "tags": [
+          "Views"
+        ],
+        "summary": "Record a view on a shared conversation",
+        "description": "Fire-and-forget endpoint bumped by the public `/s/:slug` page when a non-owner views the conversation. Debounced per IP per conversation per day to prevent inflation. Returns the updated `viewCount` for the conversation and whether the view was counted (`recorded`).",
+        "operationId": "recordSessionView",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "conversationId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "View considered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSessionViewResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown conversation or not publicly accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/og/u/{username}.png": {
+      "get": {
+        "tags": [
+          "Open Graph"
+        ],
+        "summary": "Render the Open Graph card for a public profile",
+        "description": "Server-renders a 1200x630 PNG social card for the public profile at `/{username}`. Generated on demand with satori + resvg-wasm, cached at the edge for 1 hour and persisted in R2. Always responds with an image — on internal error, a static fallback card is served instead of an HTTP error, so social crawlers never see a 500.",
+        "operationId": "getProfileOgImage",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Lowercased GitHub login (path segment ends in `.png`).",
+              "example": "abdallahali"
+            },
+            "required": true,
+            "description": "Lowercased GitHub login (path segment ends in `.png`).",
+            "name": "username",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "1200x630 PNG social card",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "PNG bytes."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown user or profile is not public",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sitemap/urls": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Return the set of crawlable public URLs for the sitemap",
+        "description": "Returns every currently-crawlable public URL owned by HowiCC: opted-in public profiles, public shared conversations, and repositories that have at least one public session. Used by the web `sitemap.xml` route to render the XML without direct DB access.",
+        "operationId": "getSitemapUrls",
+        "responses": {
+          "200": {
+            "description": "Flat list of crawlable entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitemapUrlsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }

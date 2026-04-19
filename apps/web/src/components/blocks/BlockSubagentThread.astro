@@ -1,0 +1,48 @@
+---
+import type { RenderBlock, RenderSubagentThreadBlock } from '@howicc/contracts'
+import BlockHeader from './shared/BlockHeader.astro'
+import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+import BlockRenderer from './BlockRenderer.astro'
+
+type Props = {
+  block: RenderSubagentThreadBlock
+  depth?: number
+  conversationId?: string
+  apiUrl?: string
+}
+
+const { block, depth = 0, conversationId, apiUrl } = Astro.props
+
+// Subagent blocks type their children as z.unknown() to avoid a circular
+// zod schema. Narrow once at the component boundary; downstream consumers
+// see fully-typed RenderBlocks.
+const childBlocks = (block.blocks ?? []) as RenderBlock[]
+const clampedDepth = Math.min(depth + 1, 2)
+---
+
+<CollapsibleBlockShell
+  defaultOpen={!block.defaultCollapsed}
+  tone="subagent"
+  depth={clampedDepth}
+  ariaLabel={block.title}
+>
+  <BlockHeader
+    slot="summary"
+    eyebrow="Subagent"
+    title={block.title}
+    count={childBlocks.length}
+  />
+
+  {childBlocks.length === 0 ? (
+    <p class="text-muted-foreground text-sm">
+      This subagent thread has no rendered blocks.
+    </p>
+  ) : (
+    <BlockRenderer
+      blocks={childBlocks}
+      depth={clampedDepth}
+      conversationId={conversationId}
+      apiUrl={apiUrl}
+    />
+  )}
+</CollapsibleBlockShell>
