@@ -1,5 +1,14 @@
 # @howicc/web
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [377301b]
+  - @howicc/contracts@0.1.0
+  - @howicc/api-client@0.0.2
+  - @howicc/auth@0.1.1
+
 ## 0.1.1
 
 ### Patch Changes

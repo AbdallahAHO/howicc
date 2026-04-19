@@ -1,6 +1,6 @@
 {
   "name": "@howicc/api-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "description": "Type-safe API client for the HowiCC platform",

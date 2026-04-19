@@ -1,5 +1,11 @@
 # @howicc/jobs
 
+## 0.0.5
+
+### Patch Changes
+
+- @howicc/auth@0.1.1
+
 ## 0.0.4
 
 ### Patch Changes
