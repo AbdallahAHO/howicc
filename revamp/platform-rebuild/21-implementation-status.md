@@ -46,19 +46,19 @@ column shows the planned slug from doc 17 when it differs.
 | 3 | `/cli/login` | `/cli/login` | ✓ | CLI bridge with continue-button + status text wired to `wireCliLoginPage`. |
 | 4 | `/home` | `/home` | ◐ | Route matches spec (`/dashboard` → 301 → `/home`). Shell uses `@howicc/ui-web` shadcn primitives: sticky header with desktop nav + mobile hamburger + avatar dropdown. The page now server-fetches `GET /profile/stats` and `GET /profile/activity` (limit 10) and renders real data — recent-activity list (title, sessionType, project/repo, models, duration, cost, synced-at) with empty-state CTA when digestCount is 0, and live stat cards (sessions, active days + streak, total cost + coding time). Open: cursor-paginated "load more" island, `/s/:slug` links when the owner page lands. |
 | 5 | `/insights` | `/insights` | ◐ | Shipped 2026-04-19. Server-fetches the full `UserProfile` via `api.profile.get()` and renders six cards: hero stat strip (sessions / time / cost / tool runs / streak / avg turns), time-of-day + weekday histograms (zero-JS CSS bars), tool craft (category breakdown + error/rejection/plan/agent/compaction rates), languages, productivity (files / commits / PRs), models table (sessions / input tokens / output tokens / cost), top projects. Zero new endpoints. Missing: daily-activity calendar heatmap, and the cost-by-month trajectory (data exists, UI deferred). |
-| 6 | `/sessions` | `/sessions` | ◐ | Shipped 2026-04-19. Server-fetches 25 items + cursor from `GET /profile/activity`, hands them to `ActivityFeedIsland` which extends on demand. Reuses the typed item rendering from `/home`. Filters (search, visibility, repository) still to come. |
+| 6 | `/sessions` | `/sessions` | ◐ | Shipped 2026-04-19. Server-fetches 25 items + cursor from `GET /profile/activity`, hands them to `ActivityFeedIsland` which extends on demand. Reuses the typed item rendering from `/home`. Filters (visibility segmented + debounced search `q`) shipped 2026-04-19 — server handles `visibility` / `q` / `repository` query params; repository filter still surfaced only via `/r/:owner/:name` deep-link (no in-page selector yet). |
 | 7 | `/s/:slug` | `/s/:slug` (owner) | ◐ | Dynamic route (`pages/s/[slug].astro`). Server-fetches `GET /shared/:slug`; owners see a visibility dropdown + copy-link (`VisibilityMenuIsland`) that `PATCH /conversations/:id/visibility`s. Renders message / activity-group / tool_run / callout / todo / question / compact-boundary blocks today; phase spine and artifact drilldowns still pending. |
 | 7 | `/s/:slug` | `/s/:slug` (public) | ◐ | Same route — visibility-gated. Public/unlisted readable without auth; private returns 404 to non-owners. Sidebar swaps in a "Sign in to sync your own" CTA for logged-out visitors. Mobile-first polish still pending. |
-| 8 | — | `/r/:owner/:name` | + | Not built as a page. `GET /repo/:owner/:name` exists and is CORS-allowed for the web origin, but it's not GitHub-gated and there is no UI. |
+| 8 | `/r/:owner/:name` | `/r/:owner/:name` | ◐ | Shipped 2026-04-19. Public repo profile page (`pages/r/[owner]/[name].astro`) — server-fetches `api.repo.get(owner, name)` and renders contributor StatBar, hourly + weekday histograms, tool craft, languages, models table, hero stat strip. Returns 404 when the envelope is null; shows an empty-state with CTAs when no public sessions exist. Still missing: GitHub-gating on the endpoint, linked list of public sessions, view counter. |
 | 9 | — | `/r/:owner/:name/settings` | + | Not built. No visibility or hide-conversation endpoints either. |
 | 10 | `/settings` | `/settings` | ✓ | Shipped 2026-04-19. Account card (GitHub-synced identity), Tokens card (`TokensIsland` with create + revoke + one-time secret banner), and a Wave D placeholder for public-profile opt-in. Backed by `GET/POST /api-tokens` and `DELETE /api-tokens/{id}`. |
 | 11 | — | `/@:username` | + | Not built. No public-profile endpoint, no OG-image generation, no view counter. |
 | — | `/debug/auth` | (not in inventory) | ✓ | Internal tool. Not user-facing — keep out of doc 17 main surface but worth a footnote. |
 
 **Net:** 3 pages match spec end-to-end (`/login`, `/cli/login`, `/settings`),
-`/home`, `/sessions`, `/s/:slug`, and `/insights` are ◐ feature-complete for
-their wave scope, `/` is a stub, `/dashboard` 301-redirects to `/home`. 3
-doc-17 pages (8, 9, 11) are missing entirely.
+`/home`, `/sessions`, `/s/:slug`, `/insights`, and `/r/:owner/:name` are ◐
+feature-complete for their wave scope, `/` is a stub, `/dashboard`
+301-redirects to `/home`. 2 doc-17 pages (9, 11) are missing entirely.
 
 ### Resolved: `/home` is the post-login route
 

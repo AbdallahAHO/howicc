@@ -32,6 +32,8 @@ export const repoProfileResponseSchema = z
   })
   .openapi('RepoProfileResponse')
 
+export type RepoProfileResponse = z.infer<typeof repoProfileResponseSchema>
+
 export const getRepoProfileRoute = createRoute({
   method: 'get',
   path: '/repo/{owner}/{name}',

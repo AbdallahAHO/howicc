@@ -744,7 +744,7 @@ Mobile is the primary context for public shared conversations. This view must be
 
 ---
 
-## Page 8: Repository Page (`/r/:owner/:name`) — + not built (public aggregate endpoint live, not GH-gated, no UI)
+## Page 8: Repository Page (`/r/:owner/:name`) — ◐ shipped 2026-04-19 (public; GH-gating + session list still to come)
 
 **Auth:** Required. GitHub permission checked on view.
 **Structure:** Stats-led, with contributors as a prominent expandable panel
@@ -1395,9 +1395,9 @@ GET /og/profile/:username.png (OG image generation, edge-cached)
 | 3 | `/cli/login` | Session | ✓ | Desktop (CLI bridge) |
 | 4 | `/home` | Required | ◐ | Desktop primary, mobile supported. Shell built on shadcn (`@howicc/ui-web`) with welcome block, two-column layout, account card, stats placeholder, and wave-status cards. Feed awaits `GET /profile/activity`; stats await `GET /profile/stats`. `/dashboard` issues a 301 redirect to `/home`. |
 | 5 | `/insights` | Required | ◐ | Desktop primary. Shipped 2026-04-19 — six-card rollup (stats strip, hourly + weekday histograms, tool craft, languages + productivity, models table, top projects). Calendar heatmap + cost-by-month trajectory pending. |
-| 6 | `/sessions` | Required | ◐ | Desktop primary, mobile supported. Shipped 2026-04-19 with initial 25 items + `ActivityFeedIsland` load-more; filters pending. |
+| 6 | `/sessions` | Required | ◐ | Desktop primary, mobile supported. Shipped 2026-04-19 with initial 25 items + `ActivityFeedIsland` load-more and filters (visibility segmented + debounced search `q`); repository filter selector pending. |
 | 7 | `/s/:slug` | Conditional | ◐ | **Mobile-first for public**, desktop for owner. Route + owner/public views + visibility toggle (`VisibilityMenuIsland`) + block renderer shipped 2026-04-18. Remaining: phase spine, mobile-first polish for the public read, artifact drilldown. |
-| 8 | `/r/:owner/:name` | GH-gated | + | Desktop primary, mobile supported. `GET /repo/:owner/:name` exists today but is public/un-gated; UI is not built. |
+| 8 | `/r/:owner/:name` | GH-gated | ◐ | Desktop primary, mobile supported. Shipped 2026-04-19 (`pages/r/[owner]/[name].astro`) — hero stats strip, contributors StatBar, hourly + weekday histograms, tool craft, languages, models table. Still public/un-gated on the API; GitHub-gating + linked session list + view counter pending. |
 | 9 | `/r/.../settings` | Admin+GH | + | Desktop primary |
 | 10 | `/settings` | Required | ✓ | Desktop primary. Shipped 2026-04-19 with account card + token CRUD (`TokensIsland`); public-profile opt-in pending. |
 | 11 | `/@:username` | None (opt-in) | + | **Mobile-first viral profile** (shareable) |
