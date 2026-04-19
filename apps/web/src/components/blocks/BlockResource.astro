@@ -1,0 +1,68 @@
+---
+import type { RenderResourceBlock } from '@howicc/contracts'
+import BlockHeader from './shared/BlockHeader.astro'
+import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+import ContentDrawerIsland from './shared/ContentDrawerIsland'
+import MonoChip from './shared/MonoChip.astro'
+import ToolRunPreview from './shared/ToolRunPreview.astro'
+
+type Props = {
+  block: RenderResourceBlock
+  conversationId?: string
+  apiUrl?: string
+}
+
+const { block, conversationId, apiUrl } = Astro.props
+
+const canDrillDownAsset =
+  Boolean(block.assetId) && Boolean(conversationId) && Boolean(apiUrl)
+---
+
+<CollapsibleBlockShell
+  defaultOpen={!block.defaultCollapsed}
+  ariaLabel={block.title}
+>
+  <div slot="summary" class="flex min-w-0 items-start justify-between gap-3">
+    <BlockHeader
+      title={block.title}
+      meta={block.uri}
+      class="flex-1"
+    />
+    {block.server ? (
+      <MonoChip label={block.server} title={`Resource server: ${block.server}`} />
+    ) : null}
+  </div>
+
+  <div class="flex flex-col gap-3 text-sm">
+    {block.uri ? (
+      <p class="text-muted-foreground text-xs">
+        URI: <span class="font-mono text-[0.75rem] select-all break-all">{block.uri}</span>
+      </p>
+    ) : null}
+
+    {block.previewText ? (
+      <ToolRunPreview label="output" body={block.previewText} />
+    ) : (
+      <p class="text-muted-foreground text-sm">
+        No preview available. Open the asset to inspect its stored content.
+      </p>
+    )}
+
+    {canDrillDownAsset && block.assetId ? (
+      <ContentDrawerIsland
+        client:load
+        apiUrl={apiUrl!}
+        conversationId={conversationId!}
+        kind="asset"
+        id={block.assetId}
+        label={block.server ?? block.title}
+      />
+    ) : block.assetId ? (
+      <p class="text-muted-foreground text-xs">
+        Asset
+        <MonoChip label={block.assetId} class="ml-1" />
+        <span class="text-muted-foreground ml-1">— open this resource from a conversation context to preview.</span>
+      </p>
+    ) : null}
+  </div>
+</CollapsibleBlockShell>

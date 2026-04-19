@@ -1,0 +1,226 @@
+---
+import Layout from '../components/Layout.astro'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import { Skeleton } from '@howicc/ui-web/skeleton'
+import AccountAvatar from '../components/home/AccountAvatar.astro'
+import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
+import SyncFirstSession from '../components/home/SyncFirstSession.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
+import { formatCost, formatDuration, formatRelative } from '../components/home/format'
+import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+import type {
+  ProfileActivityItem,
+  ProfileActivityResponse,
+  ProfileStats,
+  ProfileStatsResponse,
+  PublicProfileMineResponse,
+} from '@howicc/contracts'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+
+const firstName = user.name?.split(' ')[0] ?? user.email.split('@')[0] ?? 'friend'
+
+const config = getRuntimeWebConfig()
+const api = createServerApiClient({
+  baseUrl: config.apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const [statsResponse, activityResponse, publicProfileResponse] = await Promise.all([
+  api.profile.stats().catch(() => null),
+  api.profile.activity({ limit: 10 }).catch(() => null),
+  api.publicProfile.mine().catch(() => null),
+])
+
+const statsEnvelope = unwrapSuccess<ProfileStatsResponse>(statsResponse)
+const activityEnvelope = unwrapSuccess<ProfileActivityResponse>(activityResponse)
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(publicProfileResponse)
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
+
+const stats: ProfileStats | null = statsEnvelope?.stats ?? null
+const activityItems: ProfileActivityItem[] = activityEnvelope?.items ?? []
+const totalSessions = activityEnvelope?.total ?? 0
+const initialCursor: string | undefined = activityEnvelope?.nextCursor
+
+const statCards = stats
+  ? [
+      {
+        label: 'Sessions synced',
+        value: stats.totalSessions.toLocaleString(),
+      },
+      {
+        label: 'Active days',
+        value: stats.activeDays.toLocaleString(),
+        hint:
+          stats.currentStreak > 1
+            ? `${stats.currentStreak} day streak`
+            : stats.currentStreak === 1
+              ? 'Active today'
+              : undefined,
+      },
+      {
+        label: 'Total cost',
+        value: formatCost(stats.totalCostUsd),
+        hint:
+          stats.totalDurationMs > 0 ? `${formatDuration(stats.totalDurationMs)} coding` : undefined,
+      },
+    ]
+  : null
+
+---
+
+<Layout title="Home">
+  <div class="archive-glow isolate min-h-dvh">
+    <AppTopBar active="home" publicProfileUrl={publicProfileUrl} />
+
+    <main class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-3">
+        <h1 class="archive-page-title max-w-[22ch] text-4xl sm:text-5xl">
+          {stats && stats.totalSessions > 0
+            ? `Welcome back, ${firstName}.`
+            : `Welcome, ${firstName}.`}
+        </h1>
+        <p class="text-ink-secondary max-w-[56ch] text-base text-pretty">
+          {stats && stats.totalSessions > 0 ? (
+            `${stats.totalSessions.toLocaleString()} ${stats.totalSessions === 1 ? 'session' : 'sessions'}. ${stats.activeDays} ${stats.activeDays === 1 ? 'day' : 'days'} at the keyboard. Pick up where you left off below.`
+          ) : (
+            <>
+              Nothing synced yet. Run <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code> and the rest of this page fills in.
+            </>
+          )}
+        </p>
+      </section>
+
+      <section class="grid gap-6 md:grid-cols-3">
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Recent activity</CardTitle>
+            <CardDescription>
+              {activityItems.length > 0
+                ? `Your ${activityItems.length} most recent ${activityItems.length === 1 ? 'session' : 'sessions'}.`
+                : 'Nothing to show yet.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {activityItems.length > 0 ? (
+              <ActivityFeedIsland
+                client:load
+                apiUrl={locals.authApiUrl}
+                initialItems={activityItems}
+                initialCursor={initialCursor}
+                total={totalSessions}
+              />
+            ) : (
+              <SyncFirstSession headline="Nothing synced yet." />
+            )}
+          </CardContent>
+        </Card>
+
+        <aside class="flex flex-col gap-6">
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Account</CardTitle>
+              <CardDescription>Signed in via GitHub OAuth.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <AccountAvatar
+                  size="lg"
+                  name={user.name ?? null}
+                  email={user.email}
+                  image={user.image ?? null}
+                />
+                <div class="flex min-w-0 flex-col">
+                  <p class="truncate text-sm font-medium">{user.name ?? 'GitHub user'}</p>
+                  <p class="text-muted-foreground truncate text-sm">{user.email}</p>
+                </div>
+              </div>
+
+              <div class="lg:hidden">
+                <a
+                  href="/settings"
+                  class="border-input bg-background hover:bg-accent hover:text-accent-foreground flex h-9 w-full items-center justify-center rounded-md border px-4 text-sm font-medium transition-colors"
+                >
+                  Settings
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Key stats</CardTitle>
+              <CardDescription>
+                {stats
+                  ? stats.lastSessionAt
+                    ? `Last sync ${formatRelative(stats.lastSessionAt)}.`
+                    : 'Rolled up from your synced session digests.'
+                  : 'Rolled up from your synced session digests.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {statCards ? (
+                <dl class="flex flex-col">
+                  {statCards.map((stat, index) => (
+                    <div
+                      class:list={[
+                        'flex items-baseline justify-between gap-3 py-3',
+                        index < statCards.length - 1 ? 'border-border/60 border-b' : '',
+                      ]}
+                    >
+                      <dt class="text-muted-foreground truncate text-sm">{stat.label}</dt>
+                      <dd class="flex flex-col items-end gap-0.5 text-right">
+                        <span class="text-foreground tabular-nums text-base font-semibold">
+                          {stat.value}
+                        </span>
+                        {stat.hint ? (
+                          <span class="text-muted-foreground text-xs">{stat.hint}</span>
+                        ) : null}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <dl class="flex flex-col">
+                  <div class="flex items-center justify-between gap-3 py-3">
+                    <dt class="text-muted-foreground truncate text-sm">Sessions synced</dt>
+                    <dd><Skeleton className="h-5 w-10" /></dd>
+                  </div>
+                  <div class="border-border/60 flex items-center justify-between gap-3 border-t py-3">
+                    <dt class="text-muted-foreground truncate text-sm">Active days</dt>
+                    <dd><Skeleton className="h-5 w-10" /></dd>
+                  </div>
+                  <div class="border-border/60 flex items-center justify-between gap-3 border-t py-3">
+                    <dt class="text-muted-foreground truncate text-sm">Total cost</dt>
+                    <dd><Skeleton className="h-5 w-12" /></dd>
+                  </div>
+                </dl>
+              )}
+            </CardContent>
+          </Card>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</Layout>

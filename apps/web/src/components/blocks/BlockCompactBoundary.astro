@@ -1,0 +1,17 @@
+---
+import type { RenderCompactBoundaryBlock } from '@howicc/contracts'
+
+type Props = {
+  block: RenderCompactBoundaryBlock
+}
+
+const { block } = Astro.props
+---
+
+<div class="flex items-center gap-3 py-2" role="separator" aria-label={block.text}>
+  <div class="bg-border h-px flex-1" aria-hidden="true"></div>
+  <p class="text-muted-foreground text-[0.6875rem] font-medium tracking-wide uppercase">
+    {block.text}
+  </p>
+  <div class="bg-border h-px flex-1" aria-hidden="true"></div>
+</div>

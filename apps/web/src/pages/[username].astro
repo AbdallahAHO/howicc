@@ -1,0 +1,520 @@
+---
+import Layout from '../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import { buttonVariants } from '@howicc/ui-web/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import Histogram from '../components/insights/Histogram.astro'
+import StatBar from '../components/insights/StatBar.astro'
+import ProfileViewRecorderIsland from '../components/profile/ProfileViewRecorderIsland'
+import { formatCost, formatDuration } from '../components/home/format'
+import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import type { WebLocals } from '../lib/auth/types'
+import {
+  isValidPublicUsername,
+  type PublicProfileResponse,
+  type PublicProfileBadge,
+  type PublicProfileSessionCard,
+  type PublicProfileTopTool,
+} from '@howicc/contracts'
+
+type SessionType =
+  | 'building'
+  | 'debugging'
+  | 'exploring'
+  | 'investigating'
+  | 'mixed'
+
+const locals = Astro.locals as WebLocals
+const rawParam = Astro.params.username ?? ''
+const username = rawParam.toLowerCase()
+
+if (!username || username !== rawParam) {
+  // Reserved slugs + uppercase variants — redirect to canonical lowercase
+  // only if it's a plausible username; otherwise 404.
+  if (rawParam && rawParam !== username && isValidPublicUsername(username)) {
+    return Astro.redirect(`/${username}`, 301)
+  }
+  return new Response('Not Found', { status: 404 })
+}
+
+if (!isValidPublicUsername(username)) {
+  return new Response('Not Found', { status: 404 })
+}
+
+const config = getRuntimeWebConfig()
+const canonicalUrl = `${config.siteUrl.replace(/\/+$/, '')}/${username}`
+
+const api = createServerApiClient({
+  baseUrl: config.apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const response = await api.publicProfile.get(username).catch(() => null)
+const envelope = unwrapSuccess<PublicProfileResponse>(response)
+
+if (!envelope) {
+  Astro.response.status = 404
+}
+
+const profile = envelope
+const viewerUser = locals.auth.user
+
+const metaDescription = profile
+  ? `${profile.user.displayName} on HowiCC — ${profile.stats.sessionCount.toLocaleString()} AI coding session${profile.stats.sessionCount === 1 ? '' : 's'}${
+      profile.stats.totalDurationMs > 0
+        ? `, ${formatDuration(profile.stats.totalDurationMs)} of coding time`
+        : ''
+    }${
+      profile.stats.currentStreak > 0
+        ? ` · ${profile.stats.currentStreak}-day streak`
+        : ''
+    }.`
+  : undefined
+
+const ogImage = `${config.apiServerUrl.replace(/\/+$/, '')}/og/u/${username}.png`
+const ogImageAlt = profile
+  ? `${profile.user.displayName}'s HowiCC profile card`
+  : undefined
+
+const hourlyLabels = Array.from({ length: 24 }, (_, hour) => {
+  if (hour === 0) return '12 am'
+  if (hour === 12) return '12 pm'
+  if (hour < 12) return `${hour} am`
+  return `${hour - 12} pm`
+})
+const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+const sessionTypeLabel: Record<SessionType, string> = {
+  building: 'Builder',
+  debugging: 'Debugger',
+  exploring: 'Explorer',
+  investigating: 'Investigator',
+  mixed: 'Generalist',
+}
+
+const topSessionType =
+  profile?.sessionTypes && Object.keys(profile.sessionTypes).length > 0
+    ? Object.entries(profile.sessionTypes)
+        .sort((a, b) => Number(b[1]) - Number(a[1]))
+        .map(([key, count]) => ({ key, count: Number(count) }))[0]
+    : null
+
+const topLanguages =
+  profile?.languages && Object.keys(profile.languages).length > 0
+    ? Object.entries(profile.languages)
+        .sort((a, b) => Number(b[1]) - Number(a[1]))
+        .slice(0, 5)
+        .map(([language, count]) => ({ language, count: Number(count) }))
+    : []
+
+const topTools: PublicProfileTopTool[] = profile?.topTools ?? []
+const sessions: PublicProfileSessionCard[] = profile?.publicSessions ?? []
+const badges: PublicProfileBadge[] = profile?.badges ?? []
+
+const personJsonLd = profile
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: profile.user.displayName,
+      alternateName: `@${profile.user.username}`,
+      url: canonicalUrl,
+      image: profile.user.avatarUrl,
+      description: metaDescription,
+      sameAs: [
+        profile.user.githubUrl,
+        profile.user.websiteUrl,
+      ].filter(Boolean),
+    })
+  : null
+
+const breadcrumbsJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'HowiCC',
+      item: config.siteUrl.replace(/\/+$/, ''),
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: profile?.user.displayName ?? `@${username}`,
+      item: canonicalUrl,
+    },
+  ],
+})
+
+const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
+---
+
+<Layout
+  title={profile ? `${profile.user.displayName} (@${profile.user.username})` : 'Profile not found'}
+  description={metaDescription}
+  canonical={canonicalUrl}
+  ogImage={profile ? ogImage : undefined}
+  ogImageAlt={ogImageAlt}
+  ogType="profile"
+  noindex={!profile}
+  jsonLd={jsonLd}
+>
+  <div class="archive-glow isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
+      <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+
+        <div class="ml-auto flex items-center gap-2">
+          {viewerUser ? (
+            <a href="/home" class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+              Your dashboard
+            </a>
+          ) : (
+            <a href="/login" class={buttonVariants({ variant: 'default', size: 'sm' })}>
+              Sign in with GitHub
+            </a>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 md:py-14">
+      {profile ? (
+        <>
+          <section class="flex flex-col gap-6 sm:flex-row sm:items-center">
+            <div class="shrink-0">
+              {profile.user.avatarUrl ? (
+                <img
+                  src={profile.user.avatarUrl}
+                  alt={`${profile.user.displayName} avatar`}
+                  width="112"
+                  height="112"
+                  class="border-border/60 size-28 rounded-full border-2"
+                  loading="eager"
+                />
+              ) : (
+                <div class="bg-muted border-border/60 text-muted-foreground grid size-28 place-items-center rounded-full border-2 text-3xl font-semibold">
+                  {profile.user.displayName.slice(0, 1).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div class="flex flex-col gap-2">
+              <Badge variant="outline" className="gap-2 self-start">
+                <span class="bg-primary size-1.5 rounded-full"></span>
+                Public profile
+              </Badge>
+              <h1 class="archive-page-title text-4xl sm:text-5xl">
+                {profile.user.displayName}
+              </h1>
+              <p class="text-ink-secondary text-base">
+                <a
+                  class="hover:text-foreground"
+                  href={profile.user.githubUrl}
+                  rel="noopener noreferrer me"
+                  target="_blank"
+                >
+                  @{profile.user.username}
+                </a>
+                {profile.user.websiteUrl ? (
+                  <>
+                    <span class="mx-2">·</span>
+                    <a
+                      class="hover:text-foreground"
+                      href={profile.user.websiteUrl}
+                      rel="noopener noreferrer me"
+                      target="_blank"
+                    >
+                      {profile.user.websiteUrl.replace(/^https?:\/\//, '')}
+                    </a>
+                  </>
+                ) : null}
+              </p>
+              {profile.user.bio ? (
+                <p class="text-foreground max-w-[58ch] text-pretty">
+                  {profile.user.bio}
+                </p>
+              ) : null}
+            </div>
+          </section>
+
+          <section class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div class="border-border/60 rounded-xl border p-4">
+              <div class="text-muted-foreground text-xs uppercase tracking-wide">Sessions</div>
+              <div class="mt-1 text-2xl font-semibold tabular-nums">
+                {profile.stats.sessionCount.toLocaleString()}
+              </div>
+            </div>
+            <div class="border-border/60 rounded-xl border p-4">
+              <div class="text-muted-foreground text-xs uppercase tracking-wide">Total time</div>
+              <div class="mt-1 text-2xl font-semibold tabular-nums">
+                {formatDuration(profile.stats.totalDurationMs)}
+              </div>
+            </div>
+            <div class="border-border/60 rounded-xl border p-4">
+              <div class="text-muted-foreground text-xs uppercase tracking-wide">Active days</div>
+              <div class="mt-1 text-2xl font-semibold tabular-nums">
+                {profile.stats.activeDays.toLocaleString()}
+              </div>
+            </div>
+            <div class="border-border/60 rounded-xl border p-4">
+              <div class="text-muted-foreground text-xs uppercase tracking-wide">Streak</div>
+              <div class="mt-1 flex items-baseline gap-1">
+                <span class="text-2xl font-semibold tabular-nums">{profile.stats.currentStreak}</span>
+                <span class="text-muted-foreground text-sm">day{profile.stats.currentStreak === 1 ? '' : 's'}</span>
+              </div>
+            </div>
+          </section>
+
+          {badges.length > 0 ? (
+            <section class="flex flex-wrap gap-2">
+              {badges.map((badge) => (
+                <div class="border-border/60 bg-muted/30 rounded-full border px-3 py-1 text-xs">
+                  <span class="text-foreground font-medium">{badge.label}</span>
+                  {badge.description ? (
+                    <span class="text-muted-foreground ml-2">{badge.description}</span>
+                  ) : null}
+                </div>
+              ))}
+            </section>
+          ) : null}
+
+          {profile.activity ? (
+            <section class="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Time of day</CardTitle>
+                  <CardDescription>Hourly distribution across all synced sessions.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Histogram values={profile.activity.hourlyDistribution} labels={hourlyLabels} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Day of week</CardTitle>
+                  <CardDescription>Busiest weekdays.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Histogram values={profile.activity.weekdayDistribution} labels={weekdayLabels} />
+                </CardContent>
+              </Card>
+            </section>
+          ) : null}
+
+          {(topTools.length > 0 || topLanguages.length > 0 || topSessionType) ? (
+            <section class="grid gap-6 md:grid-cols-2">
+              {topTools.length > 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Top tools</CardTitle>
+                    <CardDescription>Most-invoked tools across public sessions.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {(() => {
+                      const max = Math.max(...topTools.map((tool) => tool.count), 1)
+                      return topTools.slice(0, 8).map((tool) => (
+                        <StatBar
+                          label={tool.name}
+                          value={tool.count.toLocaleString()}
+                          ratio={tool.count / max}
+                        />
+                      ))
+                    })()}
+                  </CardContent>
+                </Card>
+              ) : null}
+              {topLanguages.length > 0 ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Languages</CardTitle>
+                    <CardDescription>Languages touched during public sessions.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {(() => {
+                      const max = Math.max(...topLanguages.map((entry) => entry.count), 1)
+                      return topLanguages.map((entry) => (
+                        <StatBar
+                          label={entry.language}
+                          value={entry.count.toLocaleString()}
+                          ratio={entry.count / max}
+                        />
+                      ))
+                    })()}
+                  </CardContent>
+                </Card>
+              ) : null}
+              {topSessionType && !topLanguages.length ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Session style</CardTitle>
+                    <CardDescription>How {profile.user.displayName.split(' ')[0]} spends session time.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p class="text-2xl font-semibold">
+                      {sessionTypeLabel[topSessionType.key as SessionType] ?? topSessionType.key}
+                    </p>
+                    <p class="text-muted-foreground mt-1 text-sm">
+                      {Math.round(
+                        (topSessionType.count /
+                          Math.max(profile.stats.sessionCount, 1)) *
+                          100,
+                      )}
+                      % of sessions
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : null}
+            </section>
+          ) : null}
+
+          {sessions.length > 0 ? (
+            <section class="flex flex-col gap-4">
+              <div class="flex items-baseline justify-between">
+                <h2 class="archive-section-title text-2xl">Public sessions</h2>
+                <span class="text-muted-foreground text-sm">{sessions.length} visible</span>
+              </div>
+              <ul role="list" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {sessions.map((session) => (
+                  <li>
+                    <a
+                      href={`/s/${session.slug}`}
+                      class="border-border/60 hover:border-border hover:bg-muted/30 focus-visible:ring-ring/50 block rounded-xl border p-4 transition focus:outline-none focus-visible:ring-2"
+                    >
+                      <div class="flex items-baseline justify-between gap-3">
+                        <h3 class="text-foreground font-medium leading-tight line-clamp-2">
+                          {session.title}
+                        </h3>
+                        {session.viewCount > 0 ? (
+                          <span class="text-muted-foreground text-xs tabular-nums whitespace-nowrap">
+                            {session.viewCount.toLocaleString()} views
+                          </span>
+                        ) : null}
+                      </div>
+                      <p class="text-muted-foreground mt-1 text-sm">
+                        {session.repository ? (
+                          <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">
+                            {session.repository}
+                          </code>
+                        ) : (
+                          <span class="text-xs">{session.projectKey}</span>
+                        )}
+                        <span class="mx-2">·</span>
+                        <span class="text-xs">{sessionTypeLabel[session.sessionType]}</span>
+                      </p>
+                      <div class="text-muted-foreground mt-3 flex items-center gap-3 text-xs tabular-nums">
+                        <span>{session.messageCount.toLocaleString()} messages</span>
+                        <span>·</span>
+                        <span>{session.toolRunCount.toLocaleString()} tool runs</span>
+                        {session.durationMs ? (
+                          <>
+                            <span>·</span>
+                            <span>{formatDuration(session.durationMs)}</span>
+                          </>
+                        ) : null}
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {profile.publicRepos && profile.publicRepos.length > 0 ? (
+            <section>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Works on</CardTitle>
+                  <CardDescription>Public repositories with synced sessions.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul role="list" class="flex flex-col gap-2">
+                    {profile.publicRepos.map((repo) => (
+                      <li class="flex items-center justify-between">
+                        <a
+                          href={`/r/${repo.fullName}`}
+                          class="hover:text-foreground font-mono text-sm"
+                        >
+                          {repo.fullName}
+                        </a>
+                        <span class="text-muted-foreground text-xs tabular-nums">
+                          {repo.sessionCount.toLocaleString()} session{repo.sessionCount === 1 ? '' : 's'}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </section>
+          ) : null}
+
+          {profile.cost ? (
+            <section>
+              <div class="border-border/60 rounded-xl border p-4">
+                <div class="text-muted-foreground text-xs uppercase tracking-wide">Total cost</div>
+                <div class="mt-1 text-2xl font-semibold tabular-nums">
+                  {formatCost(profile.cost.totalUsd)}
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+          {!viewerUser ? (
+            <section class="border-border/60 bg-muted/30 rounded-xl border p-8 text-center">
+              <h2 class="archive-section-title text-2xl">
+                Make one like it
+              </h2>
+              <p class="text-muted-foreground mx-auto mt-2 max-w-[50ch] text-pretty">
+                One link shows your rhythm, your tools, your projects. Sign in with GitHub and sync your first session.
+              </p>
+              <a
+                href="/login"
+                class={`${buttonVariants({ variant: 'default' })} mt-4`}
+              >
+                Sign in with GitHub
+              </a>
+            </section>
+          ) : null}
+
+          <ProfileViewRecorderIsland
+            client:idle
+            apiUrl={locals.authApiUrl}
+            username={profile.user.username}
+          />
+          <slot name="view-recorder" />
+        </>
+      ) : (
+        <section class="flex flex-col items-center gap-4 py-16 text-center">
+          <Badge variant="outline">404</Badge>
+          <h1 class="archive-page-title text-4xl">Profile not found</h1>
+          <p class="text-ink-secondary max-w-[50ch] text-pretty">
+            No public profile for <code class="bg-muted rounded px-1 py-0.5 font-mono text-sm">@{username}</code> yet.
+            Usernames follow GitHub. If it's yours, turn it on in settings.
+          </p>
+          <div class="mt-2 flex gap-3">
+            <a href="/" class={buttonVariants({ variant: 'outline' })}>Home</a>
+            {viewerUser ? (
+              <a href="/settings" class={buttonVariants({ variant: 'default' })}>Your settings</a>
+            ) : (
+              <a href="/login" class={buttonVariants({ variant: 'default' })}>Sign in with GitHub</a>
+            )}
+          </div>
+        </section>
+      )}
+    </main>
+  </div>
+</Layout>

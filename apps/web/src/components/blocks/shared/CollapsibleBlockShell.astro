@@ -1,0 +1,75 @@
+---
+/**
+ * Native <details>-based shell for any block that wants "click to expand".
+ *
+ * Zero JS. The rotating chevron is CSS-only (group + open: modifier).
+ * `summary` slot renders inside the <summary> element; default slot
+ * renders inside a divider-separated body.
+ *
+ * @example
+ * <CollapsibleBlockShell defaultOpen={!block.defaultCollapsed}>
+ *   <Fragment slot="summary">
+ *     <BlockHeader title={block.label} count={block.items.length} />
+ *   </Fragment>
+ *   …body…
+ * </CollapsibleBlockShell>
+ */
+
+type Props = {
+  defaultOpen: boolean
+  tone?: 'default' | 'muted' | 'subagent'
+  depth?: number
+  class?: string
+  ariaLabel?: string
+}
+
+const {
+  defaultOpen,
+  tone = 'muted',
+  depth = 0,
+  class: className,
+  ariaLabel,
+} = Astro.props
+
+const toneClass =
+  tone === 'muted'
+    ? 'bg-muted/20 border-border/60'
+    : tone === 'subagent'
+      ? depth >= 1
+        ? 'bg-muted/40 border-border'
+        : 'bg-muted/20 border-border/60'
+      : 'bg-background border-border/60'
+---
+
+<details
+  aria-label={ariaLabel}
+  open={defaultOpen}
+  class:list={[
+    'group/collapsible rounded-xl border',
+    toneClass,
+    className,
+  ]}
+>
+  <summary
+    class="group/summary flex cursor-pointer list-none items-center gap-3 px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:px-5 [&::-webkit-details-marker]:hidden"
+  >
+    <svg
+      class="text-muted-foreground size-3.5 shrink-0 transition-transform group-open/collapsible:rotate-90"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 4l4 4-4 4" />
+    </svg>
+    <div class="min-w-0 flex-1">
+      <slot name="summary" />
+    </div>
+  </summary>
+  <div class="border-border/60 border-t px-4 py-4 sm:px-5">
+    <slot />
+  </div>
+</details>

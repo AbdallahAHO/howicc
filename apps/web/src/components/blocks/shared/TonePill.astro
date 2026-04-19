@@ -1,0 +1,28 @@
+---
+type Tone = 'info' | 'warning' | 'error'
+
+type Props = {
+  tone: Tone
+  label?: string
+  class?: string
+}
+
+const { tone, label, class: className } = Astro.props
+
+const defaultLabel: Record<Tone, string> = {
+  info: 'Info',
+  warning: 'Warning',
+  error: 'Error',
+}
+
+const toneClass: Record<Tone, string> = {
+  info: 'bg-info',
+  warning: 'bg-warning',
+  error: 'bg-destructive',
+}
+---
+
+<span class:list={['text-ink-secondary inline-flex items-center gap-1.5 text-[0.75rem] font-medium', className]}>
+  <span class:list={['inline-flex size-1.5 rounded-pill', toneClass[tone]]}></span>
+  <span>{label ?? defaultLabel[tone]}</span>
+</span>

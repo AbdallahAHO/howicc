@@ -7,7 +7,7 @@ import type { WebLocals } from '../lib/auth/types'
 const locals = Astro.locals as WebLocals
 
 if (locals.auth.user) {
-  return Astro.redirect('/dashboard')
+  return Astro.redirect('/home')
 }
 
 const callbackUrl = resolveLoginCallbackUrl({
@@ -28,9 +28,9 @@ const callbackUrl = resolveLoginCallbackUrl({
 
       <div class="bg-card text-card-foreground rounded-2xl border p-8 shadow-sm">
         <div class="flex flex-col gap-2 text-center">
-          <h1 class="text-2xl font-semibold tracking-tight">Sign in or create your account</h1>
+          <h1 class="text-2xl font-semibold tracking-tight">Sign in with GitHub</h1>
           <p class="text-muted-foreground text-sm">
-            Authenticate with GitHub. We'll create an account on your first sign-in — no password needed.
+            First time here? We'll make you an account. No passwords.
           </p>
         </div>
 

@@ -6,7 +6,7 @@ describe('browser auth actions', () => {
     const redirectUrl = await startGithubSignIn(
       {
         authApiUrl: 'https://api.howi.cc',
-        callbackUrl: 'https://howi.cc/dashboard',
+        callbackUrl: 'https://howi.cc/home',
       },
       {
         signIn: {

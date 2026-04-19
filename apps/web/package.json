@@ -27,6 +27,7 @@
     "@astrojs/react": "^5.0.3",
     "@howicc/api-client": "workspace:*",
     "@howicc/auth": "workspace:*",
+    "@howicc/contracts": "workspace:*",
     "@howicc/ui": "workspace:*",
     "@howicc/ui-web": "workspace:*",
     "@tailwindcss/vite": "^4.1.7",

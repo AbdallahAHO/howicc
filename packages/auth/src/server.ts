@@ -1,4 +1,5 @@
 import { drizzleAdapter } from '@better-auth/drizzle-adapter'
+import { RESERVED_USERNAME_SET, isValidPublicUsername } from '@howicc/contracts'
 import * as schema from '@howicc/db/schema'
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 
@@ -28,6 +29,27 @@ const deriveCookieDomain = (input: {
   }
 }
 
+/**
+ * GitHub is the source of truth for a user's username. This maps the
+ * lowercased `login` from the GitHub profile onto our users.username column.
+ *
+ * Reserved slugs (e.g., GitHub handle happens to match a route name) fall
+ * through to `{login}-user`. GitHub itself reserves most product names so
+ * this is near-impossible in practice; the fallback exists for correctness.
+ */
+const deriveUsernameFromGithubLogin = (login: string): string => {
+  const lowered = login.toLowerCase().trim()
+  if (isValidPublicUsername(lowered)) return lowered
+
+  if (RESERVED_USERNAME_SET.has(lowered)) return `${lowered}-user`
+
+  const sanitized = lowered.replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')
+  const candidate = sanitized.replace(/^-+|-+$/g, '')
+  if (isValidPublicUsername(candidate)) return candidate
+
+  return `${candidate || 'user'}-user`
+}
+
 export const createHowiccAuth = (options: CreateHowiccAuthOptions) => {
   const githubEnabled =
     Boolean(options.githubClientId) && Boolean(options.githubClientSecret)
@@ -54,6 +76,22 @@ export const createHowiccAuth = (options: CreateHowiccAuthOptions) => {
         : { enabled: false },
       cookiePrefix: 'howicc',
     },
+    user: {
+      additionalFields: {
+        username: {
+          type: 'string',
+          required: true,
+          input: false,
+        },
+      },
+    },
+    account: {
+      accountLinking: {
+        // Ensures username + other mapped fields re-sync from GitHub on
+        // every sign-in so a GitHub handle rename propagates to HowiCC.
+        updateUserInfoOnLink: true,
+      },
+    },
   }
 
   if (githubEnabled) {
@@ -61,6 +99,12 @@ export const createHowiccAuth = (options: CreateHowiccAuthOptions) => {
       github: {
         clientId: options.githubClientId!,
         clientSecret: options.githubClientSecret!,
+        mapProfileToUser: profile => {
+          const githubLogin = typeof profile.login === 'string' ? profile.login : ''
+          return {
+            username: deriveUsernameFromGithubLogin(githubLogin),
+          }
+        },
       },
     }
   }
@@ -71,3 +115,5 @@ export const createHowiccAuth = (options: CreateHowiccAuthOptions) => {
 export type HowiccAuth = ReturnType<typeof createHowiccAuth>
 export type Session = HowiccAuth['$Infer']['Session']
 export type User = Session['user']
+
+export { deriveUsernameFromGithubLogin }

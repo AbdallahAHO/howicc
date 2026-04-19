@@ -1,15 +1,50 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
+import {
+  createApiTokenRoute,
+  listApiTokensRoute,
+  revokeApiTokenRoute,
+} from './api-tokens'
 import { cliAuthAuthorizeRoute, cliAuthExchangeRoute, cliAuthWhoamiRoute } from './cli-auth'
-import { getArtifactRoute, getRenderDocumentRoute, listConversationsRoute } from './conversations'
+import {
+  getArtifactRoute,
+  getAssetPreviewRoute,
+  getRenderDocumentRoute,
+  getSharedRenderDocumentRoute,
+  listConversationsRoute,
+  updateConversationVisibilityRoute,
+} from './conversations'
 import { healthRoute } from './health'
+import { getProfileOgImageRoute } from './og'
 import { openRouterModelsRoute } from './pricing'
-import { getProfileRoute, recomputeProfileRoute } from './profile'
-import { getRepoProfileRoute } from './repo'
+import {
+  getProfileActivityRoute,
+  getProfileRoute,
+  getProfileStatsRoute,
+  recomputeProfileRoute,
+} from './profile'
+import {
+  getPublicProfileMineRoute,
+  getPublicProfileRoute,
+  recordPublicProfileViewRoute,
+  updatePublicProfileSettingsRoute,
+} from './public-profile'
+import {
+  getRepoConsentStatusRoute,
+  getRepoProfileRoute,
+  getRepoSettingsRoute,
+  hideRepoConversationRoute,
+  previewRepoVisibilityRoute,
+  recordRepoConsentRoute,
+  unhideRepoConversationRoute,
+  updateRepoVisibilityRoute,
+} from './repo'
+import { getSitemapUrlsRoute } from './sitemap'
 import {
   createUploadSessionRoute,
   finalizeRevisionRoute,
   uploadRevisionAssetRoute,
 } from './uploads'
+import { recordSessionViewRoute } from './views'
 import { getViewerProtectedRoute, getViewerSessionRoute } from './viewer'
 
 export * from './shared'
@@ -19,8 +54,14 @@ export * from './uploads'
 export * from './conversations'
 export * from './pricing'
 export * from './cli-auth'
+export * from './api-tokens'
 export * from './profile'
+export * from './public-profile'
 export * from './repo'
+export * from './views'
+export * from './og'
+export * from './reserved-usernames'
+export * from './sitemap'
 export * from './viewer'
 
 const contractHandler = (() => {
@@ -51,14 +92,36 @@ export const routes = app
   .openapi(finalizeRevisionRoute, contractHandler)
   .openapi(listConversationsRoute, contractHandler)
   .openapi(getRenderDocumentRoute, contractHandler)
+  .openapi(getSharedRenderDocumentRoute, contractHandler)
+  .openapi(updateConversationVisibilityRoute, contractHandler)
   .openapi(getArtifactRoute, contractHandler)
+  .openapi(getAssetPreviewRoute, contractHandler)
   .openapi(openRouterModelsRoute, contractHandler)
   .openapi(cliAuthAuthorizeRoute, contractHandler)
   .openapi(cliAuthExchangeRoute, contractHandler)
   .openapi(cliAuthWhoamiRoute, contractHandler)
+  .openapi(listApiTokensRoute, contractHandler)
+  .openapi(createApiTokenRoute, contractHandler)
+  .openapi(revokeApiTokenRoute, contractHandler)
   .openapi(getProfileRoute, contractHandler)
+  .openapi(getProfileStatsRoute, contractHandler)
+  .openapi(getProfileActivityRoute, contractHandler)
   .openapi(recomputeProfileRoute, contractHandler)
+  .openapi(getPublicProfileRoute, contractHandler)
+  .openapi(getPublicProfileMineRoute, contractHandler)
+  .openapi(updatePublicProfileSettingsRoute, contractHandler)
+  .openapi(recordPublicProfileViewRoute, contractHandler)
   .openapi(getRepoProfileRoute, contractHandler)
+  .openapi(getRepoSettingsRoute, contractHandler)
+  .openapi(getRepoConsentStatusRoute, contractHandler)
+  .openapi(recordRepoConsentRoute, contractHandler)
+  .openapi(previewRepoVisibilityRoute, contractHandler)
+  .openapi(updateRepoVisibilityRoute, contractHandler)
+  .openapi(hideRepoConversationRoute, contractHandler)
+  .openapi(unhideRepoConversationRoute, contractHandler)
+  .openapi(recordSessionViewRoute, contractHandler)
+  .openapi(getProfileOgImageRoute, contractHandler)
+  .openapi(getSitemapUrlsRoute, contractHandler)
   .openapi(getViewerSessionRoute, contractHandler)
   .openapi(getViewerProtectedRoute, contractHandler)
 

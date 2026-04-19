@@ -1,0 +1,152 @@
+---
+import Layout from '../components/Layout.astro'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import AccountAvatar from '../components/home/AccountAvatar.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
+import PublicProfileIsland from '../components/settings/PublicProfileIsland'
+import TokensIsland from '../components/settings/TokensIsland'
+import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+import type {
+  ApiTokenSummary,
+  ListApiTokensResponse,
+  PublicProfileMineResponse,
+} from '@howicc/contracts'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+const session = locals.auth.session!
+
+const config = getRuntimeWebConfig()
+const api = createServerApiClient({
+  baseUrl: config.apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const [tokensResponse, publicProfileResponse] = await Promise.all([
+  api.apiTokens.list().catch(() => null),
+  api.publicProfile.mine().catch(() => null),
+])
+const tokensEnvelope = unwrapSuccess<ListApiTokensResponse>(tokensResponse)
+const initialTokens: ApiTokenSummary[] = tokensEnvelope?.tokens ?? []
+
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(
+  publicProfileResponse,
+)
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
+
+const sessionExpiresLabel = new Date(session.expiresAt).toLocaleString(undefined, {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
+---
+
+<Layout title="Settings">
+  <div class="archive-glow isolate min-h-dvh">
+    <AppTopBar active={null} publicProfileUrl={publicProfileUrl} />
+
+    <main class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-2">
+        <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+          Settings
+        </h1>
+        <p class="text-muted-foreground max-w-[58ch] text-base text-pretty">
+          Identity via GitHub. Tokens, public profile, and the knobs that don't belong anywhere else.
+        </p>
+      </section>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile</CardTitle>
+          <CardDescription>From your GitHub, on sign-in.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="flex items-center gap-4">
+            <AccountAvatar
+              size="lg"
+              name={user.name ?? null}
+              email={user.email}
+              image={user.image ?? null}
+            />
+            <div class="flex min-w-0 flex-col gap-0.5">
+              <p class="truncate text-base font-medium">{user.name ?? 'GitHub user'}</p>
+              <p class="text-muted-foreground truncate text-sm">{user.email}</p>
+              <p class="text-ink-tertiary truncate text-xs">
+                Signed in until <time datetime={session.expiresAt}>{sessionExpiresLabel}</time>
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>CLI tokens</CardTitle>
+          <CardDescription>
+            For the <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc</code> CLI, and anything else that talks to our API.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TokensIsland
+            client:load
+            apiUrl={locals.authApiUrl}
+            initialTokens={initialTokens}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Public profile</CardTitle>
+          <CardDescription>
+            {publicProfileEnvelope ? (
+              <>
+                Your profile lives at{' '}
+                <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">
+                  {config.siteUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}/{publicProfileEnvelope.username}
+                </code>
+                . GitHub owns the username.
+              </>
+            ) : (
+              <>Turn it on here to claim a public URL under your GitHub handle.</>
+            )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {publicProfileEnvelope ? (
+            <PublicProfileIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              initial={publicProfileEnvelope}
+              username={publicProfileEnvelope.username}
+              siteUrl={config.siteUrl}
+            />
+          ) : (
+            <p class="text-muted-foreground text-sm">
+              Couldn't load your profile configuration. Refresh to try again.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </main>
+  </div>
+</Layout>

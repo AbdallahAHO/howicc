@@ -1,0 +1,58 @@
+---
+/**
+ * Server-rendered avatar that always paints the GitHub image (via a plain
+ * <img> tag) so it works in Astro SSR without client hydration. Falls back
+ * to a warm neutral tile — never letter initials — when no image URL is
+ * present, which keeps the brand quiet and avoids flashing "AO" style
+ * placeholders while an image loads.
+ */
+type Size = 'sm' | 'default' | 'lg'
+
+type Props = {
+  name: string | null
+  email: string
+  image?: string | null
+  size?: Size
+  class?: string
+}
+
+const {
+  name,
+  email,
+  image,
+  size = 'default',
+  class: className = '',
+} = Astro.props as Props
+
+const displayName = name ?? email
+
+const dimensionClass: Record<Size, string> = {
+  sm: 'size-6',
+  default: 'size-8',
+  lg: 'size-10',
+}
+
+const pixelSize: Record<Size, number> = {
+  sm: 24,
+  default: 32,
+  lg: 40,
+}
+
+const base = `border-border/60 shrink-0 overflow-hidden rounded-full border ${dimensionClass[size]} ${className}`
+---
+
+{image ? (
+  <img
+    src={image}
+    alt={`${displayName} avatar`}
+    width={pixelSize[size]}
+    height={pixelSize[size]}
+    loading="lazy"
+    class={`${base} bg-muted object-cover`}
+  />
+) : (
+  <span
+    aria-hidden="true"
+    class={`${base} bg-accent text-accent-foreground/60 block`}
+  ></span>
+)}

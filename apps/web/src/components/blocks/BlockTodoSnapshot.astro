@@ -1,0 +1,56 @@
+---
+import type { RenderTodoSnapshotBlock } from '@howicc/contracts'
+import { Badge } from '@howicc/ui-web/badge'
+import BlockHeader from './shared/BlockHeader.astro'
+import CollapsibleBlockShell from './shared/CollapsibleBlockShell.astro'
+
+type Props = {
+  block: RenderTodoSnapshotBlock
+}
+
+const { block } = Astro.props
+
+const statusVariant = (status: string): 'default' | 'secondary' | 'outline' => {
+  const normalized = status.toLowerCase().replace(/[\s_-]+/g, '_')
+  if (normalized === 'completed' || normalized === 'done') return 'default'
+  if (normalized === 'in_progress' || normalized === 'active') return 'secondary'
+  return 'outline'
+}
+
+const humaniseStatus = (status: string) =>
+  status.replace(/[_-]+/g, ' ').toLowerCase()
+---
+
+<CollapsibleBlockShell
+  defaultOpen={!block.defaultCollapsed}
+  ariaLabel={block.title}
+>
+  <BlockHeader
+    slot="summary"
+    title={block.title}
+    count={block.items.length}
+  />
+
+  {block.items.length === 0 ? (
+    <p class="text-muted-foreground text-sm">No todos captured in this snapshot.</p>
+  ) : (
+    <ul role="list" class="flex flex-col gap-2 text-sm">
+      {block.items.map((item) => (
+        <li class="flex items-start gap-2">
+          <Badge
+            variant={statusVariant(item.status)}
+            className="mt-0.5 shrink-0"
+          >
+            {humaniseStatus(item.status)}
+          </Badge>
+          <p class="text-foreground text-pretty">{item.content}</p>
+          {item.priority ? (
+            <Badge variant="outline" className="ml-auto shrink-0 text-[0.6875rem]">
+              {item.priority}
+            </Badge>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  )}
+</CollapsibleBlockShell>

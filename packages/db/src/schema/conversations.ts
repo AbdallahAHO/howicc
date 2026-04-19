@@ -23,6 +23,7 @@ export const conversations = sqliteTable(
       table.sourceApp,
       table.sourceSessionId,
     ),
+    slugUniqueIdx: uniqueIndex('conversations_slug_unique_idx').on(table.slug),
   }),
 )
 

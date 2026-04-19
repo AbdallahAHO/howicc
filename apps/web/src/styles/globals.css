@@ -1,1 +1,132 @@
 @import "@howicc/ui-web/globals.css";
+
+/* ---------------------------------------------------------------
+ * Web-app-only utilities on top of the shared UI package.
+ * -------------------------------------------------------------- */
+
+/**
+ * Matches viewports with a coarse primary pointer (phones, tablets)
+ * so touch-first visitors get larger tap targets without inflating
+ * the desktop visual density.
+ */
+@custom-variant coarse-pointer (@media (hover: none) and (pointer: coarse));
+
+/**
+ * Bumps an element's interactive area to the WCAG 2.5.5 AAA target
+ * size (44×44 CSS pixels) on coarse-pointer devices. Visible size
+ * stays unchanged on mouse-driven viewports so the design keeps its
+ * intended rhythm.
+ *
+ * @example
+ * <button class="touch-target size-8"><icon /></button>
+ */
+@utility touch-target {
+  @variant coarse-pointer {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+}
+
+/**
+ * Archive atmosphere for the hero/public surfaces that should feel like
+ * warm paper under lamplight rather than a flat application canvas.
+ */
+@utility archive-glow {
+  background-image: radial-gradient(
+    ellipse at top,
+    rgba(193, 95, 60, 0.08) 0%,
+    transparent 62%
+  );
+  background-repeat: no-repeat;
+}
+
+@utility archive-page-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+@utility archive-section-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: var(--tracking-tight);
+}
+
+/**
+ * Smooth scroll for anchor navigation (phase spine, copy-link, back-to-
+ * top affordances). Disabled automatically when the user requests
+ * reduced motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/**
+ * Print styles for /s/:slug and any other page that wants to export
+ * as a readable archive.
+ *
+ * Interactive chrome — sticky header, mobile phase chip bar, visibility
+ * toggle, collapsibles — drops out. Backdrop filters and shadows flatten
+ * to white. All <details> force-open so every collapsed tool run and
+ * activity group prints in full. Blocks honour page breaks so no
+ * conversation turn splits awkwardly across pages.
+ *
+ * Elements that should not appear in print carry `data-print="hide"`.
+ */
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  [data-print='hide'] {
+    display: none !important;
+  }
+
+  .sticky,
+  .fixed {
+    position: static !important;
+    top: auto !important;
+    backdrop-filter: none !important;
+  }
+
+  details[data-responsive-details],
+  details {
+    open: true;
+  }
+
+  details > summary {
+    list-style: none;
+  }
+
+  details:not([open]) > :not(summary) {
+    display: block !important;
+  }
+
+  article,
+  section,
+  [data-slot='card'] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.75rem;
+    color: #666;
+  }
+}

@@ -1,0 +1,57 @@
+---
+import Layout from '../Layout.astro'
+import { buttonVariants } from '@howicc/ui-web/button'
+import type { WebLocals } from '../../lib/auth/types'
+
+type Props = {
+  owner: string
+  name: string
+}
+
+const { owner, name } = Astro.props as Props
+const locals = Astro.locals as WebLocals
+const repo = `${owner}/${name}`
+---
+
+<Layout title={`No admin access · ${repo}`} noindex>
+  <div class="archive-glow isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 border-b backdrop-blur">
+      <div class="mx-auto flex w-full max-w-3xl items-center gap-3 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-3xl flex-col items-start gap-6 px-4 py-20 sm:px-6">
+      <span class="text-ink-tertiary text-xs tracking-wide uppercase">403</span>
+      <h1 class="archive-page-title text-4xl sm:text-5xl">No admin access</h1>
+      <p class="text-ink-secondary max-w-[58ch] text-base text-pretty">
+        Repo settings need at least <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">maintain</code>
+        on GitHub for <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">{repo}</code>.
+        Ping someone who has it, or head back to the repo page.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href={`/r/${owner}/${name}`}
+          class={buttonVariants({ variant: 'default' })}
+        >
+          Back to {repo}
+        </a>
+        <a
+          href={`https://github.com/${owner}/${name}`}
+          class={buttonVariants({ variant: 'outline' })}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Open on GitHub
+        </a>
+      </div>
+    </main>
+  </div>
+</Layout>

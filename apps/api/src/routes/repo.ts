@@ -1,21 +1,30 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
-import { getRepoProfileRoute } from '@howicc/contracts'
+import { and, eq } from 'drizzle-orm'
+import { repoHiddenConversations, users } from '@howicc/db/schema'
+import { getRepoProfileRoute, type RepoVisibility } from '@howicc/contracts'
 import {
   getRepoProfile,
   getPublicRepoDigestCount,
 } from '../modules/profile/service'
+import {
+  getRepoSettingsRow,
+} from '../modules/repo-admin/service'
 import { createApiRuntime } from '../runtime'
 import { toApiErrorPayload, toApiErrorResponse } from '../lib/api-error'
+import { createApiAuth, type ApiAuthRuntimeEnv } from '../lib/auth'
+import { getRuntimeDatabase } from '../lib/runtime-resources'
+import {
+  permissionAtLeast,
+  resolveRepoPermission,
+} from '../lib/github-permissions'
 
 const app = new OpenAPIHono()
 
 type RepoRouteEnv = {
-  WEB_APP_URL: string
-  DB: unknown
   ASSETS?: unknown
   INGEST_QUEUE?: unknown
-}
+} & ApiAuthRuntimeEnv
 
 const getRuntime = (env: RepoRouteEnv) =>
   createApiRuntime(env as never)
@@ -29,7 +38,53 @@ app.use('/repo/*', async (c, next) => {
     allowMethods: ['GET', 'OPTIONS'],
     exposeHeaders: ['Content-Length'],
     maxAge: 600,
+    credentials: true,
   })(c, next)
+})
+
+const resolveViewerPermission = async (
+  runtime: ReturnType<typeof getRuntime>,
+  runtimeEnv: RepoRouteEnv,
+  headers: Headers,
+  owner: string,
+  name: string,
+): Promise<'none' | 'read' | 'write' | 'maintain' | 'admin'> => {
+  try {
+    const auth = createApiAuth(runtimeEnv)
+    const session = await auth.api.getSession({ headers })
+    if (!session?.user.id) return 'none'
+
+    const db = getRuntimeDatabase(runtime)
+    const [userRow] = await db
+      .select({ username: users.username })
+      .from(users)
+      .where(eq(users.id, session.user.id))
+      .limit(1)
+
+    if (!userRow?.username) return 'none'
+
+    return resolveRepoPermission(runtime, {
+      userId: session.user.id,
+      login: userRow.username,
+      owner,
+      name,
+    })
+  } catch {
+    return 'none'
+  }
+}
+
+const emptyResponse = (
+  repositoryFullName: string,
+  visibility: RepoVisibility,
+  message: string,
+) => ({
+  success: true as const,
+  repository: repositoryFullName,
+  profile: null,
+  sessionCount: 0,
+  visibility,
+  message,
 })
 
 app.openapi(getRepoProfileRoute, async c => {
@@ -51,17 +106,69 @@ app.openapi(getRepoProfileRoute, async c => {
 
     const repositoryFullName = `${owner}/${name}`
     const runtime = getRuntime(runtimeEnv)
+
+    const settings = await getRepoSettingsRow(runtime, owner, name)
+    const viewerPermission = await resolveViewerPermission(
+      runtime,
+      runtimeEnv,
+      c.req.raw.headers,
+      owner,
+      name,
+    )
+    const viewerIsAdmin = permissionAtLeast(viewerPermission, 'maintain')
+    const viewerIsMember = permissionAtLeast(viewerPermission, 'read')
+
+    // Private repos: no aggregation exposed to anyone. Admins still see the
+    // empty-state + adminHiddenCount so they can jump into settings.
+    if (settings.visibility === 'private') {
+      let adminHiddenCount: number | undefined
+      if (viewerIsAdmin) {
+        const db = getRuntimeDatabase(runtime)
+        const rows = await db
+          .select({ id: repoHiddenConversations.conversationId })
+          .from(repoHiddenConversations)
+          .where(
+            and(
+              eq(repoHiddenConversations.owner, owner),
+              eq(repoHiddenConversations.name, name),
+            ),
+          )
+        adminHiddenCount = rows.length
+      }
+      return c.json(
+        {
+          ...emptyResponse(
+            repositoryFullName,
+            'private',
+            'This repository is marked private by its admin. Aggregate stats are hidden.',
+          ),
+          ...(adminHiddenCount !== undefined ? { adminHiddenCount } : {}),
+        },
+        200,
+      )
+    }
+
+    // Members tier: must have at least read access on GitHub.
+    if (settings.visibility === 'members' && !viewerIsMember) {
+      return c.json(
+        emptyResponse(
+          repositoryFullName,
+          'members',
+          'This repository is restricted to members. Sign in with a collaborator account on GitHub to see aggregate stats.',
+        ),
+        200,
+      )
+    }
+
     const publicCount = await getPublicRepoDigestCount(runtime, repositoryFullName)
 
     if (publicCount === 0) {
       return c.json(
-        {
-          success: true as const,
-          repository: repositoryFullName,
-          profile: null,
-          sessionCount: 0,
-          message: 'No public sessions found for this repository.',
-        },
+        emptyResponse(
+          repositoryFullName,
+          settings.visibility,
+          'No public sessions found for this repository.',
+        ),
         200,
       )
     }
@@ -84,6 +191,7 @@ app.openapi(getRepoProfileRoute, async c => {
         repository: repositoryFullName,
         profile,
         sessionCount: publicCount,
+        visibility: settings.visibility,
       },
       200,
     )

@@ -17,7 +17,7 @@
     "generate": "pnpm run generate:openapi && pnpm run generate:types",
     "generate:check": "pnpm run generate && git diff --exit-code -- openapi/howicc-openapi.json src/generated/openapi.ts",
     "generate:openapi": "pnpm exec tsx scripts/export-openapi.ts",
-    "generate:types": "pnpm exec openapi-typescript ./openapi/howicc-openapi.json -o ./src/generated/openapi.ts --alphabetize --enum --enum-values --make-paths-enum --path-params-as-types --read-write-markers",
+    "generate:types": "pnpm exec openapi-typescript ./openapi/howicc-openapi.json -o ./src/generated/openapi.ts --alphabetize --enum --enum-values --make-paths-enum --read-write-markers",
     "test": "vitest run --passWithNoTests",
     "type-check": "tsc --noEmit -p tsconfig.json"
   },
