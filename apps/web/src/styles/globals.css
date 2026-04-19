@@ -28,6 +28,32 @@
 }
 
 /**
+ * Archive atmosphere for the hero/public surfaces that should feel like
+ * warm paper under lamplight rather than a flat application canvas.
+ */
+@utility archive-glow {
+  background-image: radial-gradient(
+    ellipse at top,
+    rgba(193, 95, 60, 0.08) 0%,
+    transparent 62%
+  );
+  background-repeat: no-repeat;
+}
+
+@utility archive-page-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+@utility archive-section-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: var(--tracking-tight);
+}
+
+/**
  * Smooth scroll for anchor navigation (phase spine, copy-link, back-to-
  * top affordances). Disabled automatically when the user requests
  * reduced motion.

@@ -53,8 +53,8 @@ const navItems = [
 ---
 
 <Layout title="Sessions">
-  <div class="isolate min-h-dvh">
-    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
+  <div class="archive-glow isolate min-h-dvh">
+    <header class="border-border/60 bg-background/88 supports-[backdrop-filter]:bg-background/76 sticky top-0 z-40 border-b backdrop-blur">
       <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
         <a
           href="/"
@@ -73,7 +73,7 @@ const navItems = [
                   <a
                     href={item.href}
                     aria-current="page"
-                    class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
+                    class="bg-secondary text-foreground shadow-subtle inline-flex h-8 items-center rounded-md px-3"
                   >
                     {item.label}
                   </a>
@@ -118,19 +118,19 @@ const navItems = [
           <span class="bg-primary size-1.5 rounded-full"></span>
           All sessions
         </Badge>
-        <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        <h1 class="archive-page-title text-4xl sm:text-5xl">
           {totalSessions > 0
             ? `Your ${totalSessions.toLocaleString()} synced ${totalSessions === 1 ? 'session' : 'sessions'}`
             : 'Your sessions'}
         </h1>
-        <p class="text-muted-foreground max-w-[58ch] text-base text-pretty">
+        <p class="text-ink-secondary max-w-[58ch] text-base text-pretty">
           Everything you've synced from the CLI, newest first. Click a title to open the shared view; use the visibility toggle there to decide who else can see it.
         </p>
       </section>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent activity</CardTitle>
+          <CardTitle className="archive-section-title text-xl">Recent activity</CardTitle>
           <CardDescription>
             {activityItems.length > 0
               ? `Showing ${activityItems.length} to start — extend the list with Show more.`

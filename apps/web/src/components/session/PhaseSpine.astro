@@ -27,39 +27,39 @@ const phaseDescriptions: Record<PhaseKey, string> = {
 {groups.length > 1 ? (
   <nav
     aria-label="Phases"
-    class="sticky top-24 self-start"
+    class="bg-card/95 border-border/80 shadow-subtle sticky top-24 self-start rounded-lg border px-4 py-4"
   >
-    <p class="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
+    <p class="text-ink-secondary mb-3 text-[0.6875rem] font-medium">
       Phases
     </p>
-    <ol role="list" class="relative flex flex-col gap-0">
+    <ol role="list" class="relative flex flex-col gap-1">
       <div
-        class="bg-border absolute top-3 bottom-3 left-[0.4375rem] w-px"
+        class="bg-border absolute top-4 bottom-4 left-[0.95rem] w-px"
         aria-hidden="true"
       ></div>
-      {groups.map((group) => (
+      {groups.map((group, index) => (
         <li
           data-phase-link={group.anchor}
           data-active="false"
-          class="group/phase-item relative flex items-start gap-3 py-2.5"
+          class="group/phase-item relative flex items-start gap-3 py-2"
         >
           <span
-            class="bg-background border-border group-data-[active=true]/phase-item:border-primary group-data-[active=true]/phase-item:bg-primary relative z-10 mt-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded-full border-2 transition-colors"
+            class="bg-background border-border text-ink-secondary group-data-[active=true]/phase-item:border-primary group-data-[active=true]/phase-item:bg-primary group-data-[active=true]/phase-item:text-primary-foreground shadow-subtle relative z-10 inline-flex size-8 shrink-0 items-center justify-center rounded-pill border font-mono text-[0.75rem] transition-colors"
             aria-hidden="true"
           >
-            <span class="bg-primary group-data-[active=true]/phase-item:bg-primary-foreground size-1.5 rounded-full transition-colors"></span>
+            {index + 1}
           </span>
           <a
             href={`#${group.anchor}`}
-            class="flex min-w-0 flex-col gap-0.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            class="flex min-w-0 flex-col gap-0.5 pt-0.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
           >
             <span class="text-foreground group-hover/phase-item:text-primary group-data-[active=true]/phase-item:text-primary font-medium transition-colors">
               {group.label}
             </span>
-            <span class="text-muted-foreground text-xs">
+            <span class="text-ink-secondary text-xs">
               {phaseDescriptions[group.phase]}
             </span>
-            <span class="text-muted-foreground tabular-nums text-[0.6875rem]">
+            <span class="text-ink-tertiary tabular-nums text-[0.6875rem]">
               {group.blocks.length} {group.blocks.length === 1 ? 'block' : 'blocks'}
             </span>
           </a>

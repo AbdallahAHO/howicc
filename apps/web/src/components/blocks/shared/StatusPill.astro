@@ -1,6 +1,4 @@
 ---
-import { Badge } from '@howicc/ui-web/badge'
-
 type Status = 'ok' | 'error' | 'partial'
 
 type Props = {
@@ -11,16 +9,19 @@ type Props = {
 const { status, class: className } = Astro.props
 
 const label: Record<Status, string> = {
-  ok: 'ok',
-  error: 'error',
-  partial: 'partial',
+  ok: 'Ok',
+  error: 'Error',
+  partial: 'Partial',
 }
 
-const variant: Record<Status, 'outline' | 'secondary' | 'destructive'> = {
-  ok: 'outline',
-  partial: 'secondary',
-  error: 'destructive',
+const toneClass: Record<Status, string> = {
+  ok: 'bg-success',
+  partial: 'bg-warning',
+  error: 'bg-destructive',
 }
 ---
 
-<Badge variant={variant[status]} className={className}>{label[status]}</Badge>
+<span class:list={['text-ink-secondary inline-flex items-center gap-1.5 text-[0.75rem] font-medium', className]}>
+  <span class:list={['inline-flex size-1.5 rounded-pill', toneClass[status]]}></span>
+  <span>{label[status]}</span>
+</span>

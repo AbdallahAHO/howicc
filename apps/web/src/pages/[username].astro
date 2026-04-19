@@ -218,10 +218,10 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
                 <span class="bg-primary size-1.5 rounded-full"></span>
                 Public profile
               </Badge>
-              <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+              <h1 class="archive-page-title text-4xl sm:text-5xl">
                 {profile.user.displayName}
               </h1>
-              <p class="text-muted-foreground text-base">
+              <p class="text-ink-secondary text-base">
                 <a
                   class="hover:text-foreground"
                   href={profile.user.githubUrl}
@@ -502,8 +502,8 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
       ) : (
         <section class="flex flex-col items-center gap-4 py-16 text-center">
           <Badge variant="outline">404</Badge>
-          <h1 class="text-3xl font-semibold tracking-tight text-balance">Profile not found</h1>
-          <p class="text-muted-foreground max-w-[50ch] text-pretty">
+          <h1 class="archive-page-title text-4xl">Profile not found</h1>
+          <p class="text-ink-secondary max-w-[50ch] text-pretty">
             No public HowiCC profile for <code class="bg-muted rounded px-1 py-0.5 font-mono text-sm">@{username}</code>.
             Usernames mirror GitHub — check the handle, or sign in to opt your own profile public.
           </p>

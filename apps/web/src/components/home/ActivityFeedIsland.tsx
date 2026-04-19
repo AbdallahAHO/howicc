@@ -245,24 +245,19 @@ export const ActivityFeedIsland = ({
       ) : null}
 
       {filtersActive && items.length === 0 && !refreshing ? (
-        <div className="border-border/60 bg-muted/20 flex flex-col gap-2 rounded-xl border border-dashed p-5 text-sm">
+        <div className="border-border/70 bg-surface-raised/80 shadow-subtle flex flex-col gap-2 rounded-lg border border-dashed p-5 text-sm">
           <p className="text-foreground font-medium">No sessions match these filters.</p>
-          <p className="text-muted-foreground text-pretty">
+          <p className="text-ink-secondary text-pretty">
             Try a broader search or clear the filters.
           </p>
         </div>
       ) : null}
 
-      <ol role="list" className="flex flex-col">
-        {items.map((item, index) => (
+      <ol role="list" className="flex flex-col gap-3">
+        {items.map((item) => (
           <li
             key={item.conversationId}
-            className={[
-              'flex flex-col gap-2 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6',
-              index > 0 ? 'border-border/60 border-t' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
+            className="bg-card/90 border-border/80 shadow-subtle hover:shadow-default flex flex-col gap-3 rounded-lg border px-4 py-4 transition-shadow sm:flex-row sm:items-start sm:justify-between sm:gap-6"
           >
             <div className="flex min-w-0 flex-col gap-1.5">
               <div className="flex flex-wrap items-center gap-2">
@@ -271,7 +266,7 @@ export const ActivityFeedIsland = ({
                 </Badge>
                 <a
                   href={`/s/${item.slug}`}
-                  className="text-foreground hover:text-primary min-w-0 truncate text-sm font-medium transition-colors"
+                  className="text-foreground hover:text-primary min-w-0 truncate text-[0.95rem] font-medium transition-colors"
                 >
                   {item.title}
                 </a>
@@ -286,21 +281,27 @@ export const ActivityFeedIsland = ({
                   </Badge>
                 ) : null}
               </div>
-              <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
+              <p className="text-ink-secondary flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                 {item.repository ? (
                   <>
-                    <span className="font-mono">{item.repository.fullName}</span>
+                    <span className="bg-accent text-primary rounded-pill px-2 py-0.5 font-mono text-[0.6875rem] shadow-2xs">
+                      {item.repository.fullName}
+                    </span>
                     <span aria-hidden="true">·</span>
                   </>
                 ) : (
                   <>
-                    <span className="font-mono max-w-[24ch] truncate">{item.projectKey}</span>
+                    <span className="bg-accent text-primary max-w-[24ch] truncate rounded-pill px-2 py-0.5 font-mono text-[0.6875rem] shadow-2xs">
+                      {item.projectKey}
+                    </span>
                     <span aria-hidden="true">·</span>
                   </>
                 )}
                 {item.models.length > 0 ? (
                   <>
-                    <span className="font-mono">{item.models[0]}</span>
+                    <span className="bg-background/80 text-ink-secondary rounded-pill border border-border px-2 py-0.5 font-mono text-[0.6875rem] shadow-2xs">
+                      {item.models[0]}
+                    </span>
                     <span aria-hidden="true">·</span>
                   </>
                 ) : null}
@@ -323,7 +324,7 @@ export const ActivityFeedIsland = ({
                   {formatCost(item.estimatedCostUsd)}
                 </dd>
               </div>
-              <div className="text-muted-foreground text-xs">
+              <div className="text-ink-secondary text-xs">
                 <dt className="sr-only">Synced</dt>
                 <dd>
                   Synced <time dateTime={item.syncedAt}>{formatRelative(item.syncedAt)}</time>

@@ -16,15 +16,15 @@ const preview = truncated ? `${body.slice(0, limit).trimEnd()}…` : body
 
 const shellClass =
   label === 'input'
-    ? 'bg-muted/50 border-border/40'
-    : 'bg-background border-border/60'
+    ? 'bg-surface-sunk/75 border-border/70'
+    : 'bg-background/90 border-border/80'
 ---
 
-<figure class:list={['group/preview relative overflow-hidden rounded-md border', shellClass]}>
-  <figcaption class="border-border/40 text-muted-foreground flex items-center justify-between gap-2 border-b px-3 py-1.5 text-[0.6875rem] font-medium tracking-wide uppercase">
+<figure class:list={['group/preview relative overflow-hidden rounded-lg border shadow-subtle', shellClass]}>
+  <figcaption class="border-border/60 text-ink-secondary flex items-center justify-between gap-2 border-b px-3 py-2 text-[0.6875rem] font-medium">
     <span>{label}</span>
     {truncated ? (
-      <span class="text-muted-foreground normal-case tracking-normal">
+      <span class="text-ink-tertiary normal-case tracking-normal">
         truncated to {limit.toLocaleString()} chars
       </span>
     ) : null}
@@ -36,5 +36,5 @@ const shellClass =
       ariaLabel={`Copy ${label}`}
     />
   </div>
-  <pre class="text-foreground overflow-x-auto px-3 py-2 font-mono text-xs leading-relaxed"><code>{preview}</code></pre>
+  <pre class="text-foreground overflow-x-auto px-3 py-3 font-mono text-[0.75rem] leading-6"><code>{preview}</code></pre>
 </figure>

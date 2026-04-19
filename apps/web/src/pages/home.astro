@@ -173,12 +173,12 @@ const navItems = [
           <span class="bg-primary size-1.5 rounded-full"></span>
           Canonical sessions
         </Badge>
-        <h1 class="max-w-[22ch] text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        <h1 class="archive-page-title max-w-[22ch] text-4xl sm:text-5xl">
           {stats && stats.totalSessions > 0
             ? `Welcome back, ${firstName}.`
             : `Welcome, ${firstName}.`}
         </h1>
-        <p class="text-muted-foreground max-w-[56ch] text-base text-pretty">
+        <p class="text-ink-secondary max-w-[56ch] text-base text-pretty">
           {stats && stats.totalSessions > 0
             ? `You've synced ${stats.totalSessions.toLocaleString()} ${stats.totalSessions === 1 ? 'session' : 'sessions'} across ${stats.activeDays} active ${stats.activeDays === 1 ? 'day' : 'days'}. The shared-session reader lands in the next wave.`
             : `Your synced sessions, activity, and key stats will land here. The web surface is rolling out in waves — until then, the CLI is the fastest way in.`}

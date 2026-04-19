@@ -21,17 +21,17 @@ const { tone = 'default', depth = 0, class: className, ariaLabel } = Astro.props
 
 const toneClass =
   tone === 'muted'
-    ? 'bg-muted/30 border-border/60'
+    ? 'bg-surface-raised/85 border-border/80 shadow-subtle'
     : tone === 'subagent'
       ? depth >= 1
-        ? 'bg-muted/40 border-border'
-        : 'bg-muted/20 border-border/60'
-      : 'bg-background border-border/60'
+        ? 'bg-surface-sunk/85 border-border shadow-subtle'
+        : 'bg-surface-raised/80 border-border/80 shadow-subtle'
+      : 'bg-card border-border/90 shadow-subtle'
 ---
 
 <article
   aria-label={ariaLabel}
-  class:list={['rounded-xl border p-4 sm:p-5', toneClass, className]}
+  class:list={['rounded-lg border p-4 sm:p-5', toneClass, className]}
 >
   <slot />
 </article>

@@ -38,11 +38,11 @@ const metaDescription = description ?? undefined
 ---
 
 <!doctype html>
-<html lang="en" class="h-full antialiased">
+<html lang="en" class="h-full bg-background text-foreground antialiased">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light" />
     <title>{fullTitle}</title>
     {metaDescription ? <meta name="description" content={metaDescription} /> : null}
     {canonical ? <link rel="canonical" href={canonical} /> : null}

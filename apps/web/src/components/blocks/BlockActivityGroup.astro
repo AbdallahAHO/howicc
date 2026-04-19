@@ -30,18 +30,24 @@ const { block, conversationId, apiUrl } = Astro.props
       No tool runs or hooks in this group.
     </p>
   ) : (
-    <ul role="list" class="-mx-4 -my-4 flex flex-col sm:-mx-5">
-      {block.items.map((item) =>
+    <ol role="list" class="flex flex-col">
+      {block.items.map((item, index) =>
         item.type === 'tool_run' ? (
           <ToolRunItem
             item={item}
             conversationId={conversationId}
             apiUrl={apiUrl}
+            first={index === 0}
+            last={index === block.items.length - 1}
           />
         ) : (
-          <HookEventItem item={item} />
+          <HookEventItem
+            item={item}
+            first={index === 0}
+            last={index === block.items.length - 1}
+          />
         ),
       )}
-    </ul>
+    </ol>
   )}
 </CollapsibleBlockShell>
