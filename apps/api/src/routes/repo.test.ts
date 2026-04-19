@@ -4,6 +4,10 @@ const mocks = vi.hoisted(() => ({
   createApiRuntime: vi.fn(),
   getPublicRepoDigestCount: vi.fn(),
   getRepoProfile: vi.fn(),
+  getRepoSettingsRow: vi.fn(),
+  createApiAuth: vi.fn(),
+  resolveRepoPermission: vi.fn(),
+  getRuntimeDatabase: vi.fn(),
 }))
 
 vi.mock('../runtime', () => ({
@@ -19,16 +23,64 @@ vi.mock('../modules/profile/service', async () => {
   }
 })
 
+vi.mock('../modules/repo-admin/service', async () => {
+  const actual = await vi.importActual('../modules/repo-admin/service')
+  return {
+    ...actual,
+    getRepoSettingsRow: mocks.getRepoSettingsRow,
+  }
+})
+
+vi.mock('../lib/auth', async () => {
+  const actual = await vi.importActual('../lib/auth')
+  return {
+    ...actual,
+    createApiAuth: mocks.createApiAuth,
+  }
+})
+
+vi.mock('../lib/github-permissions', async () => {
+  const actual = await vi.importActual('../lib/github-permissions')
+  return {
+    ...actual,
+    resolveRepoPermission: mocks.resolveRepoPermission,
+  }
+})
+
+vi.mock('../lib/runtime-resources', async () => {
+  const actual = await vi.importActual('../lib/runtime-resources')
+  return {
+    ...actual,
+    getRuntimeDatabase: mocks.getRuntimeDatabase,
+  }
+})
+
 const { default: repoRoutes } = await import('./repo')
 
 const runtimeEnv = {
   WEB_APP_URL: 'http://localhost:4321',
+  API_BASE_URL: 'http://localhost:8787',
+  BETTER_AUTH_SECRET: 'x'.repeat(32),
   DB: {},
 }
 
 describe('repo routes', () => {
   beforeEach(() => {
     mocks.createApiRuntime.mockReturnValue({ env: 'runtime' })
+    mocks.getRepoSettingsRow.mockResolvedValue({ visibility: 'public' })
+    mocks.createApiAuth.mockReturnValue({
+      api: { getSession: vi.fn().mockResolvedValue(null) },
+    })
+    mocks.resolveRepoPermission.mockResolvedValue('none')
+    mocks.getRuntimeDatabase.mockReturnValue({
+      select: () => ({
+        from: () => ({
+          where: () => ({
+            limit: () => Promise.resolve([]),
+          }),
+        }),
+      }),
+    })
   })
 
   afterEach(() => {
@@ -90,5 +142,37 @@ describe('repo routes', () => {
       sessionCount: 4,
       visibility: 'public',
     })
+  })
+
+  it('returns the members-gated empty state when repo is members-only and viewer has no access', async () => {
+    mocks.getRepoSettingsRow.mockResolvedValue({ visibility: 'members' })
+    mocks.resolveRepoPermission.mockResolvedValue('none')
+
+    const response = await repoRoutes.request(
+      'http://localhost/repo/openai/openai-node',
+      undefined,
+      runtimeEnv,
+    )
+
+    expect(response.status).toBe(200)
+    const body = (await response.json()) as { visibility: string; profile: null }
+    expect(body.visibility).toBe('members')
+    expect(body.profile).toBe(null)
+  })
+
+  it('returns the private empty state with no profile when repo is private', async () => {
+    mocks.getRepoSettingsRow.mockResolvedValue({ visibility: 'private' })
+
+    const response = await repoRoutes.request(
+      'http://localhost/repo/openai/openai-node',
+      undefined,
+      runtimeEnv,
+    )
+
+    expect(response.status).toBe(200)
+    const body = (await response.json()) as { visibility: string; profile: null }
+    expect(body.visibility).toBe('private')
+    expect(body.profile).toBe(null)
+    expect(mocks.getPublicRepoDigestCount).not.toHaveBeenCalled()
   })
 })

@@ -35,6 +35,8 @@
     "@howicc/model-pricing": "workspace:*",
     "@howicc/profile": "workspace:*",
     "@howicc/storage": "workspace:*",
+    "@octokit/core": "^7.0.0",
+    "@octokit/request-error": "^7.0.0",
     "@scalar/hono-api-reference": "^0.10.7",
     "drizzle-orm": "^0.45.2",
     "envin": "^1.2.0",

@@ -196,6 +196,10 @@ export const getRepoConsentStatusRoute = createRoute({
       description: 'Caller lacks admin/maintain permission on the repo',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
+    500: {
+      description: 'Internal error',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
   },
 })
 
@@ -242,6 +246,10 @@ export const recordRepoConsentRoute = createRoute({
           schema: recordRepoConsentResponseSchema,
         },
       },
+    },
+    400: {
+      description: 'Invalid consent payload',
+      content: { 'application/json': { schema: errorResponseSchema } },
     },
     401: {
       description: 'Not authenticated',
@@ -311,12 +319,20 @@ export const previewRepoVisibilityRoute = createRoute({
         },
       },
     },
+    400: {
+      description: 'Invalid target visibility',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
     401: {
       description: 'Not authenticated',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
     403: {
       description: 'Caller lacks admin/maintain permission on the repo',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
+    500: {
+      description: 'Internal error',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
   },
@@ -441,6 +457,10 @@ export const hideRepoConversationRoute = createRoute({
       description: 'Conversation does not exist or is not linked to this repo',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
+    500: {
+      description: 'Internal error',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
   },
 })
 
@@ -486,6 +506,10 @@ export const unhideRepoConversationRoute = createRoute({
     },
     404: {
       description: 'Conversation was not hidden',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
+    500: {
+      description: 'Internal error',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
   },

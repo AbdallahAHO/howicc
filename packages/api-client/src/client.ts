@@ -2,6 +2,7 @@ import {
   ApiPaths,
   ConversationVisibility,
   PathsProfileActivityGetParametersQueryVisibility,
+  RepoVisibility,
   UploadAssetKind,
 } from './generated/openapi'
 import {
@@ -29,8 +30,12 @@ type UploadAssetKindValue = `${UploadAssetKind}`
 
 type ConversationVisibilityValue = `${ConversationVisibility}`
 
+type RepoVisibilityValue = `${RepoVisibility}`
+
 const toConversationVisibility = (value: ConversationVisibilityValue) =>
   value as ConversationVisibility
+
+const toRepoVisibility = (value: RepoVisibilityValue) => value as RepoVisibility
 
 const settleFetchResult = async <TData, TError>(
   request: FetchResult<TData, TError>,
@@ -250,6 +255,114 @@ export const createApiClient = (config: ApiClientConfig) => {
                 name,
               },
             },
+          }),
+        ),
+      settings: (owner: string, name: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getRepoSettings, {
+            params: { path: { owner, name } },
+          }),
+        ),
+      consentStatus: (owner: string, name: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getRepoConsentStatus, {
+            params: { path: { owner, name } },
+          }),
+        ),
+      recordConsent: (owner: string, name: string) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.recordRepoConsent, {
+            params: { path: { owner, name } },
+            body: { acknowledged: true as const },
+          }),
+        ),
+      previewVisibility: (
+        owner: string,
+        name: string,
+        target: RepoVisibilityValue,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.previewRepoVisibility, {
+            params: {
+              path: { owner, name },
+              query: { target: toRepoVisibility(target) },
+            },
+          }),
+        ),
+      updateVisibility: (
+        owner: string,
+        name: string,
+        body: { visibility: RepoVisibilityValue; previewToken: string },
+      ) =>
+        unwrapFetchResult(
+          fetchClient.PATCH(ApiPaths.updateRepoVisibility, {
+            params: { path: { owner, name } },
+            body: {
+              visibility: toRepoVisibility(body.visibility),
+              previewToken: body.previewToken,
+            },
+          }),
+        ),
+      hideConversation: (
+        owner: string,
+        name: string,
+        conversationId: string,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.hideRepoConversation, {
+            params: { path: { owner, name, conversationId } },
+          }),
+        ),
+      unhideConversation: (
+        owner: string,
+        name: string,
+        conversationId: string,
+      ) =>
+        unwrapFetchResult(
+          fetchClient.DELETE(ApiPaths.unhideRepoConversation, {
+            params: { path: { owner, name, conversationId } },
+          }),
+        ),
+    },
+    publicProfile: {
+      get: (username: string) =>
+        unwrapFetchResult(
+          fetchClient.GET(ApiPaths.getPublicProfile, {
+            params: { path: { username } },
+          }),
+        ),
+      mine: () =>
+        unwrapFetchResult(fetchClient.GET(ApiPaths.getPublicProfileMine)),
+      update: (body: {
+        enabled?: boolean
+        bio?: string | null
+        websiteUrl?: string | null
+        settings?: Partial<{
+          showActivityHeatmap: boolean
+          showCost: boolean
+          showRepositories: boolean
+          showSessionTypes: boolean
+          showToolsLanguages: boolean
+          showBadges: boolean
+        }>
+      }) =>
+        unwrapFetchResult(
+          fetchClient.PATCH(ApiPaths.updatePublicProfileSettings, {
+            body,
+          }),
+        ),
+      recordView: (username: string) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.recordPublicProfileView, {
+            params: { path: { username } },
+          }),
+        ),
+    },
+    views: {
+      recordSessionView: (conversationId: string) =>
+        unwrapFetchResult(
+          fetchClient.POST(ApiPaths.recordSessionView, {
+            params: { path: { conversationId } },
           }),
         ),
     },

@@ -37,6 +37,10 @@ export const recordSessionViewRoute = createRoute({
       description: 'Unknown conversation or not publicly accessible',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
+    500: {
+      description: 'Internal error',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
   },
 })
 

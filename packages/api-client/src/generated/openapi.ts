@@ -42,7 +42,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/api-tokens/${string}`]: {
+    "/api-tokens/{tokenId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -142,7 +142,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/conversations/${string}/artifacts/${string}`]: {
+    "/conversations/{conversationId}/artifacts/{artifactId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -162,7 +162,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/conversations/${string}/assets/${string}`]: {
+    "/conversations/{conversationId}/assets/{assetId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -182,7 +182,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/conversations/${string}/render`]: {
+    "/conversations/{conversationId}/render": {
         parameters: {
             query?: never;
             header?: never;
@@ -202,7 +202,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/conversations/${string}/visibility`]: {
+    "/conversations/{conversationId}/visibility": {
         parameters: {
             query?: never;
             header?: never;
@@ -302,6 +302,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/profile/public-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the caller’s own public-profile configuration
+         * @description Returns the authenticated user's public profile configuration so the settings page can render its initial state without guessing. Mirrors the shape returned by PATCH /profile/public-settings.
+         */
+        get: operations["getPublicProfileMine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update the caller’s public-profile opt-in and settings
+         * @description Updates the authenticated user's public profile configuration: the master enabled flag, optional bio and website, and the six per-section visibility flags. Returns the full canonical settings after the patch so the caller can re-render without a second fetch.
+         */
+        patch: operations["updatePublicProfileSettings"];
+        trace?: never;
+    };
+    "/profile/public/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a public profile by username
+         * @description Returns the filtered public aggregate for the requested user. Every optional section respects the owner's visibility flags; disabled sections are omitted from the payload entirely. Returns 404 when the user does not exist or has not opted into a public profile.
+         */
+        get: operations["getPublicProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/profile/public/{username}/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a view on a public profile
+         * @description Fire-and-forget endpoint that bumps the per-user `profile_view_count`. Debounced per IP per day to prevent inflation. Returns `recorded: false` when the view was debounced.
+         */
+        post: operations["recordPublicProfileView"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/profile/recompute": {
         parameters: {
             query?: never;
@@ -342,7 +406,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/repo/${string}/${string}`]: {
+    "/repo/{owner}/{name}": {
         parameters: {
             query?: never;
             header?: never;
@@ -351,7 +415,7 @@ export interface paths {
         };
         /**
          * Get the public aggregate profile for a repository
-         * @description Aggregates the current public conversation digests for the requested repository across all users. Only conversations whose current revision is publicly visible are included in the result.
+         * @description Aggregates the current public conversation digests for the requested repository across all users. Only conversations whose current revision is publicly visible are included in the result. If the repo is marked `private`, the response omits the profile (sessionCount=0, message set). The `members` tier returns a profile only for viewers who have ≥ read access on GitHub.
          */
         get: operations["getRepoProfile"];
         put?: never;
@@ -362,7 +426,135 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/shared/${string}`]: {
+    "/repo/{owner}/{name}/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check whether the admin must re-acknowledge the private-repo notice
+         * @description Returns whether the caller must re-acknowledge the private-repo notice before editing this repo's settings. A fresh consent is required when the repo is private AND the caller has not consented within the last 30 days, or whenever another admin changed the visibility since the caller's last consent.
+         */
+        get: operations["getRepoConsentStatus"];
+        put?: never;
+        /**
+         * Record an admin’s private-repo acknowledgement
+         * @description Records the caller's acknowledgement of the private-repo notice. The acknowledgement unlocks other admin endpoints (visibility change, hide/unhide) for 30 days, or until another admin changes visibility.
+         */
+        post: operations["recordRepoConsent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/repo/{owner}/{name}/hide/{conversationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Hide a conversation from the repo aggregation
+         * @description Excludes the conversation from `/r/:owner/:name` stats without touching the conversation's own visibility — the owner can still share the `/s/:slug` link directly. Requires admin consent. Idempotent: a repeat call refreshes `hiddenAt`.
+         */
+        post: operations["hideRepoConversation"];
+        /**
+         * Unhide a conversation from the repo aggregation
+         * @description Removes a conversation from the hidden-from-aggregation set so it reappears in `/r/:owner/:name` stats. Requires admin consent.
+         */
+        delete: operations["unhideRepoConversation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/repo/{owner}/{name}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview which conversations would be aggregated at a target visibility
+         * @description Lists the public/unlisted conversations that would appear on the repo page if visibility were changed to `target`. Returns an opaque `previewToken` that must accompany the subsequent PATCH /visibility request to prove the preview was reviewed. Prevents accidental one-click exposure of private aggregation.
+         */
+        get: operations["previewRepoVisibility"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/repo/{owner}/{name}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get admin settings for a repository
+         * @description Returns repo visibility, hidden-conversation list, and the caller's GitHub permission on the repo. Requires `admin` or `maintain` access verified through the caller's GitHub OAuth token.
+         */
+        get: operations["getRepoSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/repo/{owner}/{name}/visibility": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update the repository visibility tier
+         * @description Flips the repo visibility tier. Requires admin consent (POST /consent within 24h) AND a valid preview token (GET /preview within 10 min). Individual conversation visibility is NOT affected — this only changes the aggregation ceiling.
+         */
+        patch: operations["updateRepoVisibility"];
+        trace?: never;
+    };
+    "/sessions/{conversationId}/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a view on a shared conversation
+         * @description Fire-and-forget endpoint bumped by the public `/s/:slug` page when a non-owner views the conversation. Debounced per IP per conversation per day to prevent inflation. Returns the updated `viewCount` for the conversation and whether the view was counted (`recorded`).
+         */
+        post: operations["recordSessionView"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shared/{slug}": {
         parameters: {
             query?: never;
             header?: never;
@@ -382,7 +574,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    [path: `/uploads/${string}/assets/${string}`]: {
+    "/uploads/{uploadId}/assets/{kind}": {
         parameters: {
             query?: never;
             header?: never;
@@ -578,6 +770,16 @@ export interface components {
             /** @enum {boolean} */
             success: true;
         };
+        HideRepoConversationResponse: {
+            conversationId: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            hiddenAt: string;
+            /** @enum {boolean} */
+            success: true;
+        };
         ListApiTokensResponse: {
             /** @enum {boolean} */
             success: true;
@@ -673,6 +875,154 @@ export interface components {
         };
         /** @enum {string} */
         ProviderId: ProviderId;
+        PublicProfileActivity: {
+            dailyActivity: components["schemas"]["PublicProfileDailyActivity"][];
+            hourlyDistribution: number[];
+            weekdayDistribution: number[];
+        };
+        PublicProfileBadge: {
+            description: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            earnedAt?: string;
+            id: string;
+            label: string;
+        };
+        PublicProfileDailyActivity: {
+            /**
+             * Format: date
+             * @example 2026-04-14
+             */
+            date: string;
+            sessionCount: number;
+        };
+        PublicProfileMineResponse: {
+            bio?: string;
+            enabled: boolean;
+            profileViewCount: number;
+            settings: components["schemas"]["PublicProfileSettings"];
+            /** @enum {boolean} */
+            success: true;
+            username: string;
+            websiteUrl?: string;
+        };
+        PublicProfileRepo: {
+            fullName: string;
+            sessionCount: number;
+        };
+        PublicProfileResponse: {
+            activity?: components["schemas"]["PublicProfileActivity"];
+            badges?: components["schemas"]["PublicProfileBadge"][];
+            cost?: {
+                totalUsd: number;
+            };
+            languages?: {
+                [key: string]: number;
+            };
+            publicRepos?: components["schemas"]["PublicProfileRepo"][];
+            publicSessions: components["schemas"]["PublicProfileSessionCard"][];
+            publicSettings: components["schemas"]["PublicProfileSettings"];
+            sessionTypes?: {
+                [key: string]: number;
+            };
+            stats: components["schemas"]["PublicProfileStats"];
+            /** @enum {boolean} */
+            success: true;
+            topTools?: components["schemas"]["PublicProfileTopTool"][];
+            user: components["schemas"]["PublicProfileUser"];
+        };
+        PublicProfileSessionCard: {
+            conversationId: string;
+            durationMs?: number;
+            firstMessageExcerpt?: string;
+            messageCount: number;
+            projectKey: string;
+            provider: components["schemas"]["ProviderId"];
+            repository?: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            sessionCreatedAt: string;
+            sessionType: components["schemas"]["SessionType"];
+            slug: string;
+            title: string;
+            toolRunCount: number;
+            viewCount: number;
+        };
+        PublicProfileSettings: {
+            showActivityHeatmap: boolean;
+            showBadges: boolean;
+            showCost: boolean;
+            showRepositories: boolean;
+            showSessionTypes: boolean;
+            showToolsLanguages: boolean;
+        };
+        PublicProfileStats: {
+            activeDays: number;
+            currentStreak: number;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            firstSessionAt?: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            lastSessionAt?: string;
+            longestStreak: number;
+            sessionCount: number;
+            totalDurationMs: number;
+        };
+        PublicProfileTopTool: {
+            count: number;
+            name: string;
+        };
+        PublicProfileUser: {
+            avatarUrl?: string;
+            bio?: string;
+            displayName: string;
+            /** @example https://github.com/abdallahali */
+            githubUrl: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            joinedAt: string;
+            /** @example abdallahali */
+            username: string;
+            websiteUrl?: string;
+        };
+        RecordPublicProfileViewResponse: {
+            recorded: boolean;
+            /** @enum {boolean} */
+            success: true;
+        };
+        RecordRepoConsentRequest: {
+            /**
+             * @description Must be `true` — the client asserts the admin clicked the confirmation button.
+             * @enum {boolean}
+             */
+            acknowledged: true;
+        };
+        RecordRepoConsentResponse: {
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            consentedAt: string;
+            /** @enum {boolean} */
+            success: true;
+        };
+        RecordSessionViewResponse: {
+            recorded: boolean;
+            /** @enum {boolean} */
+            success: true;
+            viewCount: number;
+        };
         RenderActivityGroupBlock: {
             defaultCollapsed: boolean;
             id: string;
@@ -865,6 +1215,32 @@ export interface components {
             /** @enum {string} */
             type: RenderToolRunActivityType;
         };
+        /** @enum {string} */
+        RepoAdminPermission: RepoAdminPermission;
+        RepoConsentCheckResponse: {
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            consentedAt?: string;
+            consentRequired: boolean;
+            /** @enum {boolean} */
+            success: true;
+        };
+        RepoHiddenConversation: {
+            conversationId: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            hiddenAt: string;
+            hiddenBy: string;
+            ownerName?: string;
+            ownerUserId: string;
+            slug: string;
+            title: string;
+            visibility: components["schemas"]["ConversationVisibility"];
+        };
         RepoProfile: components["schemas"]["UserProfile"] & ({
             contributorCount: number;
             contributors: components["schemas"]["RepoProfileContributor"][];
@@ -877,6 +1253,7 @@ export interface components {
             userId: string;
         };
         RepoProfileResponse: {
+            adminHiddenCount?: number;
             message?: string;
             profile: components["schemas"]["RepoProfile"];
             /** @example openai/openai-node */
@@ -884,6 +1261,49 @@ export interface components {
             sessionCount: number;
             /** @enum {boolean} */
             success: true;
+            visibility: components["schemas"]["RepoVisibility"];
+        };
+        RepoSettingsResponse: {
+            /** @description True when the caller must re-acknowledge the private-repo notice before editing. Resets every 30 days and after any visibility change by another admin. */
+            consentRequired: boolean;
+            hidden: components["schemas"]["RepoHiddenConversation"][];
+            repository: string;
+            /** @enum {boolean} */
+            success: true;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            updatedAt?: string;
+            updatedBy?: string;
+            viewerPermission: components["schemas"]["RepoAdminPermission"];
+            visibility: components["schemas"]["RepoVisibility"];
+        };
+        /** @enum {string} */
+        RepoVisibility: RepoVisibility;
+        RepoVisibilityPreviewItem: {
+            conversationId: string;
+            ownerName?: string;
+            ownerUserId: string;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            sessionCreatedAt: string;
+            slug: string;
+            title: string;
+            visibility: components["schemas"]["ConversationVisibility"];
+        };
+        RepoVisibilityPreviewResponse: {
+            currentVisibility: components["schemas"]["RepoVisibility"];
+            items: components["schemas"]["RepoVisibilityPreviewItem"][];
+            /** @description Opaque token returned alongside the preview. The caller MUST include it in the subsequent PATCH /visibility request as proof the preview was viewed. The server rejects PATCH requests missing a recent preview token to force the two-step review flow. */
+            previewToken: string;
+            repository: string;
+            /** @enum {boolean} */
+            success: true;
+            targetVisibility: components["schemas"]["RepoVisibility"];
+            wouldAggregateCount: number;
         };
         RevokeApiTokenResponse: {
             id: string;
@@ -926,6 +1346,11 @@ export interface components {
             web: number;
             write: number;
         };
+        UnhideRepoConversationResponse: {
+            conversationId: string;
+            /** @enum {boolean} */
+            success: true;
+        };
         UpdateConversationVisibilityBody: {
             visibility: components["schemas"]["ConversationVisibility"];
         };
@@ -937,6 +1362,36 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             visibility: components["schemas"]["ConversationVisibility"];
+        };
+        UpdatePublicProfileSettingsRequest: {
+            bio?: string | null;
+            enabled?: boolean;
+            settings?: {
+                showActivityHeatmap?: boolean;
+                showBadges?: boolean;
+                showCost?: boolean;
+                showRepositories?: boolean;
+                showSessionTypes?: boolean;
+                showToolsLanguages?: boolean;
+            };
+            /** Format: uri */
+            websiteUrl?: string | null;
+        };
+        UpdateRepoVisibilityRequest: {
+            /** @description Opaque token returned by GET /repo/:owner/:name/preview?target=... The server validates the token matches the requested visibility and is at most 10 minutes old. */
+            previewToken: string;
+            visibility: components["schemas"]["RepoVisibility"];
+        };
+        UpdateRepoVisibilityResponse: {
+            repository: string;
+            /** @enum {boolean} */
+            success: true;
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            updatedAt: string;
+            visibility: components["schemas"]["RepoVisibility"];
         };
         UploadAsset: {
             bytes: number;
@@ -1779,6 +2234,176 @@ export interface operations {
             };
         };
     };
+    getPublicProfileMine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public profile configuration */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicProfileMineResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updatePublicProfileSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePublicProfileSettingsRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated public profile settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicProfileMineResponse"];
+                };
+            };
+            /** @description Invalid payload */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getPublicProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Lowercased GitHub login. Usernames are the authoritative identifier for public profiles; they mirror GitHub as the source of truth. */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public profile payload */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicProfileResponse"];
+                };
+            };
+            /** @description Unknown user or profile is not public */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    recordPublicProfileView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description View was considered */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordPublicProfileViewResponse"];
+                };
+            };
+            /** @description Unknown user or profile is not public */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     recomputeProfile: {
         parameters: {
             query?: never;
@@ -1888,6 +2513,488 @@ export interface operations {
                 };
             };
             /** @description Repository profile aggregation failed unexpectedly */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getRepoConsentStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Consent status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepoConsentCheckResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    recordRepoConsent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordRepoConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description Consent recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordRepoConsentResponse"];
+                };
+            };
+            /** @description Invalid consent payload */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    hideRepoConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Conversation id to hide or unhide from repo aggregation. */
+                conversationId: string;
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation hidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HideRepoConversationResponse"];
+                };
+            };
+            /** @description Missing or stale consent */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conversation does not exist or is not linked to this repo */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unhideRepoConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Conversation id to hide or unhide from repo aggregation. */
+                conversationId: string;
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation unhidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnhideRepoConversationResponse"];
+                };
+            };
+            /** @description Missing or stale consent */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conversation was not hidden */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    previewRepoVisibility: {
+        parameters: {
+            query: {
+                /** @description The visibility tier the caller is considering. */
+                target: components["schemas"]["RepoVisibility"] & unknown;
+            };
+            header?: never;
+            path: {
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Preview payload + consent token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepoVisibilityPreviewResponse"];
+                };
+            };
+            /** @description Invalid target visibility */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getRepoSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin settings payload */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepoSettingsResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateRepoVisibility: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Repository name. */
+                name: string;
+                /** @description Repository owner or organization slug. */
+                owner: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRepoVisibilityRequest"];
+            };
+        };
+        responses: {
+            /** @description Visibility updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateRepoVisibilityResponse"];
+                };
+            };
+            /** @description Invalid or stale preview token, or missing/stale consent */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Caller lacks admin/maintain permission on the repo */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    recordSessionView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description View considered */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecordSessionViewResponse"];
+                };
+            };
+            /** @description Unknown conversation or not publicly accessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal error */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -2300,6 +3407,13 @@ export enum ApiErrorCode {
     upload_conflict = "upload_conflict",
     upload_expired = "upload_expired",
     pricing_catalog_unavailable = "pricing_catalog_unavailable",
+    user_not_found = "user_not_found",
+    repo_not_found = "repo_not_found",
+    repo_permission_denied = "repo_permission_denied",
+    consent_required = "consent_required",
+    preview_token_invalid = "preview_token_invalid",
+    conversation_not_in_repo = "conversation_not_in_repo",
+    hidden_conversation_missing = "hidden_conversation_missing",
     internal_error = "internal_error"
 }
 export enum ConversationVisibility {
@@ -2403,6 +3517,18 @@ export enum RenderToolRunActivityStatus {
 export enum RenderToolRunActivityType {
     tool_run = "tool_run"
 }
+export enum RepoAdminPermission {
+    admin = "admin",
+    maintain = "maintain",
+    write = "write",
+    read = "read",
+    none = "none"
+}
+export enum RepoVisibility {
+    public = "public",
+    members = "members",
+    private = "private"
+}
 export enum SessionType {
     building = "building",
     debugging = "debugging",
@@ -2437,7 +3563,19 @@ export enum ApiPaths {
     getProfileStats = "/profile/stats",
     getProfileActivity = "/profile/activity",
     recomputeProfile = "/profile/recompute",
+    getPublicProfile = "/profile/public/{username}",
+    getPublicProfileMine = "/profile/public-settings",
+    updatePublicProfileSettings = "/profile/public-settings",
+    recordPublicProfileView = "/profile/public/{username}/view",
     getRepoProfile = "/repo/{owner}/{name}",
+    getRepoSettings = "/repo/{owner}/{name}/settings",
+    getRepoConsentStatus = "/repo/{owner}/{name}/consent",
+    recordRepoConsent = "/repo/{owner}/{name}/consent",
+    previewRepoVisibility = "/repo/{owner}/{name}/preview",
+    updateRepoVisibility = "/repo/{owner}/{name}/visibility",
+    hideRepoConversation = "/repo/{owner}/{name}/hide/{conversationId}",
+    unhideRepoConversation = "/repo/{owner}/{name}/hide/{conversationId}",
     getViewerSession = "/viewer/session",
-    getViewerProtected = "/viewer/protected"
+    getViewerProtected = "/viewer/protected",
+    recordSessionView = "/sessions/{conversationId}/view"
 }

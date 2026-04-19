@@ -295,6 +295,10 @@ export const recordPublicProfileViewRoute = createRoute({
       description: 'Unknown user or profile is not public',
       content: { 'application/json': { schema: errorResponseSchema } },
     },
+    500: {
+      description: 'Internal error',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
   },
 })
 

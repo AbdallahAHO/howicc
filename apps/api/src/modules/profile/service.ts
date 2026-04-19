@@ -1,5 +1,10 @@
-import { and, eq, like, lt, or, sql, type SQL } from 'drizzle-orm'
-import { sessionDigests, userProfiles, conversations } from '@howicc/db/schema'
+import { and, eq, like, lt, notInArray, or, sql, type SQL } from 'drizzle-orm'
+import {
+  conversations,
+  repoHiddenConversations,
+  sessionDigests,
+  userProfiles,
+} from '@howicc/db/schema'
 import type {
   ProviderId,
   SessionDigest,
@@ -372,14 +377,53 @@ export type RepoProfile = UserProfile & {
   contributors: Array<{ userId: string; name?: string; sessionCount: number }>
 }
 
+const loadHiddenConversationIds = async (
+  runtime: ApiRuntime,
+  owner: string,
+  name: string,
+): Promise<string[]> => {
+  const db = getRuntimeDatabase(runtime)
+  const rows = await db
+    .select({ conversationId: repoHiddenConversations.conversationId })
+    .from(repoHiddenConversations)
+    .where(
+      and(
+        eq(repoHiddenConversations.owner, owner),
+        eq(repoHiddenConversations.name, name),
+      ),
+    )
+  return rows.map(r => r.conversationId)
+}
+
+const parseRepositoryIdentifier = (
+  repositoryFullName: string,
+): { owner: string; name: string } | null => {
+  const [owner, name] = repositoryFullName.split('/')
+  if (!owner || !name) return null
+  return { owner, name }
+}
+
 export const getRepoProfile = async (
   runtime: ApiRuntime,
   repositoryFullName: string,
 ): Promise<RepoProfile | null> => {
   const db = getRuntimeDatabase(runtime)
+  const parsed = parseRepositoryIdentifier(repositoryFullName)
+
+  const hiddenIds = parsed
+    ? await loadHiddenConversationIds(runtime, parsed.owner, parsed.name)
+    : []
 
   // Get public digests for this repo, limited to prevent OOM on popular repos
   const MAX_REPO_DIGESTS = 500
+
+  const conditions: SQL[] = [
+    eq(sessionDigests.repository, repositoryFullName),
+    eq(conversations.visibility, 'public'),
+  ]
+  if (hiddenIds.length > 0) {
+    conditions.push(notInArray(sessionDigests.conversationId, hiddenIds))
+  }
 
   const rows = await db
     .select({
@@ -388,12 +432,7 @@ export const getRepoProfile = async (
     })
     .from(sessionDigests)
     .innerJoin(conversations, currentRevisionJoin)
-    .where(
-      and(
-        eq(sessionDigests.repository, repositoryFullName),
-        eq(conversations.visibility, 'public'),
-      ),
-    )
+    .where(and(...conditions))
     .limit(MAX_REPO_DIGESTS)
 
   if (rows.length === 0) return null
@@ -426,17 +465,24 @@ export const getPublicRepoDigestCount = async (
   repositoryFullName: string,
 ): Promise<number> => {
   const db = getRuntimeDatabase(runtime)
+  const parsed = parseRepositoryIdentifier(repositoryFullName)
+  const hiddenIds = parsed
+    ? await loadHiddenConversationIds(runtime, parsed.owner, parsed.name)
+    : []
+
+  const conditions: SQL[] = [
+    eq(sessionDigests.repository, repositoryFullName),
+    eq(conversations.visibility, 'public'),
+  ]
+  if (hiddenIds.length > 0) {
+    conditions.push(notInArray(sessionDigests.conversationId, hiddenIds))
+  }
 
   const result = await db
     .select({ count: sql<number>`count(*)` })
     .from(sessionDigests)
     .innerJoin(conversations, currentRevisionJoin)
-    .where(
-      and(
-        eq(sessionDigests.repository, repositoryFullName),
-        eq(conversations.visibility, 'public'),
-      ),
-    )
+    .where(and(...conditions))
 
   return result[0]?.count ?? 0
 }
