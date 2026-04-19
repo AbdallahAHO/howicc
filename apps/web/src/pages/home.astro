@@ -1,7 +1,6 @@
 ---
 import Layout from '../components/Layout.astro'
 import { Badge } from '@howicc/ui-web/badge'
-import { Button } from '@howicc/ui-web/button'
 import {
   Card,
   CardContent,
@@ -93,7 +92,7 @@ const statCards = stats
 const navItems = [
   { href: '/home', label: 'Home', active: true, note: undefined },
   { href: '/sessions', label: 'Sessions', active: false, note: undefined },
-  { href: '/insights', label: 'Insights', active: false, note: 'Wave D' },
+  { href: '/insights', label: 'Insights', active: false, note: undefined },
 ]
 ---
 
@@ -378,15 +377,18 @@ const navItems = [
             </article>
           </li>
           <li>
-            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
+            <a
+              href="/insights"
+              class="border-border/60 hover:bg-muted/30 hover:border-border flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors"
+            >
               <header class="flex items-center justify-between gap-2">
                 <span class="text-foreground text-sm font-medium">Wave D</span>
-                <Badge variant="outline">Later</Badge>
+                <Badge variant="secondary">Live</Badge>
               </header>
               <p class="text-muted-foreground text-sm text-pretty">
-                Insights and virality — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/insights</code>, public <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/@:username</code>, OG cards.
+                Insights are live — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/insights</code> rolls up your activity rhythm, tool use, models, and projects. Public <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/@:username</code> still to come.
               </p>
-            </article>
+            </a>
           </li>
         </ul>
       </section>

@@ -52,10 +52,12 @@ const sessionExpiresLabel = new Date(session.expiresAt).toLocaleString(undefined
   timeStyle: 'short',
 })
 
-const navItems = [
+type NavItem = { href: string; label: string; active: boolean; note?: string }
+
+const navItems: NavItem[] = [
   { href: '/home', label: 'Home', active: false },
   { href: '/sessions', label: 'Sessions', active: false },
-  { href: '/insights', label: 'Insights', active: false, note: 'Wave D' },
+  { href: '/insights', label: 'Insights', active: false },
 ]
 ---
 

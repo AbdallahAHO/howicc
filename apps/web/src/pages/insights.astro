@@ -1,0 +1,603 @@
+---
+import Layout from '../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import CopyCommandIsland from '../components/home/CopyCommandIsland'
+import MobileNavIsland from '../components/home/MobileNavIsland'
+import UserMenuIsland from '../components/home/UserMenuIsland'
+import Histogram from '../components/insights/Histogram.astro'
+import StatBar from '../components/insights/StatBar.astro'
+import { formatCost, formatDuration } from '../components/home/format'
+import { createServerApiClient } from '../lib/api/client'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+
+const api = createServerApiClient({
+  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+type UserProfile = {
+  userId: string
+  generatedAt: string
+  digestCount: number
+  activity: {
+    totalSessions: number
+    totalDurationMs: number
+    activeDays: number
+    currentStreak: number
+    longestStreak: number
+    averageSessionDurationMs: number
+    averageTurnsPerSession: number
+    hourlyDistribution: number[]
+    weekdayDistribution: number[]
+    firstSessionAt?: string
+    lastSessionAt?: string
+  }
+  projects: Array<{
+    projectKey: string
+    displayName: string
+    sessionCount: number
+    totalDurationMs: number
+    estimatedCostUsd: number
+    lastActiveAt: string
+    repository?: { fullName: string; source: string }
+  }>
+  productivity: {
+    totalFilesChanged: number
+    totalFilesRead: number
+    uniqueFilesChanged: number
+    totalGitCommits: number
+    totalPrLinks: number
+    topLanguages: Array<{ language: string; fileCount: number }>
+    sessionTypeDistribution: Record<string, number>
+  }
+  toolcraft: {
+    totalToolRuns: number
+    categoryBreakdown: Record<string, number>
+    errorRate: number
+    rejectionRate: number
+    planUsageRate: number
+    agentUsageRate: number
+    compactionRate: number
+  }
+  models: Array<{
+    model: string
+    sessionCount: number
+    inputTokens: number
+    outputTokens: number
+    estimatedCostUsd: number
+  }>
+  cost: {
+    totalUsd: number
+    averagePerSessionUsd: number
+    byMonth: Array<{ month: string; totalUsd: number; sessionCount: number }>
+  }
+}
+
+const profileResult = await api.profile.get().catch(() => null)
+const profile: UserProfile | null =
+  profileResult && 'success' in profileResult && profileResult.success === true
+    ? (profileResult.profile as UserProfile | null)
+    : null
+
+const hourlyLabels = Array.from({ length: 24 }, (_, hour) => {
+  if (hour === 0) return '12 am'
+  if (hour === 12) return '12 pm'
+  if (hour < 12) return `${hour} am`
+  return `${hour - 12} pm`
+})
+const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+const formatTokens = (value: number): string => {
+  if (value < 1000) return value.toLocaleString()
+  if (value < 1_000_000) return `${(value / 1_000).toFixed(1)}K`
+  return `${(value / 1_000_000).toFixed(1)}M`
+}
+
+const formatPercent = (ratio: number): string => {
+  if (!Number.isFinite(ratio) || ratio <= 0) return '0%'
+  if (ratio < 0.01) return '<1%'
+  return `${Math.round(ratio * 100)}%`
+}
+
+const categoryLabel: Record<string, string> = {
+  read: 'Reading',
+  write: 'Writing',
+  search: 'Searching',
+  command: 'Commands',
+  agent: 'Subagents',
+  mcp: 'MCP',
+  plan: 'Planning',
+  question: 'Questions',
+  task: 'Tasks',
+  web: 'Web',
+  other: 'Other',
+}
+
+const sessionTypeLabel: Record<string, string> = {
+  building: 'Building',
+  debugging: 'Debugging',
+  exploring: 'Exploring',
+  investigating: 'Investigating',
+  mixed: 'Mixed',
+}
+
+type SortableEntry = { key: string; value: number }
+
+const sortedCategoryEntries: SortableEntry[] = profile
+  ? Object.entries(profile.toolcraft.categoryBreakdown)
+      .map(([key, value]) => ({ key, value }))
+      .filter((entry) => entry.value > 0)
+      .sort((a, b) => b.value - a.value)
+  : []
+
+const maxCategory = sortedCategoryEntries[0]?.value ?? 0
+
+const sortedSessionTypeEntries: SortableEntry[] = profile
+  ? Object.entries(profile.productivity.sessionTypeDistribution)
+      .map(([key, value]) => ({ key, value }))
+      .filter((entry) => entry.value > 0)
+      .sort((a, b) => b.value - a.value)
+  : []
+
+const maxSessionType = sortedSessionTypeEntries[0]?.value ?? 0
+
+const topLanguages = (profile?.productivity.topLanguages ?? []).slice(0, 6)
+const maxLanguage = topLanguages[0]?.fileCount ?? 0
+
+const topProjects = profile
+  ? [...profile.projects]
+      .sort((a, b) => b.sessionCount - a.sessionCount)
+      .slice(0, 5)
+  : []
+
+const topModels = profile
+  ? [...profile.models]
+      .sort((a, b) => b.sessionCount - a.sessionCount)
+      .slice(0, 6)
+  : []
+
+const totalBuckets = 24
+const emptyHourly = Array.from({ length: totalBuckets }, () => 0)
+const emptyWeekday = Array.from({ length: 7 }, () => 0)
+
+const navItems = [
+  { href: '/home', label: 'Home', active: false, note: undefined },
+  { href: '/sessions', label: 'Sessions', active: false, note: undefined },
+  { href: '/insights', label: 'Insights', active: true, note: undefined },
+]
+
+const heroStats = profile
+  ? [
+      {
+        label: 'Sessions',
+        value: profile.activity.totalSessions.toLocaleString(),
+        hint: `${profile.activity.activeDays} active ${profile.activity.activeDays === 1 ? 'day' : 'days'}`,
+      },
+      {
+        label: 'Time in Claude Code',
+        value: formatDuration(profile.activity.totalDurationMs),
+        hint:
+          profile.activity.averageSessionDurationMs > 0
+            ? `${formatDuration(profile.activity.averageSessionDurationMs)} avg`
+            : undefined,
+      },
+      {
+        label: 'Total cost',
+        value: formatCost(profile.cost.totalUsd),
+        hint:
+          profile.cost.averagePerSessionUsd > 0
+            ? `${formatCost(profile.cost.averagePerSessionUsd)} avg`
+            : undefined,
+      },
+      {
+        label: 'Tool runs',
+        value: profile.toolcraft.totalToolRuns.toLocaleString(),
+        hint: `${formatPercent(profile.toolcraft.errorRate)} error rate`,
+      },
+      {
+        label: 'Streak',
+        value: `${profile.activity.currentStreak} day${profile.activity.currentStreak === 1 ? '' : 's'}`,
+        hint:
+          profile.activity.longestStreak > profile.activity.currentStreak
+            ? `${profile.activity.longestStreak} longest`
+            : undefined,
+      },
+      {
+        label: 'Avg turns',
+        value: profile.activity.averageTurnsPerSession.toFixed(1),
+        hint: `${profile.activity.totalSessions > 0 ? (profile.productivity.totalFilesChanged / profile.activity.totalSessions).toFixed(1) : '0'} files/session`,
+      },
+    ]
+  : []
+
+const toolcraftRates = profile
+  ? [
+      { label: 'Error rate', value: formatPercent(profile.toolcraft.errorRate) },
+      { label: 'Rejection rate', value: formatPercent(profile.toolcraft.rejectionRate) },
+      { label: 'Plan usage', value: formatPercent(profile.toolcraft.planUsageRate) },
+      { label: 'Subagent usage', value: formatPercent(profile.toolcraft.agentUsageRate) },
+      { label: 'Compaction rate', value: formatPercent(profile.toolcraft.compactionRate) },
+    ]
+  : []
+---
+
+<Layout title="Insights">
+  <div class="isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
+      <div class="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+
+        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
+          <ul role="list" class="flex items-center gap-1">
+            {navItems.map((item) => (
+              <li>
+                {item.active ? (
+                  <a
+                    href={item.href}
+                    aria-current="page"
+                    class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <a
+                    href={item.href}
+                    class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
+                  >
+                    {item.label}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-2">
+          <div class="hidden lg:block">
+            <UserMenuIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              name={user.name ?? null}
+              email={user.email}
+              image={user.image ?? null}
+            />
+          </div>
+          <div class="lg:hidden">
+            <MobileNavIsland client:load />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-2">
+        <Badge variant="outline" className="gap-2 self-start">
+          <span class="bg-primary size-1.5 rounded-full"></span>
+          Insights
+        </Badge>
+        <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+          How you code with AI
+        </h1>
+        <p class="text-muted-foreground max-w-[58ch] text-base text-pretty">
+          Rolled up from every session you've synced. Updates as you sync more — rerun
+          <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code>
+          to refresh, or POST <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/profile/recompute</code>.
+        </p>
+      </section>
+
+      {profile === null ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Nothing here yet</CardTitle>
+            <CardDescription>Insights unlock after your first sync.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <CopyCommandIsland client:load command="howicc sync" />
+            <p class="text-muted-foreground text-sm text-pretty">
+              Your sessions stay local until you sync. Once a session lands, we compute
+              activity rhythm, tool-craft, and model usage here automatically.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <section aria-label="Summary" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {heroStats.map((stat) => (
+              <div class="border-border/60 flex flex-col gap-1 rounded-xl border p-3">
+                <p class="text-muted-foreground text-xs font-medium tracking-wide uppercase">{stat.label}</p>
+                <p class="text-foreground tabular-nums text-xl font-semibold">{stat.value}</p>
+                {stat.hint ? (
+                  <p class="text-muted-foreground text-[0.6875rem]">{stat.hint}</p>
+                ) : null}
+              </div>
+            ))}
+          </section>
+
+          <section class="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Time of day</CardTitle>
+                <CardDescription>
+                  {profile.activity.firstSessionAt
+                    ? `Since ${new Date(profile.activity.firstSessionAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}.`
+                    : 'When you code, bucketed by hour.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Histogram
+                  values={profile.activity.hourlyDistribution ?? emptyHourly}
+                  labels={hourlyLabels}
+                  ariaLabel="Sessions by hour of day"
+                />
+                <p class="text-muted-foreground mt-2 flex items-center justify-between text-[0.6875rem]">
+                  <span>12 am</span>
+                  <span>6 am</span>
+                  <span>noon</span>
+                  <span>6 pm</span>
+                  <span>12 am</span>
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Day of week</CardTitle>
+                <CardDescription>Which days pull the most sessions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Histogram
+                  values={profile.activity.weekdayDistribution ?? emptyWeekday}
+                  labels={weekdayLabels}
+                  ariaLabel="Sessions by weekday"
+                />
+                <p class="text-muted-foreground mt-2 flex items-center justify-between text-[0.6875rem] tabular-nums">
+                  {weekdayLabels.map((label) => (
+                    <span>{label}</span>
+                  ))}
+                </p>
+              </CardContent>
+            </Card>
+          </section>
+
+          <section class="grid gap-6 lg:grid-cols-[2fr_1fr]">
+            <Card>
+              <CardHeader>
+                <CardTitle>Tool craft</CardTitle>
+                <CardDescription>
+                  {profile.toolcraft.totalToolRuns.toLocaleString()} tool runs across all sessions.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-5">
+                {sortedCategoryEntries.length === 0 ? (
+                  <p class="text-muted-foreground text-sm">No tool runs recorded yet.</p>
+                ) : (
+                  <div class="flex flex-col">
+                    {sortedCategoryEntries.map((entry) => (
+                      <StatBar
+                        label={categoryLabel[entry.key] ?? entry.key}
+                        value={entry.value.toLocaleString()}
+                        ratio={maxCategory > 0 ? entry.value / maxCategory : 0}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <dl class="border-border/60 grid grid-cols-2 gap-x-6 gap-y-2 border-t pt-4 text-xs sm:grid-cols-5">
+                  {toolcraftRates.map((rate) => (
+                    <div class="flex flex-col gap-0.5">
+                      <dt class="text-muted-foreground">{rate.label}</dt>
+                      <dd class="text-foreground tabular-nums text-sm font-medium">{rate.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Session mix</CardTitle>
+                <CardDescription>How each session classifies.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {sortedSessionTypeEntries.length === 0 ? (
+                  <p class="text-muted-foreground text-sm">No sessions yet.</p>
+                ) : (
+                  <div class="flex flex-col">
+                    {sortedSessionTypeEntries.map((entry) => (
+                      <StatBar
+                        label={sessionTypeLabel[entry.key] ?? entry.key}
+                        value={entry.value.toLocaleString()}
+                        ratio={maxSessionType > 0 ? entry.value / maxSessionType : 0}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </section>
+
+          <section class="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Languages</CardTitle>
+                <CardDescription>Files changed, ranked by file count.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {topLanguages.length === 0 ? (
+                  <p class="text-muted-foreground text-sm">
+                    No language signal yet — we detect languages from file extensions in edit tool runs.
+                  </p>
+                ) : (
+                  <div class="flex flex-col">
+                    {topLanguages.map((lang) => (
+                      <StatBar
+                        label={lang.language}
+                        value={`${lang.fileCount.toLocaleString()} file${lang.fileCount === 1 ? '' : 's'}`}
+                        ratio={maxLanguage > 0 ? lang.fileCount / maxLanguage : 0}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Productivity</CardTitle>
+                <CardDescription>Changeset signals across sessions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl class="flex flex-col">
+                  <div class="flex items-baseline justify-between gap-3 py-1.5">
+                    <dt class="text-muted-foreground text-sm">Files changed</dt>
+                    <dd class="text-foreground tabular-nums font-medium">
+                      {profile.productivity.totalFilesChanged.toLocaleString()}
+                    </dd>
+                  </div>
+                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                    <dt class="text-muted-foreground text-sm">Files read</dt>
+                    <dd class="text-foreground tabular-nums font-medium">
+                      {profile.productivity.totalFilesRead.toLocaleString()}
+                    </dd>
+                  </div>
+                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                    <dt class="text-muted-foreground text-sm">Unique files touched</dt>
+                    <dd class="text-foreground tabular-nums font-medium">
+                      {profile.productivity.uniqueFilesChanged.toLocaleString()}
+                    </dd>
+                  </div>
+                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                    <dt class="text-muted-foreground text-sm">Git commits</dt>
+                    <dd class="text-foreground tabular-nums font-medium">
+                      {profile.productivity.totalGitCommits.toLocaleString()}
+                    </dd>
+                  </div>
+                  <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
+                    <dt class="text-muted-foreground text-sm">PR links</dt>
+                    <dd class="text-foreground tabular-nums font-medium">
+                      {profile.productivity.totalPrLinks.toLocaleString()}
+                    </dd>
+                  </div>
+                </dl>
+              </CardContent>
+            </Card>
+          </section>
+
+          {topModels.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Models</CardTitle>
+                <CardDescription>Sessions and token use per model.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div class="-mx-4 overflow-x-auto sm:-mx-6">
+                  <table class="w-full min-w-[32rem] text-sm">
+                    <thead>
+                      <tr class="text-muted-foreground text-[0.6875rem] font-medium tracking-wide uppercase">
+                        <th class="border-border/60 px-4 py-2 text-left font-medium sm:px-6">Model</th>
+                        <th class="border-border/60 px-4 py-2 text-right font-medium sm:px-6">Sessions</th>
+                        <th class="border-border/60 px-4 py-2 text-right font-medium sm:px-6">Input tokens</th>
+                        <th class="border-border/60 px-4 py-2 text-right font-medium sm:px-6">Output tokens</th>
+                        <th class="border-border/60 px-4 py-2 text-right font-medium sm:px-6">Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topModels.map((model) => (
+                        <tr class="border-border/60 border-t">
+                          <td class="px-4 py-2 font-mono text-xs sm:px-6">{model.model}</td>
+                          <td class="px-4 py-2 text-right tabular-nums sm:px-6">
+                            {model.sessionCount.toLocaleString()}
+                          </td>
+                          <td class="text-muted-foreground px-4 py-2 text-right tabular-nums sm:px-6">
+                            {formatTokens(model.inputTokens)}
+                          </td>
+                          <td class="text-muted-foreground px-4 py-2 text-right tabular-nums sm:px-6">
+                            {formatTokens(model.outputTokens)}
+                          </td>
+                          <td class="px-4 py-2 text-right tabular-nums sm:px-6">
+                            {formatCost(model.estimatedCostUsd)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {topProjects.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Top projects</CardTitle>
+                <CardDescription>Where your Claude Code time lands.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul role="list" class="flex flex-col">
+                  {topProjects.map((project, index) => (
+                    <li
+                      class:list={[
+                        'flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6',
+                        index > 0 ? 'border-border/60 border-t' : '',
+                      ]}
+                    >
+                      <div class="flex min-w-0 flex-col gap-0.5">
+                        <p class="text-foreground text-sm font-medium truncate">{project.displayName}</p>
+                        <p class="text-muted-foreground text-xs">
+                          {project.repository ? (
+                            <span class="font-mono">{project.repository.fullName}</span>
+                          ) : (
+                            <span class="font-mono max-w-[48ch] truncate">{project.projectKey}</span>
+                          )}
+                        </p>
+                      </div>
+                      <dl class="flex shrink-0 gap-5 text-xs tabular-nums sm:text-right">
+                        <div>
+                          <dt class="text-muted-foreground">Sessions</dt>
+                          <dd class="text-foreground font-medium">{project.sessionCount.toLocaleString()}</dd>
+                        </div>
+                        <div>
+                          <dt class="text-muted-foreground">Time</dt>
+                          <dd class="text-foreground font-medium">{formatDuration(project.totalDurationMs)}</dd>
+                        </div>
+                        <div>
+                          <dt class="text-muted-foreground">Cost</dt>
+                          <dd class="text-foreground font-medium">{formatCost(project.estimatedCostUsd)}</dd>
+                        </div>
+                      </dl>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ) : null}
+        </>
+      )}
+    </main>
+  </div>
+</Layout>

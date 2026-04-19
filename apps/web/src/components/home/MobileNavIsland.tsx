@@ -29,7 +29,7 @@ export const MobileNavIsland = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem render={<a href="/home">Home</a>} />
         <DropdownMenuItem render={<a href="/sessions">Sessions</a>} />
-        <DropdownMenuItem disabled>Insights (Wave D)</DropdownMenuItem>
+        <DropdownMenuItem render={<a href="/insights">Insights</a>} />
         <DropdownMenuSeparator />
         <DropdownMenuItem render={<a href="/settings">Settings</a>} />
       </DropdownMenuContent>

@@ -45,7 +45,7 @@ column shows the planned slug from doc 17 when it differs.
 | 2 | `/login` | `/login` | ✓ | Matches spec (card-centered, sentence case, scopes called out). |
 | 3 | `/cli/login` | `/cli/login` | ✓ | CLI bridge with continue-button + status text wired to `wireCliLoginPage`. |
 | 4 | `/home` | `/home` | ◐ | Route matches spec (`/dashboard` → 301 → `/home`). Shell uses `@howicc/ui-web` shadcn primitives: sticky header with desktop nav + mobile hamburger + avatar dropdown. The page now server-fetches `GET /profile/stats` and `GET /profile/activity` (limit 10) and renders real data — recent-activity list (title, sessionType, project/repo, models, duration, cost, synced-at) with empty-state CTA when digestCount is 0, and live stat cards (sessions, active days + streak, total cost + coding time). Open: cursor-paginated "load more" island, `/s/:slug` links when the owner page lands. |
-| 5 | — | `/insights` | + | Not built. UserProfile data exists in the API but no UI consumes it. |
+| 5 | `/insights` | `/insights` | ◐ | Shipped 2026-04-19. Server-fetches the full `UserProfile` via `api.profile.get()` and renders six cards: hero stat strip (sessions / time / cost / tool runs / streak / avg turns), time-of-day + weekday histograms (zero-JS CSS bars), tool craft (category breakdown + error/rejection/plan/agent/compaction rates), languages, productivity (files / commits / PRs), models table (sessions / input tokens / output tokens / cost), top projects. Zero new endpoints. Missing: daily-activity calendar heatmap, and the cost-by-month trajectory (data exists, UI deferred). |
 | 6 | `/sessions` | `/sessions` | ◐ | Shipped 2026-04-19. Server-fetches 25 items + cursor from `GET /profile/activity`, hands them to `ActivityFeedIsland` which extends on demand. Reuses the typed item rendering from `/home`. Filters (search, visibility, repository) still to come. |
 | 7 | `/s/:slug` | `/s/:slug` (owner) | ◐ | Dynamic route (`pages/s/[slug].astro`). Server-fetches `GET /shared/:slug`; owners see a visibility dropdown + copy-link (`VisibilityMenuIsland`) that `PATCH /conversations/:id/visibility`s. Renders message / activity-group / tool_run / callout / todo / question / compact-boundary blocks today; phase spine and artifact drilldowns still pending. |
 | 7 | `/s/:slug` | `/s/:slug` (public) | ◐ | Same route — visibility-gated. Public/unlisted readable without auth; private returns 404 to non-owners. Sidebar swaps in a "Sign in to sync your own" CTA for logged-out visitors. Mobile-first polish still pending. |
@@ -56,9 +56,9 @@ column shows the planned slug from doc 17 when it differs.
 | — | `/debug/auth` | (not in inventory) | ✓ | Internal tool. Not user-facing — keep out of doc 17 main surface but worth a footnote. |
 
 **Net:** 3 pages match spec end-to-end (`/login`, `/cli/login`, `/settings`),
-`/home`, `/sessions`, and `/s/:slug` are ◐ feature-complete for wave-A scope,
-`/` is a stub, `/dashboard` 301-redirects to `/home`. 4 doc-17 pages (5, 8, 9,
-11) are missing entirely.
+`/home`, `/sessions`, `/s/:slug`, and `/insights` are ◐ feature-complete for
+their wave scope, `/` is a stub, `/dashboard` 301-redirects to `/home`. 3
+doc-17 pages (8, 9, 11) are missing entirely.
 
 ### Resolved: `/home` is the post-login route
 

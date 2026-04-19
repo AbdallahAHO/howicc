@@ -352,7 +352,7 @@ Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 5: Insights (`/insights`) — + not built
+## Page 5: Insights (`/insights`) — ◐ shipped 2026-04-19 (six-card rollup; calendar heatmap + cost trajectory pending)
 
 **Auth:** Required
 **New page** — splits out analytics from the home feed
@@ -1394,7 +1394,7 @@ GET /og/profile/:username.png (OG image generation, edge-cached)
 | 2 | `/login` | None | ✓ | Desktop + mobile — OAuth |
 | 3 | `/cli/login` | Session | ✓ | Desktop (CLI bridge) |
 | 4 | `/home` | Required | ◐ | Desktop primary, mobile supported. Shell built on shadcn (`@howicc/ui-web`) with welcome block, two-column layout, account card, stats placeholder, and wave-status cards. Feed awaits `GET /profile/activity`; stats await `GET /profile/stats`. `/dashboard` issues a 301 redirect to `/home`. |
-| 5 | `/insights` | Required | + | Desktop primary |
+| 5 | `/insights` | Required | ◐ | Desktop primary. Shipped 2026-04-19 — six-card rollup (stats strip, hourly + weekday histograms, tool craft, languages + productivity, models table, top projects). Calendar heatmap + cost-by-month trajectory pending. |
 | 6 | `/sessions` | Required | ◐ | Desktop primary, mobile supported. Shipped 2026-04-19 with initial 25 items + `ActivityFeedIsland` load-more; filters pending. |
 | 7 | `/s/:slug` | Conditional | ◐ | **Mobile-first for public**, desktop for owner. Route + owner/public views + visibility toggle (`VisibilityMenuIsland`) + block renderer shipped 2026-04-18. Remaining: phase spine, mobile-first polish for the public read, artifact drilldown. |
 | 8 | `/r/:owner/:name` | GH-gated | + | Desktop primary, mobile supported. `GET /repo/:owner/:name` exists today but is public/un-gated; UI is not built. |
