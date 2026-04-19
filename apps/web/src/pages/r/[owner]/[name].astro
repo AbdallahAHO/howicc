@@ -38,6 +38,9 @@ const envelope = unwrapSuccess<RepoProfileResponse>(response)
 const profile: RepoProfile | null = envelope?.profile ?? null
 const publicSessionCount: number = envelope?.sessionCount ?? 0
 const emptyMessage: string | undefined = envelope?.message
+const repoVisibility = envelope?.visibility ?? 'public'
+const adminHiddenCount = envelope?.adminHiddenCount
+const viewerIsAdmin = typeof adminHiddenCount === 'number'
 
 if (!envelope) {
   Astro.response.status = 404
@@ -177,10 +180,25 @@ const heroStats = profile
 
     <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
       <section class="flex flex-col gap-3">
-        <Badge variant="outline" className="gap-2 self-start">
-          <span class="bg-primary size-1.5 rounded-full"></span>
-          Repository
-        </Badge>
+        <div class="flex flex-wrap items-center gap-2">
+          <Badge variant="outline" className="gap-2">
+            <span class="bg-primary size-1.5 rounded-full"></span>
+            Repository
+          </Badge>
+          {repoVisibility !== 'public' ? (
+            <Badge variant="secondary" className="gap-1.5 text-[0.6875rem]">
+              {repoVisibility === 'private' ? 'Private' : 'Members only'}
+            </Badge>
+          ) : null}
+          {viewerIsAdmin ? (
+            <a
+              href={`/r/${owner}/${name}/settings`}
+              class={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
+              Admin settings
+            </a>
+          ) : null}
+        </div>
         <h1 class="font-mono text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           {repositoryFullName}
         </h1>
@@ -197,6 +215,44 @@ const heroStats = profile
           </p>
         )}
       </section>
+
+      {!profile && repoVisibility === 'private' ? (
+        <section class="border-border/60 bg-muted/30 flex flex-col items-center gap-3 rounded-xl border p-8 text-center">
+          <div class="bg-background border-border/60 grid size-12 place-items-center rounded-full border">
+            <span aria-hidden="true" class="text-xl">🔒</span>
+          </div>
+          <h2 class="text-xl font-semibold tracking-tight">Aggregate stats are private</h2>
+          <p class="text-muted-foreground max-w-[48ch] text-pretty text-sm">
+            An admin has marked this repo private on HowiCC. Individual conversations remain under their owners' control — shared <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/s/:slug</code> links keep working.
+          </p>
+          {viewerIsAdmin ? (
+            <a
+              href={`/r/${owner}/${name}/settings`}
+              class={buttonVariants({ variant: 'default' })}
+            >
+              Open admin settings →
+            </a>
+          ) : null}
+        </section>
+      ) : null}
+
+      {!profile && repoVisibility === 'members' ? (
+        <section class="border-border/60 bg-muted/30 flex flex-col items-center gap-3 rounded-xl border p-8 text-center">
+          <div class="bg-background border-border/60 grid size-12 place-items-center rounded-full border">
+            <span aria-hidden="true" class="text-xl">🧑‍🤝‍🧑</span>
+          </div>
+          <h2 class="text-xl font-semibold tracking-tight">Members-only repo</h2>
+          <p class="text-muted-foreground max-w-[48ch] text-pretty text-sm">
+            Aggregate stats are restricted to GitHub collaborators with at least read access.
+            Sign in with a GitHub account that has access to see this page.
+          </p>
+          {!viewerIsAuthenticated ? (
+            <a href="/login" class={buttonVariants({ variant: 'default' })}>
+              Sign in with GitHub
+            </a>
+          ) : null}
+        </section>
+      ) : null}
 
       {profile ? (
         <>

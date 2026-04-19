@@ -1,0 +1,239 @@
+---
+import Layout from '../../../../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import { buttonVariants } from '@howicc/ui-web/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import RepoConsentIsland from '../../../../components/repo/RepoConsentIsland'
+import RepoHiddenListIsland from '../../../../components/repo/RepoHiddenListIsland'
+import RepoVisibilityIsland from '../../../../components/repo/RepoVisibilityIsland'
+import { createServerApiClient } from '../../../../lib/api/client'
+import { unwrapSuccess } from '../../../../lib/api/unwrap'
+import { getRuntimeWebConfig } from '../../../../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../../../../lib/auth/protected'
+import type { WebLocals } from '../../../../lib/auth/types'
+import type {
+  RepoSettingsResponse,
+} from '@howicc/contracts'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+
+const owner = Astro.params.owner ?? ''
+const name = Astro.params.name ?? ''
+
+if (!owner || !name) {
+  return new Response('Not Found', { status: 404 })
+}
+
+const repositoryFullName = `${owner}/${name}`
+
+const config = getRuntimeWebConfig()
+const api = createServerApiClient({
+  baseUrl: config.apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const response = await api.repo.settings(owner, name).catch(() => null)
+const settings = unwrapSuccess<RepoSettingsResponse>(response)
+
+if (!settings) {
+  // 403 means not admin; 404 is returned for non-existent paths. Both map
+  // to a graceful "access denied" screen so we never 500 the page.
+  return new Response(
+    renderAccessDenied({
+      owner,
+      name,
+      userName: user.name,
+      productName: locals.productName,
+    }),
+    {
+      status: 403,
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    },
+  )
+}
+
+const viewerIsAdmin =
+  settings.viewerPermission === 'admin' || settings.viewerPermission === 'maintain'
+
+const canonicalUrl = `${config.siteUrl.replace(/\/+$/, '')}/r/${owner}/${name}/settings`
+
+function renderAccessDenied(input: {
+  owner: string
+  name: string
+  userName: string
+  productName: string
+}) {
+  return `<!doctype html>
+<html lang="en" class="h-full antialiased">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Access denied · ${input.productName}</title>
+</head>
+<body style="font-family:system-ui;padding:3rem;max-width:40rem;margin:auto;">
+  <h1>Access denied</h1>
+  <p>You don't have admin access to <code>${input.owner}/${input.name}</code>.
+  Repo settings on HowiCC require at least <strong>maintain</strong> access
+  on GitHub.</p>
+  <p><a href="/r/${input.owner}/${input.name}">← Back to the repo page</a></p>
+</body>
+</html>`
+}
+---
+
+<Layout
+  title={`${repositoryFullName} · Settings`}
+  description={`Admin settings for the ${repositoryFullName} repository on HowiCC.`}
+  canonical={canonicalUrl}
+  noindex
+>
+  <div class="isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
+      <div class="mx-auto flex w-full max-w-4xl items-center gap-4 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+
+        <nav aria-label="Breadcrumb" class="hidden items-center gap-2 text-sm md:flex">
+          <a href={`/r/${owner}/${name}`} class="text-muted-foreground hover:text-foreground font-mono">
+            {repositoryFullName}
+          </a>
+          <span class="text-muted-foreground">/</span>
+          <span class="text-foreground">Settings</span>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-2">
+          <a
+            href={`https://github.com/${owner}/${name}`}
+            class={buttonVariants({ variant: 'outline', size: 'sm' })}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Open on GitHub
+          </a>
+          <a
+            href={`/r/${owner}/${name}`}
+            class={buttonVariants({ variant: 'ghost', size: 'sm' })}
+          >
+            Repo page
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-2">
+        <Badge variant="outline" className="gap-2 self-start">
+          <span class="bg-primary size-1.5 rounded-full"></span>
+          Admin
+        </Badge>
+        <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+          Repository settings
+        </h1>
+        <p class="text-muted-foreground max-w-[58ch] text-base text-pretty">
+          Control what's visible at <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howi.cc/r/{owner}/{name}</code>.
+          Changes only affect aggregation — individual conversation visibility stays under each owner's control.
+        </p>
+      </section>
+
+      {settings.consentRequired ? (
+        <section class="flex flex-col gap-3">
+          <RepoConsentIsland
+            client:load
+            apiUrl={locals.authApiUrl}
+            owner={owner}
+            name={name}
+            hiddenCount={settings.hidden.length}
+            publicSessionCount={0}
+          />
+        </section>
+      ) : null}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Visibility</CardTitle>
+          <CardDescription>
+            Who can see aggregate stats for this repository. This sets the ceiling — a private setting does not reveal private conversations.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {settings.consentRequired ? (
+            <p class="text-muted-foreground text-sm">
+              Acknowledge the private-repo notice above to unlock visibility changes.
+            </p>
+          ) : viewerIsAdmin ? (
+            <RepoVisibilityIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              owner={owner}
+              name={name}
+              initialVisibility={settings.visibility}
+            />
+          ) : (
+            <p class="text-muted-foreground text-sm">
+              Only repo admins or maintainers can change visibility.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Hidden conversations</CardTitle>
+          <CardDescription>
+            Conversations excluded from repo aggregation. Owners can still share them via direct link.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {settings.consentRequired ? (
+            <p class="text-muted-foreground text-sm">
+              Acknowledge the private-repo notice above to unlock hidden-conversation management.
+            </p>
+          ) : (
+            <RepoHiddenListIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              owner={owner}
+              name={name}
+              initialHidden={settings.hidden}
+            />
+          )}
+        </CardContent>
+      </Card>
+
+      <section class="border-border/60 bg-muted/20 rounded-xl border p-4 text-sm">
+        <h2 class="text-foreground font-medium">How gating works</h2>
+        <ul class="text-muted-foreground mt-2 space-y-1.5 text-pretty">
+          <li>
+            <strong class="text-foreground">Public</strong> — aggregate stats are visible to anyone on the web.
+          </li>
+          <li>
+            <strong class="text-foreground">Members</strong> — only GitHub collaborators with ≥ read access see aggregate stats. Verified against GitHub on each visit.
+          </li>
+          <li>
+            <strong class="text-foreground">Private</strong> — the repo page is empty for everyone except admins. Owner-shared <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/s/:slug</code> links keep working.
+          </li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</Layout>

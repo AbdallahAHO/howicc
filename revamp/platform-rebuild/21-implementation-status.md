@@ -49,16 +49,20 @@ column shows the planned slug from doc 17 when it differs.
 | 6 | `/sessions` | `/sessions` | ◐ | Shipped 2026-04-19. Server-fetches 25 items + cursor from `GET /profile/activity`, hands them to `ActivityFeedIsland` which extends on demand. Reuses the typed item rendering from `/home`. Filters (visibility segmented + debounced search `q`) shipped 2026-04-19 — server handles `visibility` / `q` / `repository` query params; repository filter still surfaced only via `/r/:owner/:name` deep-link (no in-page selector yet). |
 | 7 | `/s/:slug` | `/s/:slug` (owner) | ◐ | Dynamic route (`pages/s/[slug].astro`). Server-fetches `GET /shared/:slug`; owners see a visibility dropdown + copy-link (`VisibilityMenuIsland`) that `PATCH /conversations/:id/visibility`s. Renders message / activity-group / tool_run / callout / todo / question / compact-boundary blocks today; phase spine and artifact drilldowns still pending. |
 | 7 | `/s/:slug` | `/s/:slug` (public) | ◐ | Same route — visibility-gated. Public/unlisted readable without auth; private returns 404 to non-owners. Sidebar swaps in a "Sign in to sync your own" CTA for logged-out visitors. Mobile-first polish still pending. |
-| 8 | `/r/:owner/:name` | `/r/:owner/:name` | ◐ | Shipped 2026-04-19. Public repo profile page (`pages/r/[owner]/[name].astro`) — server-fetches `api.repo.get(owner, name)` and renders contributor StatBar, hourly + weekday histograms, tool craft, languages, models table, hero stat strip. Returns 404 when the envelope is null; shows an empty-state with CTAs when no public sessions exist. Still missing: GitHub-gating on the endpoint, linked list of public sessions, view counter. |
-| 9 | — | `/r/:owner/:name/settings` | + | Not built. No visibility or hide-conversation endpoints either. |
-| 10 | `/settings` | `/settings` | ✓ | Shipped 2026-04-19. Account card (GitHub-synced identity), Tokens card (`TokensIsland` with create + revoke + one-time secret banner), and a Wave D placeholder for public-profile opt-in. Backed by `GET/POST /api-tokens` and `DELETE /api-tokens/{id}`. |
-| 11 | — | `/@:username` | + | Not built. No public-profile endpoint, no OG-image generation, no view counter. |
+| 8 | `/r/:owner/:name` | `/r/:owner/:name` | ◐ | Shipped 2026-04-19 + polished 2026-04-19 for Wave C. Public repo profile page honors the new `repos.visibility` tier (public / members / private) returned by the API. Private renders a friendly locked empty state; members shows a sign-in prompt; public renders the full profile. Admins (GitHub `≥ maintain`) see an "Admin settings" CTA + badge. Still missing: GitHub-gating guards on the endpoint beyond the visibility tier, linked list of public sessions, view counter. |
+| 9 | `/r/:owner/:name/settings` | `/r/:owner/:name/settings` | ◐ | Shipped 2026-04-19 (Wave C admin). Admin-only page gated by `resolveRepoPermission` ≥ maintain. Renders: consent gate (`RepoConsentIsland`) when the repo is private and consent is stale; visibility editor (`RepoVisibilityIsland`) with inline preview panel + opaque preview-token handshake; hidden-conversations list (`RepoHiddenListIsland`) with unhide buttons. Non-admins receive a 403 HTML explainer; never 500s. |
+| 10 | `/settings` | `/settings` | ✓ | Shipped 2026-04-19 + updated 2026-04-19 for Wave D. Account card, Tokens card, and a live Public-profile card (`PublicProfileIsland` — master toggle, bio, website, 6 per-section opt-in switches) backed by `GET/PATCH /profile/public-settings`. |
+| 11 | `/:username` | `/:username` (spec said `/@:username`) | ◐ | Shipped 2026-04-19 (Wave D). Dropped the `@` prefix per product call — `/abdallahali` is cleaner + tweetable. Full SEO pack: canonical, `og:type=profile`, `twitter:card=summary_large_image` pointing at `/og/u/:username.png` (workers-og), JSON-LD Person + BreadcrumbList, reserved-slug guard on the route, `noindex` on miss. Sidebar sections follow the caller's opt-in flags end-to-end. Missing: daily-activity calendar heatmap UI, cost-by-month chart, more badges. |
+| — | `sitemap.xml`, `robots.txt` | (infrastructure) | ✓ | Shipped 2026-04-19 (Wave D). Dynamic sitemap driven by `GET /sitemap/urls`: opted-in profiles + public `/s/:slug` + public `/r/:owner/:name`. Robots disallows authenticated surfaces and points at `sitemap.xml`. |
+| — | `/og/u/:username.png` | (infrastructure) | ✓ | Shipped 2026-04-19 (Wave D). `workers-og` (satori + resvg-wasm) renders a 1200×630 card in the API worker. R2 + CF edge cache; hash-keyed on display name + avatar + stats so any profile change mints a new key; fallback transparent PNG so crawlers never see 5xx. |
 | — | `/debug/auth` | (not in inventory) | ✓ | Internal tool. Not user-facing — keep out of doc 17 main surface but worth a footnote. |
 
 **Net:** 3 pages match spec end-to-end (`/login`, `/cli/login`, `/settings`),
-`/home`, `/sessions`, `/s/:slug`, `/insights`, and `/r/:owner/:name` are ◐
-feature-complete for their wave scope, `/` is a stub, `/dashboard`
-301-redirects to `/home`. 2 doc-17 pages (9, 11) are missing entirely.
+`/home`, `/sessions`, `/s/:slug`, `/insights`, `/r/:owner/:name`,
+`/r/:owner/:name/settings`, and `/:username` are ◐ feature-complete for
+their wave scope, `/` is a stub, `/dashboard` 301-redirects to `/home`.
+All 11 doc-17 pages now exist in some form — the only remaining gaps are
+polish items (homepage content, more profile depth).
 
 ### Resolved: `/home` is the post-login route
 
