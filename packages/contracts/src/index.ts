@@ -38,6 +38,7 @@ import {
   unhideRepoConversationRoute,
   updateRepoVisibilityRoute,
 } from './repo'
+import { getSitemapUrlsRoute } from './sitemap'
 import {
   createUploadSessionRoute,
   finalizeRevisionRoute,
@@ -60,6 +61,7 @@ export * from './repo'
 export * from './views'
 export * from './og'
 export * from './reserved-usernames'
+export * from './sitemap'
 export * from './viewer'
 
 const contractHandler = (() => {
@@ -119,6 +121,7 @@ export const routes = app
   .openapi(unhideRepoConversationRoute, contractHandler)
   .openapi(recordSessionViewRoute, contractHandler)
   .openapi(getProfileOgImageRoute, contractHandler)
+  .openapi(getSitemapUrlsRoute, contractHandler)
   .openapi(getViewerSessionRoute, contractHandler)
   .openapi(getViewerProtectedRoute, contractHandler)
 

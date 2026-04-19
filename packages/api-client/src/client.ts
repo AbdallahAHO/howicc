@@ -366,6 +366,9 @@ export const createApiClient = (config: ApiClientConfig) => {
           }),
         ),
     },
+    sitemap: {
+      getUrls: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getSitemapUrls)),
+    },
     viewer: {
       getSession: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getViewerSession)),
       getProtectedHtml: async (): Promise<ApiHtmlResult> => {

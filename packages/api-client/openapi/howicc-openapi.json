@@ -3300,6 +3300,54 @@
           "recorded",
           "viewCount"
         ]
+      },
+      "SitemapUrlsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapEntry"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "entries"
+        ]
+      },
+      "SitemapEntry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "public_profile",
+              "shared_session",
+              "public_repo"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "example": "/abdallahali",
+            "description": "Site-relative path. Prepend the canonical origin to build an absolute URL."
+          },
+          "lastmod": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T12:34:56.000Z"
+          }
+        },
+        "required": [
+          "type",
+          "path"
+        ]
       }
     },
     "parameters": {}
@@ -6082,6 +6130,38 @@
           },
           "404": {
             "description": "Unknown user or profile is not public",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sitemap/urls": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Return the set of crawlable public URLs for the sitemap",
+        "description": "Returns every currently-crawlable public URL owned by HowiCC: opted-in public profiles, public shared conversations, and repositories that have at least one public session. Used by the web `sitemap.xml` route to render the XML without direct DB access.",
+        "operationId": "getSitemapUrls",
+        "responses": {
+          "200": {
+            "description": "Flat list of crawlable entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitemapUrlsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
             "content": {
               "application/json": {
                 "schema": {

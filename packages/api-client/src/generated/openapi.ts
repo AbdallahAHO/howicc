@@ -594,6 +594,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sitemap/urls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Return the set of crawlable public URLs for the sitemap
+         * @description Returns every currently-crawlable public URL owned by HowiCC: opted-in public profiles, public shared conversations, and repositories that have at least one public session. Used by the web `sitemap.xml` route to render the XML without direct DB access.
+         */
+        get: operations["getSitemapUrls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/uploads/{uploadId}/assets/{kind}": {
         parameters: {
             query?: never;
@@ -1352,6 +1372,25 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             visibility: components["schemas"]["ConversationVisibility"];
+        };
+        SitemapEntry: {
+            /**
+             * Format: date-time
+             * @example 2026-04-14T12:34:56.000Z
+             */
+            lastmod?: string;
+            /**
+             * @description Site-relative path. Prepend the canonical origin to build an absolute URL.
+             * @example /abdallahali
+             */
+            path: string;
+            /** @enum {string} */
+            type: SitemapEntryType;
+        };
+        SitemapUrlsResponse: {
+            entries: components["schemas"]["SitemapEntry"][];
+            /** @enum {boolean} */
+            success: true;
         };
         ToolCategoryBreakdown: {
             agent: number;
@@ -3099,6 +3138,35 @@ export interface operations {
             };
         };
     };
+    getSitemapUrls: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Flat list of crawlable entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SitemapUrlsResponse"];
+                };
+            };
+            /** @description Internal error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     uploadRevisionAsset: {
         parameters: {
             query?: never;
@@ -3588,6 +3656,11 @@ export enum SessionType {
     investigating = "investigating",
     mixed = "mixed"
 }
+export enum SitemapEntryType {
+    public_profile = "public_profile",
+    shared_session = "shared_session",
+    public_repo = "public_repo"
+}
 export enum UploadAssetKind {
     source_bundle = "source_bundle",
     canonical_json = "canonical_json",
@@ -3630,5 +3703,6 @@ export enum ApiPaths {
     getViewerSession = "/viewer/session",
     getViewerProtected = "/viewer/protected",
     recordSessionView = "/sessions/{conversationId}/view",
-    getProfileOgImage = "/og/u/{username}.png"
+    getProfileOgImage = "/og/u/{username}.png",
+    getSitemapUrls = "/sitemap/urls"
 }

@@ -5,11 +5,36 @@ import type { WebLocals } from '../lib/auth/types'
 type Props = {
   title?: string
   bodyClass?: string
+  description?: string
+  /** Absolute URL preferred. Relative URL works when pageUrl is also set. */
+  canonical?: string
+  /** Absolute URL for og:image / twitter:image. */
+  ogImage?: string
+  ogImageAlt?: string
+  ogType?: 'website' | 'profile' | 'article'
+  twitterCreator?: string
+  /** Adds <meta name="robots" content="noindex">. */
+  noindex?: boolean
+  /** Inline JSON-LD blocks. Each string is rendered as a <script type="application/ld+json"> tag. */
+  jsonLd?: string[]
 }
 
-const { title, bodyClass = 'bg-background text-foreground' } = Astro.props
+const {
+  title,
+  bodyClass = 'bg-background text-foreground',
+  description,
+  canonical,
+  ogImage,
+  ogImageAlt,
+  ogType = 'website',
+  twitterCreator,
+  noindex = false,
+  jsonLd = [],
+} = Astro.props
+
 const locals = Astro.locals as WebLocals
 const fullTitle = title ? `${title} · ${locals.productName}` : locals.productName
+const metaDescription = description ?? undefined
 ---
 
 <!doctype html>
@@ -19,6 +44,31 @@ const fullTitle = title ? `${title} · ${locals.productName}` : locals.productNa
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>{fullTitle}</title>
+    {metaDescription ? <meta name="description" content={metaDescription} /> : null}
+    {canonical ? <link rel="canonical" href={canonical} /> : null}
+    {noindex ? <meta name="robots" content="noindex, follow" /> : null}
+    {metaDescription ? <meta property="og:description" content={metaDescription} /> : null}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={locals.productName} />
+    {canonical ? <meta property="og:url" content={canonical} /> : null}
+    {ogImage ? (
+      <>
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {ogImageAlt ? <meta property="og:image:alt" content={ogImageAlt} /> : null}
+      </>
+    ) : null}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={fullTitle} />
+    {metaDescription ? <meta name="twitter:description" content={metaDescription} /> : null}
+    {ogImage ? <meta name="twitter:image" content={ogImage} /> : null}
+    {twitterCreator ? <meta name="twitter:creator" content={twitterCreator} /> : null}
+    {jsonLd.map(block => (
+      <script is:inline type="application/ld+json" set:html={block} />
+    ))}
+    <slot name="head" />
   </head>
   <body class={`isolate min-h-dvh ${bodyClass}`}>
     <slot />

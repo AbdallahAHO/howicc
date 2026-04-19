@@ -1,7 +1,6 @@
 ---
 import Layout from '../components/Layout.astro'
 import { Badge } from '@howicc/ui-web/badge'
-import { Button } from '@howicc/ui-web/button'
 import {
   Card,
   CardContent,
@@ -13,13 +12,18 @@ import { Separator } from '@howicc/ui-web/separator'
 import AccountAvatar from '../components/home/AccountAvatar'
 import MobileNavIsland from '../components/home/MobileNavIsland'
 import UserMenuIsland from '../components/home/UserMenuIsland'
+import PublicProfileIsland from '../components/settings/PublicProfileIsland'
 import TokensIsland from '../components/settings/TokensIsland'
 import { createServerApiClient } from '../lib/api/client'
 import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
 import type { WebLocals } from '../lib/auth/types'
-import type { ApiTokenSummary, ListApiTokensResponse } from '@howicc/contracts'
+import type {
+  ApiTokenSummary,
+  ListApiTokensResponse,
+  PublicProfileMineResponse,
+} from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
 const result = requireAuthenticatedPage(Astro)
@@ -31,14 +35,22 @@ if (result instanceof Response) {
 const user = result
 const session = locals.auth.session!
 
+const config = getRuntimeWebConfig()
 const api = createServerApiClient({
-  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  baseUrl: config.apiServerUrl,
   cookie: Astro.request.headers.get('cookie'),
 })
 
-const tokensResponse = await api.apiTokens.list().catch(() => null)
+const [tokensResponse, publicProfileResponse] = await Promise.all([
+  api.apiTokens.list().catch(() => null),
+  api.publicProfile.mine().catch(() => null),
+])
 const tokensEnvelope = unwrapSuccess<ListApiTokensResponse>(tokensResponse)
 const initialTokens: ApiTokenSummary[] = tokensEnvelope?.tokens ?? []
+
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(
+  publicProfileResponse,
+)
 
 const sessionExpiresLabel = new Date(session.expiresAt).toLocaleString(undefined, {
   dateStyle: 'medium',
@@ -171,15 +183,35 @@ const navItems: NavItem[] = [
       <Card>
         <CardHeader>
           <CardTitle>Public profile</CardTitle>
-          <CardDescription>Wave D — show off your AI coding practice at a public URL.</CardDescription>
+          <CardDescription>
+            Opt in to show your AI coding practice at
+            {publicProfileEnvelope ? (
+              <>
+                {' '}
+                <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">
+                  {config.siteUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}/{publicProfileEnvelope.username}
+                </code>
+                . GitHub is the source of truth for your username.
+              </>
+            ) : (
+              ' a public URL.'
+            )}
+          </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <p class="text-muted-foreground text-sm text-pretty">
-            A future <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/@{user.email.split('@')[0]}</code> will surface your public sessions, tool-craft stats, and favourite projects. Opt-in toggle lands with the public-profile endpoint.
-          </p>
-          <Button variant="outline" size="sm" disabled className="self-start">
-            Coming in Wave D
-          </Button>
+        <CardContent>
+          {publicProfileEnvelope ? (
+            <PublicProfileIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              initial={publicProfileEnvelope}
+              username={publicProfileEnvelope.username}
+              siteUrl={config.siteUrl}
+            />
+          ) : (
+            <p class="text-muted-foreground text-sm">
+              Couldn't load your profile configuration. Refresh to try again.
+            </p>
+          )}
         </CardContent>
       </Card>
     </main>
