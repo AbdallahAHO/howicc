@@ -54,6 +54,6 @@ export const toApiErrorResponse = (
   return {
     status: fallback.httpStatus,
     code: fallback.code,
-    error: error instanceof Error ? error.message : fallback.title,
+    error: fallback.title,
   }
 }
