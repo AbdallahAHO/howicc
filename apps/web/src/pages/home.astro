@@ -15,12 +15,18 @@ import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
 import CopyCommandIsland from '../components/home/CopyCommandIsland'
 import MobileNavIsland from '../components/home/MobileNavIsland'
 import UserMenuIsland from '../components/home/UserMenuIsland'
-import type { ActivityItem, StatsSnapshot } from '../components/home/activity-types'
 import { formatCost, formatDuration, formatRelative } from '../components/home/format'
 import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
 import type { WebLocals } from '../lib/auth/types'
+import type {
+  ProfileActivityItem,
+  ProfileActivityResponse,
+  ProfileStats,
+  ProfileStatsResponse,
+} from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
 const result = requireAuthenticatedPage(Astro)
@@ -39,30 +45,18 @@ const api = createServerApiClient({
   cookie: Astro.request.headers.get('cookie'),
 })
 
-const [statsResult, activityResult] = await Promise.all([
+const [statsResponse, activityResponse] = await Promise.all([
   api.profile.stats().catch(() => null),
   api.profile.activity({ limit: 10 }).catch(() => null),
 ])
 
-const stats: StatsSnapshot | null =
-  statsResult && 'success' in statsResult && statsResult.success === true
-    ? (statsResult.stats as StatsSnapshot | null)
-    : null
+const statsEnvelope = unwrapSuccess<ProfileStatsResponse>(statsResponse)
+const activityEnvelope = unwrapSuccess<ProfileActivityResponse>(activityResponse)
 
-const activityItems: ActivityItem[] =
-  activityResult && 'success' in activityResult && activityResult.success === true
-    ? (activityResult.items as ActivityItem[])
-    : []
-
-const totalSessions =
-  activityResult && 'success' in activityResult && activityResult.success === true
-    ? (activityResult.total as number)
-    : 0
-
-const initialCursor: string | undefined =
-  activityResult && 'success' in activityResult && activityResult.success === true
-    ? ((activityResult as { nextCursor?: string }).nextCursor ?? undefined)
-    : undefined
+const stats: ProfileStats | null = statsEnvelope?.stats ?? null
+const activityItems: ProfileActivityItem[] = activityEnvelope?.items ?? []
+const totalSessions = activityEnvelope?.total ?? 0
+const initialCursor: string | undefined = activityEnvelope?.nextCursor
 
 const statCards = stats
   ? [

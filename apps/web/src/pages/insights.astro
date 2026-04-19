@@ -15,9 +15,11 @@ import Histogram from '../components/insights/Histogram.astro'
 import StatBar from '../components/insights/StatBar.astro'
 import { formatCost, formatDuration } from '../components/home/format'
 import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
 import type { WebLocals } from '../lib/auth/types'
+import type { ProfileResponse, UserProfile } from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
 const result = requireAuthenticatedPage(Astro)
@@ -33,69 +35,9 @@ const api = createServerApiClient({
   cookie: Astro.request.headers.get('cookie'),
 })
 
-type UserProfile = {
-  userId: string
-  generatedAt: string
-  digestCount: number
-  activity: {
-    totalSessions: number
-    totalDurationMs: number
-    activeDays: number
-    currentStreak: number
-    longestStreak: number
-    averageSessionDurationMs: number
-    averageTurnsPerSession: number
-    hourlyDistribution: number[]
-    weekdayDistribution: number[]
-    firstSessionAt?: string
-    lastSessionAt?: string
-  }
-  projects: Array<{
-    projectKey: string
-    displayName: string
-    sessionCount: number
-    totalDurationMs: number
-    estimatedCostUsd: number
-    lastActiveAt: string
-    repository?: { fullName: string; source: string }
-  }>
-  productivity: {
-    totalFilesChanged: number
-    totalFilesRead: number
-    uniqueFilesChanged: number
-    totalGitCommits: number
-    totalPrLinks: number
-    topLanguages: Array<{ language: string; fileCount: number }>
-    sessionTypeDistribution: Record<string, number>
-  }
-  toolcraft: {
-    totalToolRuns: number
-    categoryBreakdown: Record<string, number>
-    errorRate: number
-    rejectionRate: number
-    planUsageRate: number
-    agentUsageRate: number
-    compactionRate: number
-  }
-  models: Array<{
-    model: string
-    sessionCount: number
-    inputTokens: number
-    outputTokens: number
-    estimatedCostUsd: number
-  }>
-  cost: {
-    totalUsd: number
-    averagePerSessionUsd: number
-    byMonth: Array<{ month: string; totalUsd: number; sessionCount: number }>
-  }
-}
-
-const profileResult = await api.profile.get().catch(() => null)
-const profile: UserProfile | null =
-  profileResult && 'success' in profileResult && profileResult.success === true
-    ? (profileResult.profile as UserProfile | null)
-    : null
+const profileResponse = await api.profile.get().catch(() => null)
+const profileEnvelope = unwrapSuccess<ProfileResponse>(profileResponse)
+const profile: UserProfile | null = profileEnvelope?.profile ?? null
 
 const hourlyLabels = Array.from({ length: 24 }, (_, hour) => {
   if (hour === 0) return '12 am'

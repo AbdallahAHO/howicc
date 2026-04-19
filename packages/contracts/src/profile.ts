@@ -215,6 +215,12 @@ export const getProfileActivityRoute = createRoute({
   },
 })
 
+export type ProfileStats = z.infer<typeof profileStatsSchema>
+export type ProfileStatsResponse = z.infer<typeof profileStatsResponseSchema>
+export type ProfileActivityItem = z.infer<typeof profileActivityItemSchema>
+export type ProfileActivityResponse = z.infer<typeof profileActivityResponseSchema>
+export type ProfileResponse = z.infer<typeof profileResponseSchema>
+
 export const recomputeProfileRoute = createRoute({
   method: 'post',
   path: '/profile/recompute',

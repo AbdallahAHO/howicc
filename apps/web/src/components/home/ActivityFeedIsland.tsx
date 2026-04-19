@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import type { ProfileActivityResponse } from '@howicc/contracts'
 import { Badge } from '@howicc/ui-web/badge'
 import { Button } from '@howicc/ui-web/button'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { createBrowserApiClient } from '../../lib/api/client'
+import { unwrapSuccess } from '../../lib/api/unwrap'
 import type { ActivityItem, ActivitySessionType, ActivityVisibility } from './activity-types'
 import { formatCost, formatDuration, formatRelative } from './format'
 
@@ -36,21 +38,6 @@ const visibilityLabel: Record<ActivityVisibility, string> = {
   public: 'Public',
 }
 
-type ActivityPageResponse = {
-  success: true
-  items: ActivityItem[]
-  nextCursor?: string
-  total: number
-}
-
-const isSuccessPage = (value: unknown): value is ActivityPageResponse =>
-  Boolean(value) &&
-  typeof value === 'object' &&
-  value !== null &&
-  'success' in value &&
-  (value as { success?: unknown }).success === true &&
-  Array.isArray((value as { items?: unknown }).items)
-
 export const ActivityFeedIsland = ({
   apiUrl,
   initialItems,
@@ -72,14 +59,15 @@ export const ActivityFeedIsland = ({
     try {
       const api = createBrowserApiClient(apiUrl)
       const response = await api.profile.activity({ cursor, limit: pageSize })
+      const envelope = unwrapSuccess<ProfileActivityResponse>(response)
 
-      if (!isSuccessPage(response)) {
+      if (!envelope) {
         setError('Could not load more sessions. Try again.')
         return
       }
 
-      setItems((current) => [...current, ...response.items])
-      setCursor(response.nextCursor)
+      setItems((current) => [...current, ...envelope.items])
+      setCursor(envelope.nextCursor)
     } catch (err) {
       console.error(err)
       setError(err instanceof Error ? err.message : 'Could not load more sessions.')

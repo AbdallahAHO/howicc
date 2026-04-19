@@ -12,11 +12,15 @@ import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
 import CopyCommandIsland from '../components/home/CopyCommandIsland'
 import MobileNavIsland from '../components/home/MobileNavIsland'
 import UserMenuIsland from '../components/home/UserMenuIsland'
-import type { ActivityItem } from '../components/home/activity-types'
 import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
 import type { WebLocals } from '../lib/auth/types'
+import type {
+  ProfileActivityItem,
+  ProfileActivityResponse,
+} from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
 const result = requireAuthenticatedPage(Astro)
@@ -34,22 +38,12 @@ const api = createServerApiClient({
 
 const INITIAL_PAGE_SIZE = 25
 
-const activityResult = await api.profile.activity({ limit: INITIAL_PAGE_SIZE }).catch(() => null)
+const activityResponse = await api.profile.activity({ limit: INITIAL_PAGE_SIZE }).catch(() => null)
+const activityEnvelope = unwrapSuccess<ProfileActivityResponse>(activityResponse)
 
-const activityItems: ActivityItem[] =
-  activityResult && 'success' in activityResult && activityResult.success === true
-    ? (activityResult.items as ActivityItem[])
-    : []
-
-const totalSessions =
-  activityResult && 'success' in activityResult && activityResult.success === true
-    ? (activityResult.total as number)
-    : 0
-
-const initialCursor: string | undefined =
-  activityResult && 'success' in activityResult && activityResult.success === true
-    ? ((activityResult as { nextCursor?: string }).nextCursor ?? undefined)
-    : undefined
+const activityItems: ProfileActivityItem[] = activityEnvelope?.items ?? []
+const totalSessions = activityEnvelope?.total ?? 0
+const initialCursor: string | undefined = activityEnvelope?.nextCursor
 
 const navItems = [
   { href: '/home', label: 'Home', active: false, note: undefined },

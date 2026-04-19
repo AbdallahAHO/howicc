@@ -217,6 +217,11 @@ export const updateConversationVisibilityRoute = createRoute({
   },
 })
 
+export type SharedRenderDocumentResponse = z.infer<typeof sharedRenderDocumentResponseSchema>
+export type SharedConversationMeta = SharedRenderDocumentResponse['sharedMeta']
+export type UpdateConversationVisibilityBody = z.infer<typeof updateConversationVisibilityBodySchema>
+export type UpdateConversationVisibilityResponse = z.infer<typeof updateConversationVisibilityResponseSchema>
+
 export const getAssetPreviewRoute = createRoute({
   method: 'get',
   path: '/conversations/{conversationId}/assets/{assetId}',

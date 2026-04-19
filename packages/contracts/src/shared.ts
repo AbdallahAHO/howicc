@@ -364,6 +364,29 @@ export type RenderBriefDeliveryAttachment = z.infer<typeof briefDeliveryAttachme
 export type RenderSubagentThreadBlock = z.infer<typeof subagentThreadBlockSchema>
 export type RenderCompactBoundaryBlock = z.infer<typeof compactBoundaryBlockSchema>
 
+// -----------------------------------------------------------------------
+// Profile type exports. Dashboards, /insights, and the public profile
+// page all render narrowed slices of these; exporting the inferred union
+// once keeps every consumer on the same source of truth.
+// -----------------------------------------------------------------------
+
+export type UserProfile = z.infer<typeof userProfileSchema>
+export type UserProfileActivity = z.infer<typeof userProfileActivitySchema>
+export type UserProfileDailyActivity = z.infer<typeof userProfileDailyActivitySchema>
+export type UserProfileProject = z.infer<typeof userProfileProjectSchema>
+export type UserProfileToolcraft = z.infer<typeof userProfileToolcraftSchema>
+export type UserProfileProductivity = z.infer<typeof userProfileProductivitySchema>
+export type UserProfileModel = z.infer<typeof userProfileModelSchema>
+export type UserProfileCost = z.infer<typeof userProfileCostSchema>
+export type UserProfileIntegrations = z.infer<typeof userProfileIntegrationsSchema>
+export type UserProfileMcpServer = z.infer<typeof userProfileMcpServerSchema>
+export type UserProfileSkill = z.infer<typeof userProfileSkillSchema>
+export type UserProfileProvider = z.infer<typeof userProfileProviderSchema>
+export type ProjectLanguages = z.infer<typeof projectLanguagesSchema>
+export type RepoProfile = z.infer<typeof repoProfileSchema>
+export type ConversationSummary = z.infer<typeof conversationSummarySchema>
+export type ConversationVisibility = z.infer<typeof visibilitySchema>
+
 export const cliAuthAuthorizeBodySchema = z
   .object({
     callbackUrl: z.url(),

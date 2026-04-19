@@ -138,3 +138,6 @@ export const revokeApiTokenRoute = createRoute({
 })
 
 export type ApiTokenSummary = z.infer<typeof apiTokenSummarySchema>
+export type ListApiTokensResponse = z.infer<typeof listApiTokensResponseSchema>
+export type CreateApiTokenResponse = z.infer<typeof createApiTokenResponseSchema>
+export type RevokeApiTokenResponse = z.infer<typeof revokeApiTokenResponseSchema>

@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import type {
+  ConversationVisibility,
+  UpdateConversationVisibilityResponse,
+} from '@howicc/contracts'
 import { Button } from '@howicc/ui-web/button'
 import {
   DropdownMenu,
@@ -12,8 +16,9 @@ import {
 } from '@howicc/ui-web/dropdown-menu'
 import { Check, ChevronDown, Loader2 } from 'lucide-react'
 import { createBrowserApiClient } from '../../lib/api/client'
+import { unwrapSuccess } from '../../lib/api/unwrap'
 
-type Visibility = 'private' | 'unlisted' | 'public'
+type Visibility = ConversationVisibility
 
 type Props = {
   apiUrl: string
@@ -54,12 +59,8 @@ export const VisibilityMenuIsland = ({
     try {
       const api = createBrowserApiClient(apiUrl)
       const response = await api.conversations.updateVisibility(conversationId, target)
-      const succeeded =
-        Boolean(response) &&
-        typeof response === 'object' &&
-        'success' in response &&
-        response.success === true
-      if (!succeeded) {
+      const envelope = unwrapSuccess<UpdateConversationVisibilityResponse>(response)
+      if (!envelope) {
         setVisibility(previous)
       }
     } catch (error) {

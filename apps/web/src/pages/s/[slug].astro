@@ -7,7 +7,11 @@ import BlockRenderer from '../../components/blocks/BlockRenderer.astro'
 import PhaseSpine from '../../components/session/PhaseSpine.astro'
 import VisibilityMenuIsland from '../../components/session/VisibilityMenuIsland'
 import { classifyPhases } from '../../components/session/classifyPhases'
-import type { RenderBlock } from '@howicc/contracts'
+import type {
+  RenderBlock,
+  SharedConversationMeta,
+  SharedRenderDocumentResponse,
+} from '@howicc/contracts'
 import { createServerApiClient } from '../../lib/api/client'
 import { getRuntimeWebConfig } from '../../lib/runtime/web-config.server'
 import type { WebLocals } from '../../lib/auth/types'
@@ -19,70 +23,37 @@ if (!slug) {
   return new Response(null, { status: 404 })
 }
 
-type SharedMeta = {
-  slug: string
-  conversationId: string
-  visibility: 'private' | 'unlisted' | 'public'
-  ownerUserId: string
-  isOwner: boolean
-  updatedAt: string
-}
-
-type RenderDocumentResponse = {
-  kind: 'render_document'
-  schemaVersion: number
-  session: {
-    sessionId: string
-    title: string
-    provider: string
-    createdAt: string
-    updatedAt: string
-    gitBranch?: string
-    tag?: string
-    stats: { messageCount: number; toolRunCount: number; activityGroupCount: number }
-  }
-  context?: {
-    currentPlan?: {
-      title: string
-      body: string
-      source: 'file' | 'transcript_recovered'
-      filePath?: string
-      artifactId?: string
-    }
-  }
-  blocks: unknown[]
-  sharedMeta: SharedMeta
-}
+const isSharedResponse = (value: unknown): value is SharedRenderDocumentResponse =>
+  Boolean(value) &&
+  typeof value === 'object' &&
+  value !== null &&
+  'kind' in value &&
+  (value as { kind?: unknown }).kind === 'render_document' &&
+  'sharedMeta' in value
 
 const api = createServerApiClient({
   baseUrl: getRuntimeWebConfig().apiServerUrl,
   cookie: Astro.request.headers.get('cookie'),
 })
 
-const result = await api.conversations.getShared(slug).catch(() => null)
+const sharedResponse = await api.conversations.getShared(slug).catch(() => null)
+const doc: SharedRenderDocumentResponse | null = isSharedResponse(sharedResponse)
+  ? sharedResponse
+  : null
 
-const payload = result as RenderDocumentResponse | { success: false; code?: string } | null
-const isNotFound =
-  !payload ||
-  (typeof payload === 'object' &&
-    'success' in payload &&
-    payload.success === false)
-
-if (isNotFound) {
+if (!doc) {
   Astro.response.status = 404
 }
-
-const doc = !isNotFound ? (payload as RenderDocumentResponse) : null
 const title = doc ? doc.session.title : 'Conversation not found'
 const viewerIsAuthenticated = Boolean(locals.auth.user)
 
-const visibilityLabel: Record<SharedMeta['visibility'], string> = {
+const visibilityLabel: Record<SharedConversationMeta['visibility'], string> = {
   private: 'Private',
   unlisted: 'Unlisted',
   public: 'Public',
 }
 
-const visibilityTone: Record<SharedMeta['visibility'], 'default' | 'secondary' | 'outline'> = {
+const visibilityTone: Record<SharedConversationMeta['visibility'], 'default' | 'secondary' | 'outline'> = {
   private: 'secondary',
   unlisted: 'outline',
   public: 'default',

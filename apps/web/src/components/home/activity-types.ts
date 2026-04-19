@@ -1,46 +1,21 @@
-export type ActivityVisibility = 'private' | 'unlisted' | 'public'
+/**
+ * Web-side type aliases pulled from @howicc/contracts so SSR and the
+ * hydrated React islands stay bolted to a single source of truth. If
+ * the contract shape changes, TypeScript fails the build until
+ * consumers follow — no silent drift.
+ */
+import type {
+  ConversationVisibility,
+  ProfileActivityItem,
+  ProfileStats,
+} from '@howicc/contracts'
 
-export type ActivitySessionType =
-  | 'building'
-  | 'debugging'
-  | 'exploring'
-  | 'investigating'
-  | 'mixed'
+export type ActivityItem = ProfileActivityItem
 
-export type ActivityRepository = {
-  fullName: string
-  source: 'git_remote' | 'pr_link' | 'cwd_derived'
-}
+export type ActivityVisibility = ConversationVisibility
 
-export type ActivityItem = {
-  conversationId: string
-  slug: string
-  title: string
-  visibility: ActivityVisibility
-  provider: string
-  projectKey: string
-  projectPath?: string
-  sessionCreatedAt: string
-  syncedAt: string
-  durationMs?: number
-  estimatedCostUsd?: number
-  toolRunCount: number
-  turnCount: number
-  messageCount: number
-  sessionType: ActivitySessionType
-  hasPlan: boolean
-  models: string[]
-  repository: ActivityRepository | null
-}
+export type ActivitySessionType = ProfileActivityItem['sessionType']
 
-export type StatsSnapshot = {
-  digestCount: number
-  totalSessions: number
-  totalDurationMs: number
-  totalCostUsd: number
-  activeDays: number
-  currentStreak: number
-  longestStreak: number
-  firstSessionAt?: string
-  lastSessionAt?: string
-}
+export type ActivityRepository = NonNullable<ProfileActivityItem['repository']>
+
+export type StatsSnapshot = ProfileStats

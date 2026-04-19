@@ -15,9 +15,11 @@ import MobileNavIsland from '../components/home/MobileNavIsland'
 import UserMenuIsland from '../components/home/UserMenuIsland'
 import TokensIsland from '../components/settings/TokensIsland'
 import { createServerApiClient } from '../lib/api/client'
+import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
 import type { WebLocals } from '../lib/auth/types'
+import type { ApiTokenSummary, ListApiTokensResponse } from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
 const result = requireAuthenticatedPage(Astro)
@@ -34,18 +36,9 @@ const api = createServerApiClient({
   cookie: Astro.request.headers.get('cookie'),
 })
 
-type TokenSummary = {
-  id: string
-  tokenPrefix: string
-  createdAt: string
-  revokedAt?: string
-}
-
-const tokensResult = await api.apiTokens.list().catch(() => null)
-const initialTokens: TokenSummary[] =
-  tokensResult && typeof tokensResult === 'object' && 'success' in tokensResult && tokensResult.success === true
-    ? (tokensResult.tokens as TokenSummary[])
-    : []
+const tokensResponse = await api.apiTokens.list().catch(() => null)
+const tokensEnvelope = unwrapSuccess<ListApiTokensResponse>(tokensResponse)
+const initialTokens: ApiTokenSummary[] = tokensEnvelope?.tokens ?? []
 
 const sessionExpiresLabel = new Date(session.expiresAt).toLocaleString(undefined, {
   dateStyle: 'medium',

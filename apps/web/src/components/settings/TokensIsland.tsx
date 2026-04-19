@@ -1,20 +1,19 @@
 import { useState } from 'react'
+import type {
+  ApiTokenSummary,
+  CreateApiTokenResponse,
+  RevokeApiTokenResponse,
+} from '@howicc/contracts'
 import { Badge } from '@howicc/ui-web/badge'
 import { Button } from '@howicc/ui-web/button'
 import { Skeleton } from '@howicc/ui-web/skeleton'
 import { AlertTriangle, Check, Copy, Loader2, Plus, Trash2 } from 'lucide-react'
 import { createBrowserApiClient } from '../../lib/api/client'
-
-type TokenSummary = {
-  id: string
-  tokenPrefix: string
-  createdAt: string
-  revokedAt?: string
-}
+import { unwrapSuccess } from '../../lib/api/unwrap'
 
 type Props = {
   apiUrl: string
-  initialTokens: TokenSummary[]
+  initialTokens: ApiTokenSummary[]
 }
 
 type FreshToken = {
@@ -37,13 +36,6 @@ const formatRelative = (iso: string): string => {
   return then.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-const hasSuccess = (value: unknown): value is { success: true } =>
-  Boolean(value) &&
-  typeof value === 'object' &&
-  value !== null &&
-  'success' in value &&
-  (value as { success?: unknown }).success === true
-
 /**
  * CRUD island for the /settings Tokens card. Keeps everything local:
  * list is seeded from SSR (no hydration fetch), create/revoke mutate
@@ -52,7 +44,7 @@ const hasSuccess = (value: unknown): value is { success: true } =>
  * banner drops the plaintext from memory.
  */
 export const TokensIsland = ({ apiUrl, initialTokens }: Props) => {
-  const [tokens, setTokens] = useState<TokenSummary[]>(initialTokens)
+  const [tokens, setTokens] = useState<ApiTokenSummary[]>(initialTokens)
   const [creating, setCreating] = useState(false)
   const [revokingId, setRevokingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -66,20 +58,18 @@ export const TokensIsland = ({ apiUrl, initialTokens }: Props) => {
     try {
       const api = createBrowserApiClient(apiUrl)
       const response = await api.apiTokens.create()
-      if (!hasSuccess(response)) {
+      const envelope = unwrapSuccess<CreateApiTokenResponse>(response)
+
+      if (!envelope) {
         setError('Could not create a new token. Try again.')
         return
       }
 
-      const body = response as {
-        token: TokenSummary
-        secret: string
-      }
-      setTokens((current) => [body.token, ...current])
+      setTokens((current) => [envelope.token, ...current])
       setFreshToken({
-        id: body.token.id,
-        tokenPrefix: body.token.tokenPrefix,
-        secret: body.secret,
+        id: envelope.token.id,
+        tokenPrefix: envelope.token.tokenPrefix,
+        secret: envelope.secret,
       })
     } catch (err) {
       console.error(err)
@@ -106,7 +96,8 @@ export const TokensIsland = ({ apiUrl, initialTokens }: Props) => {
     try {
       const api = createBrowserApiClient(apiUrl)
       const response = await api.apiTokens.revoke(tokenId)
-      if (!hasSuccess(response)) {
+      const envelope = unwrapSuccess<RevokeApiTokenResponse>(response)
+      if (!envelope) {
         setError('Could not revoke this token. Try again.')
         setTokens(previous)
       }
