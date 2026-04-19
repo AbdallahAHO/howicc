@@ -5,6 +5,7 @@ import cliAuthRoutes from './routes/cliAuth'
 import conversationsRoutes from './routes/conversations'
 import healthRoutes from './routes/health'
 import { createOpenApiRouter } from './lib/openapi'
+import ogRoutes from './routes/og'
 import pricingRoutes from './routes/pricing'
 import profileRoutes from './routes/profile'
 import publicProfileRoutes from './routes/publicProfile'
@@ -39,6 +40,7 @@ export const createApp = () => {
   app.route('/', repoAdminRoutes)
   app.route('/', viewerRoutes)
   app.route('/', viewsRoutes)
+  app.route('/', ogRoutes)
 
   app.doc('/openapi.json', c => ({
     openapi: '3.1.0',

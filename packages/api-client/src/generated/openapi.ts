@@ -242,6 +242,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/og/u/{username}.png": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Render the Open Graph card for a public profile
+         * @description Server-renders a 1200x630 PNG social card for the public profile at `/{username}`. Generated on demand with satori + resvg-wasm, cached at the edge for 1 hour and persisted in R2. Always responds with an image — on internal error, a static fallback card is served instead of an HTTP error, so social crawlers never see a 500.
+         */
+        get: operations["getProfileOgImage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/pricing/models": {
         parameters: {
             query?: never;
@@ -2100,6 +2120,38 @@ export interface operations {
             };
         };
     };
+    getProfileOgImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Lowercased GitHub login (path segment ends in `.png`). */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 1200x630 PNG social card */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": string;
+                };
+            };
+            /** @description Unknown user or profile is not public */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     listPricingModels: {
         parameters: {
             query?: never;
@@ -3577,5 +3629,6 @@ export enum ApiPaths {
     unhideRepoConversation = "/repo/{owner}/{name}/hide/{conversationId}",
     getViewerSession = "/viewer/session",
     getViewerProtected = "/viewer/protected",
-    recordSessionView = "/sessions/{conversationId}/view"
+    recordSessionView = "/sessions/{conversationId}/view",
+    getProfileOgImage = "/og/u/{username}.png"
 }
