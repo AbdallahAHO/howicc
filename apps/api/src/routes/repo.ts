@@ -60,6 +60,7 @@ app.openapi(getRepoProfileRoute, async c => {
           repository: repositoryFullName,
           profile: null,
           sessionCount: 0,
+          visibility: 'public' as const,
           message: 'No public sessions found for this repository.',
         },
         200,
@@ -84,6 +85,7 @@ app.openapi(getRepoProfileRoute, async c => {
         repository: repositoryFullName,
         profile,
         sessionCount: publicCount,
+        visibility: 'public' as const,
       },
       200,
     )

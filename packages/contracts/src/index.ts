@@ -14,6 +14,7 @@ import {
   updateConversationVisibilityRoute,
 } from './conversations'
 import { healthRoute } from './health'
+import { getProfileOgImageRoute } from './og'
 import { openRouterModelsRoute } from './pricing'
 import {
   getProfileActivityRoute,
@@ -21,12 +22,28 @@ import {
   getProfileStatsRoute,
   recomputeProfileRoute,
 } from './profile'
-import { getRepoProfileRoute } from './repo'
+import {
+  getPublicProfileMineRoute,
+  getPublicProfileRoute,
+  recordPublicProfileViewRoute,
+  updatePublicProfileSettingsRoute,
+} from './public-profile'
+import {
+  getRepoConsentStatusRoute,
+  getRepoProfileRoute,
+  getRepoSettingsRoute,
+  hideRepoConversationRoute,
+  previewRepoVisibilityRoute,
+  recordRepoConsentRoute,
+  unhideRepoConversationRoute,
+  updateRepoVisibilityRoute,
+} from './repo'
 import {
   createUploadSessionRoute,
   finalizeRevisionRoute,
   uploadRevisionAssetRoute,
 } from './uploads'
+import { recordSessionViewRoute } from './views'
 import { getViewerProtectedRoute, getViewerSessionRoute } from './viewer'
 
 export * from './shared'
@@ -38,7 +55,11 @@ export * from './pricing'
 export * from './cli-auth'
 export * from './api-tokens'
 export * from './profile'
+export * from './public-profile'
 export * from './repo'
+export * from './views'
+export * from './og'
+export * from './reserved-usernames'
 export * from './viewer'
 
 const contractHandler = (() => {
@@ -84,7 +105,20 @@ export const routes = app
   .openapi(getProfileStatsRoute, contractHandler)
   .openapi(getProfileActivityRoute, contractHandler)
   .openapi(recomputeProfileRoute, contractHandler)
+  .openapi(getPublicProfileRoute, contractHandler)
+  .openapi(getPublicProfileMineRoute, contractHandler)
+  .openapi(updatePublicProfileSettingsRoute, contractHandler)
+  .openapi(recordPublicProfileViewRoute, contractHandler)
   .openapi(getRepoProfileRoute, contractHandler)
+  .openapi(getRepoSettingsRoute, contractHandler)
+  .openapi(getRepoConsentStatusRoute, contractHandler)
+  .openapi(recordRepoConsentRoute, contractHandler)
+  .openapi(previewRepoVisibilityRoute, contractHandler)
+  .openapi(updateRepoVisibilityRoute, contractHandler)
+  .openapi(hideRepoConversationRoute, contractHandler)
+  .openapi(unhideRepoConversationRoute, contractHandler)
+  .openapi(recordSessionViewRoute, contractHandler)
+  .openapi(getProfileOgImageRoute, contractHandler)
   .openapi(getViewerSessionRoute, contractHandler)
   .openapi(getViewerProtectedRoute, contractHandler)
 

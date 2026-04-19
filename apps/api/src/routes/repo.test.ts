@@ -65,6 +65,7 @@ describe('repo routes', () => {
       repository: 'openai/openai-node',
       profile: null,
       sessionCount: 0,
+      visibility: 'public',
       message: 'No public sessions found for this repository.',
     })
   })
@@ -87,6 +88,7 @@ describe('repo routes', () => {
       repository: 'openai/openai-node',
       profile,
       sessionCount: 4,
+      visibility: 'public',
     })
   })
 })
