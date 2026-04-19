@@ -65,7 +65,7 @@ export const UserMenuIsland = ({ apiUrl, name, email, image }: Props) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem disabled>Settings (Wave B)</DropdownMenuItem>
+          <DropdownMenuItem render={<a href="/settings">Settings</a>} />
           <DropdownMenuItem disabled>Public profile (Wave D)</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

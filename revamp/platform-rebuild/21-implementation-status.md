@@ -24,7 +24,7 @@ Legend (matches doc 18):
 |------|----------|
 | Public pages from doc 17 (1, 11) | 1 of 2 partial — landing exists as stub, public profile missing |
 | Authenticated pages from doc 17 (4–10) | 2 partial of 7 — `/home` (feed + stats live, clickable titles), `/s/:slug` owner + public view with visibility toggle. Others unbuilt. |
-| API endpoints from doc 18 | 17 of 31 (≈55%) — 14 still to add or modify |
+| API endpoints from doc 18 | 21 of 32 (≈66%) — 11 still to add or modify |
 | Design system "The Archive" (doc 20) | Color tokens partially adopted; serif typography, cream surfaces, timeline component, warm shadows all not yet implemented |
 | Core sharing loop (sync → browse → share → public view) | Sync ✓, Browse ✓, Share ✓, Public view ✓ (all live end-to-end with unique slugs) |
 
@@ -46,18 +46,19 @@ column shows the planned slug from doc 17 when it differs.
 | 3 | `/cli/login` | `/cli/login` | ✓ | CLI bridge with continue-button + status text wired to `wireCliLoginPage`. |
 | 4 | `/home` | `/home` | ◐ | Route matches spec (`/dashboard` → 301 → `/home`). Shell uses `@howicc/ui-web` shadcn primitives: sticky header with desktop nav + mobile hamburger + avatar dropdown. The page now server-fetches `GET /profile/stats` and `GET /profile/activity` (limit 10) and renders real data — recent-activity list (title, sessionType, project/repo, models, duration, cost, synced-at) with empty-state CTA when digestCount is 0, and live stat cards (sessions, active days + streak, total cost + coding time). Open: cursor-paginated "load more" island, `/s/:slug` links when the owner page lands. |
 | 5 | — | `/insights` | + | Not built. UserProfile data exists in the API but no UI consumes it. |
-| 6 | — | `/sessions` | + | Not built. `conversations.list()` works but no filters, no pagination, no UI. |
+| 6 | `/sessions` | `/sessions` | ◐ | Shipped 2026-04-19. Server-fetches 25 items + cursor from `GET /profile/activity`, hands them to `ActivityFeedIsland` which extends on demand. Reuses the typed item rendering from `/home`. Filters (search, visibility, repository) still to come. |
 | 7 | `/s/:slug` | `/s/:slug` (owner) | ◐ | Dynamic route (`pages/s/[slug].astro`). Server-fetches `GET /shared/:slug`; owners see a visibility dropdown + copy-link (`VisibilityMenuIsland`) that `PATCH /conversations/:id/visibility`s. Renders message / activity-group / tool_run / callout / todo / question / compact-boundary blocks today; phase spine and artifact drilldowns still pending. |
 | 7 | `/s/:slug` | `/s/:slug` (public) | ◐ | Same route — visibility-gated. Public/unlisted readable without auth; private returns 404 to non-owners. Sidebar swaps in a "Sign in to sync your own" CTA for logged-out visitors. Mobile-first polish still pending. |
 | 8 | — | `/r/:owner/:name` | + | Not built as a page. `GET /repo/:owner/:name` exists and is CORS-allowed for the web origin, but it's not GitHub-gated and there is no UI. |
 | 9 | — | `/r/:owner/:name/settings` | + | Not built. No visibility or hide-conversation endpoints either. |
-| 10 | — | `/settings` | + | Not built. No `/api-tokens` CRUD endpoints either. |
+| 10 | `/settings` | `/settings` | ✓ | Shipped 2026-04-19. Account card (GitHub-synced identity), Tokens card (`TokensIsland` with create + revoke + one-time secret banner), and a Wave D placeholder for public-profile opt-in. Backed by `GET/POST /api-tokens` and `DELETE /api-tokens/{id}`. |
 | 11 | — | `/@:username` | + | Not built. No public-profile endpoint, no OG-image generation, no view counter. |
 | — | `/debug/auth` | (not in inventory) | ✓ | Internal tool. Not user-facing — keep out of doc 17 main surface but worth a footnote. |
 
-**Net:** 2 pages match spec end-to-end (`/login`, `/cli/login`), `/home` has a
-polished shadcn shell awaiting wave-A endpoints, `/` is a stub, `/dashboard`
-301-redirects to `/home`, 6 doc-17 pages (5–9, 11) are missing entirely.
+**Net:** 3 pages match spec end-to-end (`/login`, `/cli/login`, `/settings`),
+`/home`, `/sessions`, and `/s/:slug` are ◐ feature-complete for wave-A scope,
+`/` is a stub, `/dashboard` 301-redirects to `/home`. 4 doc-17 pages (5, 8, 9,
+11) are missing entirely.
 
 ### Resolved: `/home` is the post-login route
 
@@ -97,6 +98,8 @@ section just confirms the audit and flags two corrections.
 
 - Conversations: `GET /conversations` (◐ add filters + visibility), `GET /conversations/:id` (+), `GET /conversations/:id/digest` (+), ~~`PATCH /conversations/:id/visibility` (+)~~ ✓ shipped 2026-04-18, ~~`GET /shared/:slug` (+)~~ ✓ shipped 2026-04-18.
 - Profile: ~~`GET /profile/stats` (+)~~ ✓ shipped 2026-04-18, ~~`GET /profile/activity` (+)~~ ✓ shipped 2026-04-18, `GET /profile/public/:username` (+), `PATCH /profile/settings` (+).
+- API tokens: ~~`GET /api-tokens` (+)~~ ✓ shipped 2026-04-19, ~~`POST /api-tokens` (+)~~ ✓ shipped 2026-04-19, ~~`DELETE /api-tokens/{tokenId}` (+)~~ ✓ shipped 2026-04-19.
+- Conversations (extra): ~~`GET /conversations/:id/assets/:assetId` (+)~~ ✓ shipped 2026-04-19.
 - Repos: `GET /repos` (+), `GET /repos/:owner/:name` (+ GitHub-gated, replaces or wraps current `/repo/:owner/:name`), `PATCH /repos/:owner/:name/visibility` (+), `PATCH /repos/:owner/:name/conversations/:id/repo-visibility` (+).
 - Tokens: `GET /api-tokens` (+), `POST /api-tokens` (+), `DELETE /api-tokens/:id` (+).
 - Misc: `GET /og/profile/:username.png` (+), `POST /sessions/:id/view` (+).

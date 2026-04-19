@@ -415,7 +415,7 @@ Already implemented. Same centered card pattern as login.
 
 ---
 
-## Page 6: Sessions (`/sessions`) — + not built
+## Page 6: Sessions (`/sessions`) — ◐ shipped 2026-04-19 (load-more feed; filters pending)
 
 **Auth:** Required
 **Replaces:** Previous `/dashboard/sessions`
@@ -934,7 +934,7 @@ Same layout, plus:
 
 ---
 
-## Page 10: Settings (`/settings`) — + not built
+## Page 10: Settings (`/settings`) — ✓ shipped 2026-04-19 (profile + token CRUD; public-profile opt-in pending)
 
 **Auth:** Required
 **Changes from v1:** Merged account and CLI tokens into one page with stacked sections (no sidebar — 2 sections don't need one).
@@ -1395,11 +1395,11 @@ GET /og/profile/:username.png (OG image generation, edge-cached)
 | 3 | `/cli/login` | Session | ✓ | Desktop (CLI bridge) |
 | 4 | `/home` | Required | ◐ | Desktop primary, mobile supported. Shell built on shadcn (`@howicc/ui-web`) with welcome block, two-column layout, account card, stats placeholder, and wave-status cards. Feed awaits `GET /profile/activity`; stats await `GET /profile/stats`. `/dashboard` issues a 301 redirect to `/home`. |
 | 5 | `/insights` | Required | + | Desktop primary |
-| 6 | `/sessions` | Required | + | Desktop primary, mobile supported |
+| 6 | `/sessions` | Required | ◐ | Desktop primary, mobile supported. Shipped 2026-04-19 with initial 25 items + `ActivityFeedIsland` load-more; filters pending. |
 | 7 | `/s/:slug` | Conditional | ◐ | **Mobile-first for public**, desktop for owner. Route + owner/public views + visibility toggle (`VisibilityMenuIsland`) + block renderer shipped 2026-04-18. Remaining: phase spine, mobile-first polish for the public read, artifact drilldown. |
 | 8 | `/r/:owner/:name` | GH-gated | + | Desktop primary, mobile supported. `GET /repo/:owner/:name` exists today but is public/un-gated; UI is not built. |
 | 9 | `/r/.../settings` | Admin+GH | + | Desktop primary |
-| 10 | `/settings` | Required | + | Desktop primary |
+| 10 | `/settings` | Required | ✓ | Desktop primary. Shipped 2026-04-19 with account card + token CRUD (`TokensIsland`); public-profile opt-in pending. |
 | 11 | `/@:username` | None (opt-in) | + | **Mobile-first viral profile** (shareable) |
 | — | `/debug/auth` | Either | ✓ | Internal diagnostic page, not part of the user-facing surface. |
 

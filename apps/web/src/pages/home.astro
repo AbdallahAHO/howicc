@@ -92,7 +92,7 @@ const statCards = stats
 
 const navItems = [
   { href: '/home', label: 'Home', active: true, note: undefined },
-  { href: '/sessions', label: 'Sessions', active: false, note: 'Wave B' },
+  { href: '/sessions', label: 'Sessions', active: false, note: undefined },
   { href: '/insights', label: 'Insights', active: false, note: 'Wave D' },
 ]
 ---
@@ -122,7 +122,7 @@ const navItems = [
                   >
                     {item.label}
                   </a>
-                ) : (
+                ) : item.note ? (
                   <a
                     href={item.href}
                     aria-disabled="true"
@@ -134,6 +134,13 @@ const navItems = [
                     <Badge variant="secondary" className="h-4 px-1.5 text-[0.6875rem]">
                       {item.note}
                     </Badge>
+                  </a>
+                ) : (
+                  <a
+                    href={item.href}
+                    class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
+                  >
+                    {item.label}
                   </a>
                 )}
               </li>
@@ -264,9 +271,12 @@ const navItems = [
               </dl>
 
               <div class="lg:hidden">
-                <Button variant="outline" className="w-full" disabled>
-                  Settings (Wave B)
-                </Button>
+                <a
+                  href="/settings"
+                  class="border-input bg-background hover:bg-accent hover:text-accent-foreground flex h-9 w-full items-center justify-center rounded-md border px-4 text-sm font-medium transition-colors"
+                >
+                  Settings
+                </a>
               </div>
             </CardContent>
           </Card>
@@ -343,15 +353,18 @@ const navItems = [
             </article>
           </li>
           <li>
-            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
+            <a
+              href="/sessions"
+              class="border-border/60 hover:bg-muted/30 hover:border-border flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors"
+            >
               <header class="flex items-center justify-between gap-2">
                 <span class="text-foreground text-sm font-medium">Wave B</span>
-                <Badge variant="outline">Next</Badge>
+                <Badge variant="secondary">Live</Badge>
               </header>
               <p class="text-muted-foreground text-sm text-pretty">
-                Own your data — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/sessions</code>, <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/settings</code>, CLI token management.
+                Own your data — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/sessions</code>, <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/settings</code>, and CLI token management.
               </p>
-            </article>
+            </a>
           </li>
           <li>
             <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">

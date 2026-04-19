@@ -1,0 +1,169 @@
+---
+import Layout from '../components/Layout.astro'
+import { Badge } from '@howicc/ui-web/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@howicc/ui-web/card'
+import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
+import CopyCommandIsland from '../components/home/CopyCommandIsland'
+import MobileNavIsland from '../components/home/MobileNavIsland'
+import UserMenuIsland from '../components/home/UserMenuIsland'
+import type { ActivityItem } from '../components/home/activity-types'
+import { createServerApiClient } from '../lib/api/client'
+import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
+import { requireAuthenticatedPage } from '../lib/auth/protected'
+import type { WebLocals } from '../lib/auth/types'
+
+const locals = Astro.locals as WebLocals
+const result = requireAuthenticatedPage(Astro)
+
+if (result instanceof Response) {
+  return result
+}
+
+const user = result
+
+const api = createServerApiClient({
+  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  cookie: Astro.request.headers.get('cookie'),
+})
+
+const INITIAL_PAGE_SIZE = 25
+
+const activityResult = await api.profile.activity({ limit: INITIAL_PAGE_SIZE }).catch(() => null)
+
+const activityItems: ActivityItem[] =
+  activityResult && 'success' in activityResult && activityResult.success === true
+    ? (activityResult.items as ActivityItem[])
+    : []
+
+const totalSessions =
+  activityResult && 'success' in activityResult && activityResult.success === true
+    ? (activityResult.total as number)
+    : 0
+
+const initialCursor: string | undefined =
+  activityResult && 'success' in activityResult && activityResult.success === true
+    ? ((activityResult as { nextCursor?: string }).nextCursor ?? undefined)
+    : undefined
+
+const navItems = [
+  { href: '/home', label: 'Home', active: false, note: undefined },
+  { href: '/sessions', label: 'Sessions', active: true, note: undefined },
+  { href: '/insights', label: 'Insights', active: false, note: 'Wave D' },
+]
+---
+
+<Layout title="Sessions">
+  <div class="isolate min-h-dvh">
+    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
+      <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
+        <a
+          href="/"
+          aria-label="Homepage"
+          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+        >
+          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+          <span class="hidden sm:inline">{locals.productName}</span>
+        </a>
+
+        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
+          <ul role="list" class="flex items-center gap-1">
+            {navItems.map((item) => (
+              <li>
+                {item.active ? (
+                  <a
+                    href={item.href}
+                    aria-current="page"
+                    class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <a
+                    href={item.href}
+                    class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center gap-2 rounded-md px-3"
+                  >
+                    {item.label}
+                    {item.note ? (
+                      <Badge variant="secondary" className="h-4 px-1.5 text-[0.6875rem]">
+                        {item.note}
+                      </Badge>
+                    ) : null}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-2">
+          <div class="hidden lg:block">
+            <UserMenuIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              name={user.name ?? null}
+              email={user.email}
+              image={user.image ?? null}
+            />
+          </div>
+          <div class="lg:hidden">
+            <MobileNavIsland client:load />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+      <section class="flex flex-col gap-2">
+        <Badge variant="outline" className="gap-2 self-start">
+          <span class="bg-primary size-1.5 rounded-full"></span>
+          All sessions
+        </Badge>
+        <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+          {totalSessions > 0
+            ? `Your ${totalSessions.toLocaleString()} synced ${totalSessions === 1 ? 'session' : 'sessions'}`
+            : 'Your sessions'}
+        </h1>
+        <p class="text-muted-foreground max-w-[58ch] text-base text-pretty">
+          Everything you've synced from the CLI, newest first. Click a title to open the shared view; use the visibility toggle there to decide who else can see it.
+        </p>
+      </section>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent activity</CardTitle>
+          <CardDescription>
+            {activityItems.length > 0
+              ? `Showing ${activityItems.length} to start — extend the list with Show more.`
+              : "You don't have any synced sessions yet. Sync your first with the CLI."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {activityItems.length > 0 ? (
+            <ActivityFeedIsland
+              client:load
+              apiUrl={locals.authApiUrl}
+              initialItems={activityItems}
+              initialCursor={initialCursor}
+              total={totalSessions}
+              pageSize={INITIAL_PAGE_SIZE}
+            />
+          ) : (
+            <div class="flex flex-col gap-4">
+              <p class="text-foreground text-sm font-medium">Sync your first session</p>
+              <CopyCommandIsland client:load command="howicc sync" />
+              <p class="text-muted-foreground text-sm text-pretty">
+                Sessions live under <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">~/.claude/projects/</code> until you sync them.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </main>
+  </div>
+</Layout>
