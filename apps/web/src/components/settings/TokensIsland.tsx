@@ -132,7 +132,7 @@ export const TokensIsland = ({ apiUrl, initialTokens }: Props) => {
         <div className="flex flex-col gap-1">
           <p className="text-foreground text-sm font-medium">Tokens</p>
           <p className="text-muted-foreground text-sm text-pretty">
-            Bearer tokens for the <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc</code> CLI and other automation. Minted once, stored as a SHA-256 hash.
+            The secret is shown once when you create a token. Keep it somewhere safe — you can always make a new one.
           </p>
         </div>
         <Button
@@ -161,7 +161,7 @@ export const TokensIsland = ({ apiUrl, initialTokens }: Props) => {
           <div className="flex flex-col gap-1">
             <p className="text-foreground font-medium">Your new token</p>
             <p className="text-muted-foreground text-xs text-pretty">
-              Copy it now — this is the only time the secret is shown. It's already active and you can use it as <code className="bg-muted rounded px-1 py-0.5 font-mono text-[0.6875rem]">Authorization: Bearer &lt;secret&gt;</code>.
+              Copy this now. It's the only time we'll show it. Pass it as <code className="bg-muted rounded px-1 py-0.5 font-mono text-[0.6875rem]">Authorization: Bearer &lt;secret&gt;</code>.
             </p>
           </div>
           <div className="bg-background border-border/60 flex items-center gap-2 overflow-hidden rounded-md border">
@@ -204,7 +204,7 @@ export const TokensIsland = ({ apiUrl, initialTokens }: Props) => {
         <div className="border-border/60 bg-muted/20 flex flex-col gap-2 rounded-xl border border-dashed p-5 text-sm">
           <p className="text-foreground font-medium">No tokens yet.</p>
           <p className="text-muted-foreground text-pretty">
-            Create one above or run <code className="bg-background rounded px-1 py-0.5 font-mono text-xs">howicc login</code> from the CLI to mint one via the browser flow.
+            Create one above, or run <code className="bg-background rounded px-1 py-0.5 font-mono text-xs">howicc login</code> from the CLI.
           </p>
         </div>
       ) : (

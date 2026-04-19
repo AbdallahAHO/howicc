@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Alert, AlertDescription, AlertTitle } from '@howicc/ui-web/alert'
 import { Button } from '@howicc/ui-web/button'
 import { Checkbox } from '@howicc/ui-web/checkbox'
-import { Label } from '@howicc/ui-web/label'
 import { ShieldAlert } from 'lucide-react'
 
 type Props = {
@@ -132,6 +131,3 @@ export default function RepoConsentIsland({
 }
 
 export { RepoConsentIsland }
-// Label re-export keeps the component surface explicit for any future
-// caller that wants to align with shadcn patterns.
-export { Label }

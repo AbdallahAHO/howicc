@@ -1,0 +1,25 @@
+---
+import CopyCommandIsland from './CopyCommandIsland'
+
+/**
+ * Shared empty-state block used anywhere the signed-in user has no synced data yet
+ * (home, sessions, insights). Keeps one voice across those surfaces.
+ */
+type Props = {
+  /** Optional override for the single-line headline. */
+  headline?: string
+}
+
+const { headline = 'Nothing synced yet.' } = Astro.props as Props
+---
+
+<div class="flex flex-col gap-4">
+  <p class="text-foreground text-sm font-medium">{headline}</p>
+  <p class="text-muted-foreground text-sm text-pretty">
+    One command mirrors your local Claude Code sessions. Run it and this page fills in automatically.
+  </p>
+  <CopyCommandIsland client:load command="howicc sync" />
+  <p class="text-muted-foreground text-xs text-pretty">
+    Your sessions stay in <code class="bg-muted rounded px-1 py-0.5 font-mono text-[0.6875rem]">~/.claude/projects/</code> until you sync. Nothing leaves your machine unless you explicitly upload.
+  </p>
+</div>

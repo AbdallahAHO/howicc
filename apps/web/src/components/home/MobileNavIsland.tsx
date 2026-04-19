@@ -2,6 +2,7 @@ import { Button } from '@howicc/ui-web/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -25,11 +26,15 @@ export const MobileNavIsland = () => {
         }
       />
       <DropdownMenuContent align="end" sideOffset={8} className="min-w-52">
-        <DropdownMenuLabel>Navigate</DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Navigate</DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<a href="/home">Home</a>} />
-        <DropdownMenuItem render={<a href="/sessions">Sessions</a>} />
-        <DropdownMenuItem render={<a href="/insights">Insights</a>} />
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<a href="/home">Home</a>} />
+          <DropdownMenuItem render={<a href="/sessions">Sessions</a>} />
+          <DropdownMenuItem render={<a href="/insights">Insights</a>} />
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem render={<a href="/settings">Settings</a>} />
       </DropdownMenuContent>

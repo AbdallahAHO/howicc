@@ -1,6 +1,5 @@
 ---
 import Layout from '../components/Layout.astro'
-import { Badge } from '@howicc/ui-web/badge'
 import {
   Card,
   CardContent,
@@ -8,10 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@howicc/ui-web/card'
-import { Separator } from '@howicc/ui-web/separator'
-import AccountAvatar from '../components/home/AccountAvatar'
-import MobileNavIsland from '../components/home/MobileNavIsland'
-import UserMenuIsland from '../components/home/UserMenuIsland'
+import AccountAvatar from '../components/home/AccountAvatar.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
 import PublicProfileIsland from '../components/settings/PublicProfileIsland'
 import TokensIsland from '../components/settings/TokensIsland'
 import { createServerApiClient } from '../lib/api/client'
@@ -51,91 +48,38 @@ const initialTokens: ApiTokenSummary[] = tokensEnvelope?.tokens ?? []
 const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(
   publicProfileResponse,
 )
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
 
 const sessionExpiresLabel = new Date(session.expiresAt).toLocaleString(undefined, {
   dateStyle: 'medium',
   timeStyle: 'short',
 })
 
-type NavItem = { href: string; label: string; active: boolean; note?: string }
-
-const navItems: NavItem[] = [
-  { href: '/home', label: 'Home', active: false },
-  { href: '/sessions', label: 'Sessions', active: false },
-  { href: '/insights', label: 'Insights', active: false },
-]
 ---
 
 <Layout title="Settings">
-  <div class="isolate min-h-dvh">
-    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
-      <div class="mx-auto flex w-full max-w-4xl items-center gap-4 px-4 py-3 sm:px-6">
-        <a
-          href="/"
-          aria-label="Homepage"
-          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
-        >
-          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
-          <span class="hidden sm:inline">{locals.productName}</span>
-        </a>
-
-        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
-          <ul role="list" class="flex items-center gap-1">
-            {navItems.map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center gap-2 rounded-md px-3"
-                >
-                  {item.label}
-                  {item.note ? (
-                    <Badge variant="secondary" className="h-4 px-1.5 text-[0.6875rem]">
-                      {item.note}
-                    </Badge>
-                  ) : null}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div class="ml-auto flex items-center gap-2">
-          <div class="hidden lg:block">
-            <UserMenuIsland
-              client:load
-              apiUrl={locals.authApiUrl}
-              name={user.name ?? null}
-              email={user.email}
-              image={user.image ?? null}
-            />
-          </div>
-          <div class="lg:hidden">
-            <MobileNavIsland client:load />
-          </div>
-        </div>
-      </div>
-    </header>
+  <div class="archive-glow isolate min-h-dvh">
+    <AppTopBar active={null} publicProfileUrl={publicProfileUrl} />
 
     <main class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
       <section class="flex flex-col gap-2">
-        <Badge variant="outline" className="gap-2 self-start">
-          <span class="bg-primary size-1.5 rounded-full"></span>
-          Account
-        </Badge>
         <h1 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           Settings
         </h1>
         <p class="text-muted-foreground max-w-[58ch] text-base text-pretty">
-          Your account identity is managed by GitHub. Use this page to review your profile, manage CLI tokens, and (soon) toggle your public profile.
+          Identity via GitHub. Tokens, public profile, and the knobs that don't belong anywhere else.
         </p>
       </section>
 
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>Synced from your GitHub account on sign-in.</CardDescription>
+          <CardDescription>From your GitHub, on sign-in.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+        <CardContent>
           <div class="flex items-center gap-4">
             <AccountAvatar
               size="lg"
@@ -143,24 +87,14 @@ const navItems: NavItem[] = [
               email={user.email}
               image={user.image ?? null}
             />
-            <div class="flex min-w-0 flex-col">
+            <div class="flex min-w-0 flex-col gap-0.5">
               <p class="truncate text-base font-medium">{user.name ?? 'GitHub user'}</p>
               <p class="text-muted-foreground truncate text-sm">{user.email}</p>
+              <p class="text-ink-tertiary truncate text-xs">
+                Signed in until <time datetime={session.expiresAt}>{sessionExpiresLabel}</time>
+              </p>
             </div>
           </div>
-
-          <Separator />
-
-          <dl class="text-sm">
-            <div class="flex items-baseline justify-between gap-3 py-1.5">
-              <dt class="text-muted-foreground">User id</dt>
-              <dd class="max-w-[60%] truncate font-mono text-xs">{user.id}</dd>
-            </div>
-            <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
-              <dt class="text-muted-foreground">Session expires</dt>
-              <dd class="tabular-nums text-xs">{sessionExpiresLabel}</dd>
-            </div>
-          </dl>
         </CardContent>
       </Card>
 
@@ -168,7 +102,7 @@ const navItems: NavItem[] = [
         <CardHeader>
           <CardTitle>CLI tokens</CardTitle>
           <CardDescription>
-            Bearer tokens for <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code> and other CLI use. Created here or via <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc login</code>.
+            For the <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc</code> CLI, and anything else that talks to our API.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -184,17 +118,16 @@ const navItems: NavItem[] = [
         <CardHeader>
           <CardTitle>Public profile</CardTitle>
           <CardDescription>
-            Opt in to show your AI coding practice at
             {publicProfileEnvelope ? (
               <>
-                {' '}
+                Your profile lives at{' '}
                 <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">
                   {config.siteUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}/{publicProfileEnvelope.username}
                 </code>
-                . GitHub is the source of truth for your username.
+                . GitHub owns the username.
               </>
             ) : (
-              ' a public URL.'
+              <>Turn it on here to claim a public URL under your GitHub handle.</>
             )}
           </CardDescription>
         </CardHeader>

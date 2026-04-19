@@ -24,7 +24,7 @@ if (!locals.auth.user) {
           You're signed in as <strong class="text-foreground">{locals.auth.user.email}</strong>.
         </p>
         <p class="text-muted-foreground mt-3 text-sm">
-          Continue to hand a one-time code back to the local HowiCC CLI process running on your machine.
+          This will send a one-time code back to the CLI running on your machine.
         </p>
 
         <button
@@ -37,7 +37,7 @@ if (!locals.auth.user) {
         >
           Continue in CLI
         </button>
-        <p id="cli-auth-status" class="text-muted-foreground mt-3 text-center text-xs">Waiting to continue…</p>
+        <p id="cli-auth-status" class="text-muted-foreground mt-3 text-center text-xs" aria-live="polite"></p>
       </div>
     </div>
   </main>

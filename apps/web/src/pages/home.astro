@@ -1,6 +1,5 @@
 ---
 import Layout from '../components/Layout.astro'
-import { Badge } from '@howicc/ui-web/badge'
 import {
   Card,
   CardContent,
@@ -8,13 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@howicc/ui-web/card'
-import { Separator } from '@howicc/ui-web/separator'
 import { Skeleton } from '@howicc/ui-web/skeleton'
-import AccountAvatar from '../components/home/AccountAvatar'
+import AccountAvatar from '../components/home/AccountAvatar.astro'
 import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
-import CopyCommandIsland from '../components/home/CopyCommandIsland'
-import MobileNavIsland from '../components/home/MobileNavIsland'
-import UserMenuIsland from '../components/home/UserMenuIsland'
+import SyncFirstSession from '../components/home/SyncFirstSession.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
 import { formatCost, formatDuration, formatRelative } from '../components/home/format'
 import { createServerApiClient } from '../lib/api/client'
 import { unwrapSuccess } from '../lib/api/unwrap'
@@ -26,6 +23,7 @@ import type {
   ProfileActivityResponse,
   ProfileStats,
   ProfileStatsResponse,
+  PublicProfileMineResponse,
 } from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
@@ -36,22 +34,28 @@ if (result instanceof Response) {
 }
 
 const user = result
-const session = locals.auth.session!
 
 const firstName = user.name?.split(' ')[0] ?? user.email.split('@')[0] ?? 'friend'
 
+const config = getRuntimeWebConfig()
 const api = createServerApiClient({
-  baseUrl: getRuntimeWebConfig().apiServerUrl,
+  baseUrl: config.apiServerUrl,
   cookie: Astro.request.headers.get('cookie'),
 })
 
-const [statsResponse, activityResponse] = await Promise.all([
+const [statsResponse, activityResponse, publicProfileResponse] = await Promise.all([
   api.profile.stats().catch(() => null),
   api.profile.activity({ limit: 10 }).catch(() => null),
+  api.publicProfile.mine().catch(() => null),
 ])
 
 const statsEnvelope = unwrapSuccess<ProfileStatsResponse>(statsResponse)
 const activityEnvelope = unwrapSuccess<ProfileActivityResponse>(activityResponse)
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(publicProfileResponse)
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
 
 const stats: ProfileStats | null = statsEnvelope?.stats ?? null
 const activityItems: ProfileActivityItem[] = activityEnvelope?.items ?? []
@@ -83,105 +87,27 @@ const statCards = stats
     ]
   : null
 
-const navItems = [
-  { href: '/home', label: 'Home', active: true, note: undefined },
-  { href: '/sessions', label: 'Sessions', active: false, note: undefined },
-  { href: '/insights', label: 'Insights', active: false, note: undefined },
-]
 ---
 
 <Layout title="Home">
-  <div class="isolate min-h-dvh">
-    <header class="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div class="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-        <a
-          href="/"
-          aria-label="Homepage"
-          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
-        >
-          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
-          <span class="hidden sm:inline">{locals.productName}</span>
-        </a>
+  <div class="archive-glow isolate min-h-dvh">
+    <AppTopBar active="home" publicProfileUrl={publicProfileUrl} />
 
-        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
-          <ul role="list" class="flex items-center gap-1">
-            {navItems.map((item) => (
-              <li>
-                {item.active ? (
-                  <a
-                    href={item.href}
-                    aria-current="page"
-                    class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
-                  >
-                    {item.label}
-                  </a>
-                ) : item.note ? (
-                  <a
-                    href={item.href}
-                    aria-disabled="true"
-                    tabindex="-1"
-                    title={`Coming in ${item.note}`}
-                    class="text-muted-foreground hover:text-foreground pointer-events-none inline-flex h-8 items-center gap-2 rounded-md px-3"
-                  >
-                    {item.label}
-                    <Badge variant="secondary" className="h-4 px-1.5 text-[0.6875rem]">
-                      {item.note}
-                    </Badge>
-                  </a>
-                ) : (
-                  <a
-                    href={item.href}
-                    class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
-                  >
-                    {item.label}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div class="ml-auto flex items-center gap-2">
-          <a
-            href="https://github.com/AbdallahAHO/howicc"
-            target="_blank"
-            rel="noreferrer"
-            class="text-muted-foreground hover:text-foreground hidden text-sm md:inline-flex md:items-center md:gap-1 md:px-2 md:py-1.5"
-          >
-            Docs
-          </a>
-          <span class="bg-border mx-1 hidden h-6 w-px md:inline-block"></span>
-          <div class="hidden lg:block">
-            <UserMenuIsland
-              client:load
-              apiUrl={locals.authApiUrl}
-              name={user.name ?? null}
-              email={user.email}
-              image={user.image ?? null}
-            />
-          </div>
-          <div class="lg:hidden">
-            <MobileNavIsland client:load />
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-10 sm:px-6 md:py-14">
+    <main class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 md:py-14">
       <section class="flex flex-col gap-3">
-        <Badge variant="outline" className="gap-2">
-          <span class="bg-primary size-1.5 rounded-full"></span>
-          Canonical sessions
-        </Badge>
         <h1 class="archive-page-title max-w-[22ch] text-4xl sm:text-5xl">
           {stats && stats.totalSessions > 0
             ? `Welcome back, ${firstName}.`
             : `Welcome, ${firstName}.`}
         </h1>
         <p class="text-ink-secondary max-w-[56ch] text-base text-pretty">
-          {stats && stats.totalSessions > 0
-            ? `You've synced ${stats.totalSessions.toLocaleString()} ${stats.totalSessions === 1 ? 'session' : 'sessions'} across ${stats.activeDays} active ${stats.activeDays === 1 ? 'day' : 'days'}. The shared-session reader lands in the next wave.`
-            : `Your synced sessions, activity, and key stats will land here. The web surface is rolling out in waves — until then, the CLI is the fastest way in.`}
+          {stats && stats.totalSessions > 0 ? (
+            `${stats.totalSessions.toLocaleString()} ${stats.totalSessions === 1 ? 'session' : 'sessions'}. ${stats.activeDays} ${stats.activeDays === 1 ? 'day' : 'days'} at the keyboard. Pick up where you left off below.`
+          ) : (
+            <>
+              Nothing synced yet. Run <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code> and the rest of this page fills in.
+            </>
+          )}
         </p>
       </section>
 
@@ -191,11 +117,11 @@ const navItems = [
             <CardTitle>Recent activity</CardTitle>
             <CardDescription>
               {activityItems.length > 0
-                ? `Your ${activityItems.length} most recent synced ${activityItems.length === 1 ? 'session' : 'sessions'}.`
-                : "You don't have any synced sessions yet. Sync your first with the CLI."}
+                ? `Your ${activityItems.length} most recent ${activityItems.length === 1 ? 'session' : 'sessions'}.`
+                : 'Nothing to show yet.'}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-5">
+          <CardContent>
             {activityItems.length > 0 ? (
               <ActivityFeedIsland
                 client:load
@@ -205,25 +131,7 @@ const navItems = [
                 total={totalSessions}
               />
             ) : (
-              <>
-                <div class="flex flex-col gap-3">
-                  <p class="text-foreground text-sm font-medium">Sync your first session</p>
-                  <CopyCommandIsland client:load command="howicc sync" />
-                </div>
-                <Separator />
-                <div class="flex flex-col gap-3">
-                  <p class="text-foreground text-sm font-medium">Browse what you have locally</p>
-                  <div class="flex flex-col gap-2">
-                    <CopyCommandIsland client:load command="howicc list" />
-                    <CopyCommandIsland client:load command="howicc inspect <id>" />
-                  </div>
-                  <p class="text-muted-foreground text-sm text-pretty">
-                    Sessions live under
-                    <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">~/.claude/projects/</code>
-                    until you sync them. Everything stays local until you explicitly upload.
-                  </p>
-                </div>
-              </>
+              <SyncFirstSession headline="Nothing synced yet." />
             )}
           </CardContent>
         </Card>
@@ -247,21 +155,6 @@ const navItems = [
                   <p class="text-muted-foreground truncate text-sm">{user.email}</p>
                 </div>
               </div>
-
-              <Separator />
-
-              <dl class="text-sm">
-                <div class="flex items-baseline justify-between gap-3 py-1.5">
-                  <dt class="text-muted-foreground">User</dt>
-                  <dd class="max-w-[60%] truncate font-mono text-xs">{user.id}</dd>
-                </div>
-                <div class="flex items-baseline justify-between gap-3 py-1.5">
-                  <dt class="text-muted-foreground">Session expires</dt>
-                  <dd class="tabular-nums">
-                    {new Date(session.expiresAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-                  </dd>
-                </div>
-              </dl>
 
               <div class="lg:hidden">
                 <a
@@ -328,64 +221,6 @@ const navItems = [
         </aside>
       </section>
 
-      <section aria-labelledby="roadmap-heading" class="flex flex-col gap-4">
-        <div class="flex items-baseline justify-between gap-3">
-          <h2 id="roadmap-heading" class="text-lg font-medium tracking-tight">What's next</h2>
-          <span class="text-muted-foreground text-xs">revamp doc 21</span>
-        </div>
-        <ul role="list" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <li>
-            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
-              <header class="flex items-center justify-between gap-2">
-                <span class="text-foreground text-sm font-medium">Wave A</span>
-                <Badge variant="secondary">In progress</Badge>
-              </header>
-              <p class="text-muted-foreground text-sm text-pretty">
-                Sharing loop — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/s/:slug</code> owner + public and the visibility toggle.
-              </p>
-            </article>
-          </li>
-          <li>
-            <a
-              href="/sessions"
-              class="border-border/60 hover:bg-muted/30 hover:border-border flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors"
-            >
-              <header class="flex items-center justify-between gap-2">
-                <span class="text-foreground text-sm font-medium">Wave B</span>
-                <Badge variant="secondary">Live</Badge>
-              </header>
-              <p class="text-muted-foreground text-sm text-pretty">
-                Own your data — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/sessions</code>, <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/settings</code>, and CLI token management.
-              </p>
-            </a>
-          </li>
-          <li>
-            <article class="border-border/60 hover:bg-muted/30 flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors">
-              <header class="flex items-center justify-between gap-2">
-                <span class="text-foreground text-sm font-medium">Wave C</span>
-                <Badge variant="outline">Later</Badge>
-              </header>
-              <p class="text-muted-foreground text-sm text-pretty">
-                Team features — GitHub-gated <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/r/:owner/:name</code> pages and repo moderation.
-              </p>
-            </article>
-          </li>
-          <li>
-            <a
-              href="/insights"
-              class="border-border/60 hover:bg-muted/30 hover:border-border flex h-full flex-col gap-2 rounded-xl border p-4 transition-colors"
-            >
-              <header class="flex items-center justify-between gap-2">
-                <span class="text-foreground text-sm font-medium">Wave D</span>
-                <Badge variant="secondary">Live</Badge>
-              </header>
-              <p class="text-muted-foreground text-sm text-pretty">
-                Insights are live — <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/insights</code> rolls up your activity rhythm, tool use, models, and projects. Public <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/@:username</code> still to come.
-              </p>
-            </a>
-          </li>
-        </ul>
-      </section>
     </main>
   </div>
 </Layout>

@@ -1,6 +1,5 @@
 ---
 import Layout from '../components/Layout.astro'
-import { Badge } from '@howicc/ui-web/badge'
 import {
   Card,
   CardContent,
@@ -8,36 +7,44 @@ import {
   CardHeader,
   CardTitle,
 } from '@howicc/ui-web/card'
-import CopyCommandIsland from '../components/home/CopyCommandIsland'
-import MobileNavIsland from '../components/home/MobileNavIsland'
-import UserMenuIsland from '../components/home/UserMenuIsland'
+import SyncFirstSession from '../components/home/SyncFirstSession.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
 import Histogram from '../components/insights/Histogram.astro'
 import StatBar from '../components/insights/StatBar.astro'
 import { formatCost, formatDuration } from '../components/home/format'
+import { formatModelName } from '../lib/models/display-name'
 import { createServerApiClient } from '../lib/api/client'
 import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
 import { requireAuthenticatedPage } from '../lib/auth/protected'
-import type { WebLocals } from '../lib/auth/types'
-import type { ProfileResponse, UserProfile } from '@howicc/contracts'
+import type {
+  ProfileResponse,
+  PublicProfileMineResponse,
+  UserProfile,
+} from '@howicc/contracts'
 
-const locals = Astro.locals as WebLocals
 const result = requireAuthenticatedPage(Astro)
 
 if (result instanceof Response) {
   return result
 }
 
-const user = result
-
 const api = createServerApiClient({
   baseUrl: getRuntimeWebConfig().apiServerUrl,
   cookie: Astro.request.headers.get('cookie'),
 })
 
-const profileResponse = await api.profile.get().catch(() => null)
+const [profileResponse, publicProfileResponse] = await Promise.all([
+  api.profile.get().catch(() => null),
+  api.publicProfile.mine().catch(() => null),
+])
 const profileEnvelope = unwrapSuccess<ProfileResponse>(profileResponse)
 const profile: UserProfile | null = profileEnvelope?.profile ?? null
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(publicProfileResponse)
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
 
 const hourlyLabels = Array.from({ length: 24 }, (_, hour) => {
   if (hour === 0) return '12 am'
@@ -120,12 +127,6 @@ const totalBuckets = 24
 const emptyHourly = Array.from({ length: totalBuckets }, () => 0)
 const emptyWeekday = Array.from({ length: 7 }, () => 0)
 
-const navItems = [
-  { href: '/home', label: 'Home', active: false, note: undefined },
-  { href: '/sessions', label: 'Sessions', active: false, note: undefined },
-  { href: '/insights', label: 'Insights', active: true, note: undefined },
-]
-
 const heroStats = profile
   ? [
       {
@@ -182,88 +183,27 @@ const toolcraftRates = profile
 ---
 
 <Layout title="Insights">
-  <div class="isolate min-h-dvh">
-    <header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
-      <div class="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-        <a
-          href="/"
-          aria-label="Homepage"
-          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
-        >
-          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
-          <span class="hidden sm:inline">{locals.productName}</span>
-        </a>
+  <div class="archive-glow isolate min-h-dvh">
+    <AppTopBar active="insights" publicProfileUrl={publicProfileUrl} />
 
-        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
-          <ul role="list" class="flex items-center gap-1">
-            {navItems.map((item) => (
-              <li>
-                {item.active ? (
-                  <a
-                    href={item.href}
-                    aria-current="page"
-                    class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <a
-                    href={item.href}
-                    class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
-                  >
-                    {item.label}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div class="ml-auto flex items-center gap-2">
-          <div class="hidden lg:block">
-            <UserMenuIsland
-              client:load
-              apiUrl={locals.authApiUrl}
-              name={user.name ?? null}
-              email={user.email}
-              image={user.image ?? null}
-            />
-          </div>
-          <div class="lg:hidden">
-            <MobileNavIsland client:load />
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
+    <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
       <section class="flex flex-col gap-2">
-        <Badge variant="outline" className="gap-2 self-start">
-          <span class="bg-primary size-1.5 rounded-full"></span>
-          Insights
-        </Badge>
         <h1 class="archive-page-title text-4xl sm:text-5xl">
           How you code with AI
         </h1>
         <p class="text-ink-secondary max-w-[58ch] text-base text-pretty">
-          Rolled up from every session you've synced. Updates as you sync more — rerun
-          <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code>
-          to refresh, or POST <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/profile/recompute</code>.
+          Patterns across every session you've synced. The more you sync, the sharper this gets.
         </p>
       </section>
 
       {profile === null ? (
         <Card>
           <CardHeader>
-            <CardTitle>Nothing here yet</CardTitle>
-            <CardDescription>Insights unlock after your first sync.</CardDescription>
+            <CardTitle>Not enough data to roll up yet</CardTitle>
+            <CardDescription>The rhythm, the tools, the models — they all land here.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <CopyCommandIsland client:load command="howicc sync" />
-            <p class="text-muted-foreground text-sm text-pretty">
-              Your sessions stay local until you sync. Once a session lands, we compute
-              activity rhythm, tool-craft, and model usage here automatically.
-            </p>
+          <CardContent>
+            <SyncFirstSession headline="No sessions synced yet." />
           </CardContent>
         </Card>
       ) : (
@@ -309,7 +249,7 @@ const toolcraftRates = profile
             <Card>
               <CardHeader>
                 <CardTitle>Day of week</CardTitle>
-                <CardDescription>Which days pull the most sessions.</CardDescription>
+                <CardDescription>Your busiest weekdays.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Histogram
@@ -329,14 +269,14 @@ const toolcraftRates = profile
           <section class="grid gap-6 lg:grid-cols-[2fr_1fr]">
             <Card>
               <CardHeader>
-                <CardTitle>Tool craft</CardTitle>
+                <CardTitle>Tools</CardTitle>
                 <CardDescription>
-                  {profile.toolcraft.totalToolRuns.toLocaleString()} tool runs across all sessions.
+                  {profile.toolcraft.totalToolRuns.toLocaleString()} runs across every session.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-5">
                 {sortedCategoryEntries.length === 0 ? (
-                  <p class="text-muted-foreground text-sm">No tool runs recorded yet.</p>
+                  <p class="text-muted-foreground text-sm">No tool runs yet.</p>
                 ) : (
                   <div class="flex flex-col">
                     {sortedCategoryEntries.map((entry) => (
@@ -362,8 +302,8 @@ const toolcraftRates = profile
 
             <Card>
               <CardHeader>
-                <CardTitle>Session mix</CardTitle>
-                <CardDescription>How each session classifies.</CardDescription>
+                <CardTitle>Session types</CardTitle>
+                <CardDescription>Each session, sorted by what you were actually doing.</CardDescription>
               </CardHeader>
               <CardContent>
                 {sortedSessionTypeEntries.length === 0 ? (
@@ -392,7 +332,7 @@ const toolcraftRates = profile
               <CardContent>
                 {topLanguages.length === 0 ? (
                   <p class="text-muted-foreground text-sm">
-                    No language signal yet — we detect languages from file extensions in edit tool runs.
+                    No languages yet. They show up once you've edited a file or two.
                   </p>
                 ) : (
                   <div class="flex flex-col">
@@ -469,9 +409,20 @@ const toolcraftRates = profile
                       </tr>
                     </thead>
                     <tbody>
-                      {topModels.map((model) => (
+                      {topModels.map((model) => {
+                        const display = formatModelName(model.model)
+                        return (
                         <tr class="border-border/60 border-t">
-                          <td class="px-4 py-2 font-mono text-xs sm:px-6">{model.model}</td>
+                          <td class="px-4 py-2 sm:px-6">
+                            <div class="flex flex-col gap-0.5">
+                              <span class="text-foreground text-sm">{display.label}</span>
+                              {display.suffix ? (
+                                <span class="text-muted-foreground font-mono text-[0.6875rem]">{display.suffix}</span>
+                              ) : display.label !== model.model ? null : (
+                                <span class="text-muted-foreground font-mono text-[0.6875rem]">{model.model}</span>
+                              )}
+                            </div>
+                          </td>
                           <td class="px-4 py-2 text-right tabular-nums sm:px-6">
                             {model.sessionCount.toLocaleString()}
                           </td>
@@ -485,7 +436,8 @@ const toolcraftRates = profile
                             {formatCost(model.estimatedCostUsd)}
                           </td>
                         </tr>
-                      ))}
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>

@@ -1,0 +1,101 @@
+---
+import MobileNavIsland from '../home/MobileNavIsland'
+import UserMenuIsland from '../home/UserMenuIsland'
+import type { WebLocals } from '../../lib/auth/types'
+
+/**
+ * Single top bar for every signed-in dashboard surface. Keeping one copy
+ * here means the brand mark, nav items, GitHub link, and user menu stay in
+ * exact sync across /home, /sessions, /insights, and /settings — nothing
+ * drifts because a page forgot to match.
+ *
+ * @example
+ * <AppTopBar active="home" publicProfileUrl={publicProfileUrl} />
+ */
+type NavKey = 'home' | 'sessions' | 'insights' | null
+
+type Props = {
+  /** Highlights the current tab. Pass null on pages that aren't one of the three (e.g. settings). */
+  active: NavKey
+  /** When the user has a public profile, the UserMenu shows a direct link to it. */
+  publicProfileUrl?: string | null
+}
+
+const { active, publicProfileUrl = null } = Astro.props as Props
+
+const locals = Astro.locals as WebLocals
+const user = locals.auth.user
+
+if (!user) {
+  throw new Error('AppTopBar requires an authenticated user in locals.')
+}
+
+const navItems: Array<{ key: Exclude<NavKey, null>; href: string; label: string }> = [
+  { key: 'home', href: '/home', label: 'Home' },
+  { key: 'sessions', href: '/sessions', label: 'Sessions' },
+  { key: 'insights', href: '/insights', label: 'Insights' },
+]
+---
+
+<header class="border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur">
+  <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
+    <a
+      href="/"
+      aria-label="Homepage"
+      class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
+    >
+      <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
+      <span class="hidden sm:inline">{locals.productName}</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
+      <ul role="list" class="flex items-center gap-1">
+        {navItems.map((item) => (
+          <li>
+            {active === item.key ? (
+              <a
+                href={item.href}
+                aria-current="page"
+                class="bg-muted text-foreground inline-flex h-8 items-center rounded-md px-3"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <a
+                href={item.href}
+                class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center rounded-md px-3"
+              >
+                {item.label}
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      <a
+        href="https://github.com/AbdallahAHO/howicc"
+        target="_blank"
+        rel="noreferrer"
+        class="text-muted-foreground hover:text-foreground hidden text-sm md:inline-flex md:items-center md:gap-1 md:px-2 md:py-1.5"
+      >
+        GitHub
+      </a>
+      <span class="bg-border mx-1 hidden h-6 w-px md:inline-block"></span>
+      <div class="hidden lg:block">
+        <UserMenuIsland
+          client:load
+          apiUrl={locals.authApiUrl}
+          name={user.name ?? null}
+          email={user.email}
+          image={user.image ?? null}
+          publicProfileUrl={publicProfileUrl}
+        />
+      </div>
+      <div class="lg:hidden">
+        <MobileNavIsland client:load />
+      </div>
+    </div>
+  </div>
+</header>

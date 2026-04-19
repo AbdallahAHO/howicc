@@ -234,7 +234,7 @@ const phaseGroups = doc
               <Card>
                 <CardContent>
                   <p class="text-muted-foreground py-6 text-center text-sm">
-                    This conversation has no rendered blocks yet.
+                    Nothing rendered for this one yet. Re-sync and it should fill in.
                   </p>
                 </CardContent>
               </Card>
@@ -272,7 +272,13 @@ const phaseGroups = doc
                   <dl class="text-sm">
                     <div class="flex items-baseline justify-between gap-3 py-1.5">
                       <dt class="text-muted-foreground">Provider</dt>
-                      <dd class="font-mono text-xs">{doc.session.provider}</dd>
+                      <dd class="text-xs" title={doc.session.provider}>
+                        {doc.session.provider === 'claude-code'
+                          ? 'Claude Code'
+                          : doc.session.provider === 'codex'
+                            ? 'Codex'
+                            : doc.session.provider}
+                      </dd>
                     </div>
                     {doc.session.gitBranch ? (
                       <div class="border-border/60 flex items-baseline justify-between gap-3 border-t py-1.5">
@@ -308,11 +314,11 @@ const phaseGroups = doc
               {!viewerIsAuthenticated ? (
                 <Card size="sm">
                   <CardHeader>
-                    <CardTitle>Seen something you like?</CardTitle>
+                    <CardTitle>Like what you're reading?</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3">
                     <p class="text-muted-foreground text-sm text-pretty">
-                      Sign in to sync your own Claude Code sessions and share them like this.
+                      Sign in to sync your own sessions and share them like this.
                     </p>
                     <a href="/login" class={buttonVariants({ variant: 'default' })}>
                       Sign in with GitHub

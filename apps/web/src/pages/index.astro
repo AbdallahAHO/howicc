@@ -3,7 +3,6 @@ import Layout from '../components/Layout.astro'
 import type { WebLocals } from '../lib/auth/types'
 
 const locals = Astro.locals as WebLocals
-const apiHealthUrl = new URL('/health', locals.authApiUrl).toString()
 const user = locals.auth.user
 ---
 
@@ -16,14 +15,6 @@ const user = locals.auth.user
           {locals.productName}
         </a>
         <nav class="flex items-center gap-2 text-sm">
-          <a
-            href={apiHealthUrl}
-            target="_blank"
-            rel="noreferrer"
-            class="text-muted-foreground hover:text-foreground hidden px-3 py-2 sm:inline-flex"
-          >
-            API health
-          </a>
           {user ? (
             <a
               href="/home"
@@ -44,58 +35,49 @@ const user = locals.auth.user
     </header>
 
     <main class="mx-auto flex w-full max-w-3xl flex-col items-start gap-8 px-4 py-20 md:py-28">
-      <span class="border-border bg-muted/40 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
-        <span class="bg-primary size-1.5 rounded-full"></span>
-        Now running on canonical sessions
-      </span>
-
       <h1 class="archive-page-title max-w-[18ch] text-5xl md:text-6xl">
         Share your AI coding sessions as readable web pages.
       </h1>
 
-      <p class="text-ink-secondary max-w-[48ch] text-lg text-pretty">
-        HowiCC turns Claude Code, Codex, and other coding-agent transcripts into
-        structured, shareable conversations — with cost, model, and tool-use insights baked in.
+      <p class="text-ink-secondary max-w-[52ch] text-lg text-pretty">
+        A quiet home for the coding sessions you actually want to keep — readable, searchable, and yours to share.
       </p>
 
       <div class="flex flex-wrap items-center gap-3">
         {user ? (
-          <>
-            <a
-              href="/home"
-              class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
-            >
-              Welcome back, {user.name?.split(' ')[0] ?? 'friend'} → Home
-            </a>
-          </>
+          <a
+            href="/home"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
+          >
+            Open your dashboard
+          </a>
         ) : (
-          <>
-            <a
-              href="/login"
-              class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
-            >
-              Continue with GitHub
-            </a>
-            <a
-              href="/login"
-              class="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-11 items-center justify-center rounded-md border px-6 text-sm font-medium transition-colors"
-            >
-              Create account
-            </a>
-          </>
+          <a
+            href="/login"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
+          >
+            Continue with GitHub
+          </a>
         )}
       </div>
-
-      <dl class="text-muted-foreground mt-12 grid gap-2 text-xs">
-        <div class="flex gap-2">
-          <dt class="font-medium">Web</dt>
-          <dd><code>{locals.siteUrl}</code></dd>
-        </div>
-        <div class="flex gap-2">
-          <dt class="font-medium">API</dt>
-          <dd><code>{locals.authApiUrl}</code></dd>
-        </div>
-      </dl>
     </main>
+
+    <footer class="border-border/60 mt-auto border-t">
+      <div class="text-ink-tertiary mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-xs">
+        <p class="text-pretty">
+          An indie project. Light mode, warm paper, no tracking pixels.
+        </p>
+        <nav class="flex items-center gap-4">
+          <a
+            href="https://github.com/AbdallahAHO/howicc"
+            class="hover:text-foreground"
+            rel="noreferrer"
+            target="_blank"
+          >
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </footer>
   </div>
 </Layout>

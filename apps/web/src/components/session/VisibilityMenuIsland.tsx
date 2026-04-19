@@ -7,7 +7,7 @@ import { Button } from '@howicc/ui-web/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -113,7 +113,9 @@ export const VisibilityMenuIsland = ({
           }
         />
         <DropdownMenuContent align="end" sideOffset={8} className="min-w-64">
-          <DropdownMenuLabel>Who can see this?</DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Who can see this?</DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup value={visibility} onValueChange={applyVisibility}>
             {(['private', 'unlisted', 'public'] as const).map((option) => (
@@ -125,8 +127,6 @@ export const VisibilityMenuIsland = ({
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem disabled>Share settings (Wave B)</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

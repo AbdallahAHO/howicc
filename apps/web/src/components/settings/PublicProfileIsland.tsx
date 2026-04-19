@@ -24,17 +24,17 @@ const SECTION_META: Array<{
   {
     key: 'showActivityHeatmap',
     label: 'Activity heatmap',
-    description: 'Hourly + weekday histograms derived from public sessions.',
+    description: 'Hours and weekdays you\'re most active.',
   },
   {
     key: 'showSessionTypes',
     label: 'Session types',
-    description: 'Distribution across building / debugging / exploring.',
+    description: 'Building, debugging, exploring — the mix.',
   },
   {
     key: 'showToolsLanguages',
     label: 'Tools & languages',
-    description: 'Top tools invoked and languages touched.',
+    description: 'What you reach for most.',
   },
   {
     key: 'showRepositories',
@@ -44,12 +44,12 @@ const SECTION_META: Array<{
   {
     key: 'showBadges',
     label: 'Badges',
-    description: 'Derived identity signals — Builder, Night Owl, streak, etc.',
+    description: 'Auto-awarded tags like Builder and Night Owl.',
   },
   {
     key: 'showCost',
     label: 'Total cost',
-    description: 'Aggregate USD spend. Hidden by default.',
+    description: 'Running USD total. Hidden by default.',
   },
 ]
 
@@ -131,18 +131,24 @@ export default function PublicProfileIsland({
           <Label htmlFor="public-profile-enabled" className="text-sm font-medium">
             Make my profile public
           </Label>
-          <p className="text-muted-foreground text-sm text-pretty">
-            Your profile will be reachable at{' '}
-            <a
-              className="hover:text-foreground font-mono"
-              href={profileUrl}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {profileUrl.replace(/^https?:\/\//, '')}
-            </a>
-            . GitHub is the source of truth for your username.
-          </p>
+          {enabled ? (
+            <p className="text-muted-foreground text-sm text-pretty">
+              Visit{' '}
+              <a
+                className="hover:text-foreground font-mono"
+                href={profileUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {profileUrl.replace(/^https?:\/\//, '')}
+              </a>{' '}
+              to see what people see.
+            </p>
+          ) : (
+            <p className="text-muted-foreground text-sm text-pretty">
+              Off for now. Flip the switch and it'll be reachable at the URL above.
+            </p>
+          )}
         </div>
         <Switch
           id="public-profile-enabled"
@@ -158,7 +164,7 @@ export default function PublicProfileIsland({
           value={bio}
           onChange={event => setBio(event.target.value)}
           maxLength={280}
-          placeholder="TypeScript builder · Night owl"
+          placeholder="One line about what you build."
           rows={3}
           disabled={!enabled}
         />

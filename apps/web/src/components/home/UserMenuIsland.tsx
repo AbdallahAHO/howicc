@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@howicc/ui-web/dropdown-menu'
-import { LogOut } from 'lucide-react'
 import { createBrowserAuthClient } from '../../lib/auth/client'
 
 type Props = {
@@ -17,6 +16,8 @@ type Props = {
   name: string | null
   email: string
   image?: string | null
+  /** Present when the user has opted their profile public. Links the dropdown to `/{username}`. */
+  publicProfileUrl?: string | null
 }
 
 const computeInitials = (source: string) =>
@@ -27,7 +28,7 @@ const computeInitials = (source: string) =>
     .map((part) => part[0]!.toUpperCase())
     .join('') || '?'
 
-export const UserMenuIsland = ({ apiUrl, name, email, image }: Props) => {
+export const UserMenuIsland = ({ apiUrl, name, email, image, publicProfileUrl }: Props) => {
   const [pending, setPending] = useState(false)
   const displayName = name ?? email
   const initials = computeInitials(displayName)
@@ -56,27 +57,33 @@ export const UserMenuIsland = ({ apiUrl, name, email, image }: Props) => {
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={8} className="min-w-56">
-        <DropdownMenuLabel>
-          <div className="flex flex-col gap-0.5">
-            <span className="truncate text-sm font-medium">{name ?? 'GitHub user'}</span>
-            <span className="text-muted-foreground truncate text-xs">{email}</span>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+      <DropdownMenuContent align="end" sideOffset={10} className="w-64 p-1.5">
         <DropdownMenuGroup>
-          <DropdownMenuItem render={<a href="/settings">Settings</a>} />
-          <DropdownMenuItem disabled>Public profile (Wave D)</DropdownMenuItem>
+          <DropdownMenuLabel className="px-2 py-2">
+            <div className="flex min-w-0 flex-col">
+              <span className="text-foreground truncate text-sm font-medium">
+                {name ?? 'GitHub user'}
+              </span>
+              <span className="text-muted-foreground truncate text-xs font-normal">
+                {email}
+              </span>
+            </div>
+          </DropdownMenuLabel>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={signOut}
-          disabled={pending}
-          variant="destructive"
-        >
-          <LogOut aria-hidden="true" />
-          {pending ? 'Signing out…' : 'Sign out'}
-        </DropdownMenuItem>
+        <DropdownMenuSeparator className="my-1" />
+        <DropdownMenuGroup>
+          {publicProfileUrl ? (
+            <DropdownMenuItem render={<a href={publicProfileUrl}>Public profile</a>} />
+          ) : null}
+          <DropdownMenuItem render={<a href="/settings">Settings</a>} />
+          <DropdownMenuItem
+            onClick={signOut}
+            disabled={pending}
+            className="text-muted-foreground hover:text-foreground focus:text-foreground"
+          >
+            {pending ? 'Signing out…' : 'Sign out'}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   )

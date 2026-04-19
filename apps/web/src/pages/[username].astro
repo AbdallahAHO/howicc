@@ -307,7 +307,7 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base">Day of week</CardTitle>
-                  <CardDescription>Which days this maker ships.</CardDescription>
+                  <CardDescription>Busiest weekdays.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Histogram values={profile.activity.weekdayDistribution} labels={weekdayLabels} />
@@ -476,11 +476,10 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
           {!viewerUser ? (
             <section class="border-border/60 bg-muted/30 rounded-xl border p-8 text-center">
               <h2 class="archive-section-title text-2xl">
-                Create your own HowiCC profile
+                Make one like it
               </h2>
               <p class="text-muted-foreground mx-auto mt-2 max-w-[50ch] text-pretty">
-                Share your AI coding rhythm and sessions with a single link.
-                Sign in with GitHub to sync your first session in seconds.
+                One link shows your rhythm, your tools, your projects. Sign in with GitHub and sync your first session.
               </p>
               <a
                 href="/login"
@@ -497,15 +496,14 @@ const jsonLd = [personJsonLd, breadcrumbsJsonLd].filter(Boolean) as string[]
             username={profile.user.username}
           />
           <slot name="view-recorder" />
-          {/* Per-viewer-per-day dedup happens server-side. */}
         </>
       ) : (
         <section class="flex flex-col items-center gap-4 py-16 text-center">
           <Badge variant="outline">404</Badge>
           <h1 class="archive-page-title text-4xl">Profile not found</h1>
           <p class="text-ink-secondary max-w-[50ch] text-pretty">
-            No public HowiCC profile for <code class="bg-muted rounded px-1 py-0.5 font-mono text-sm">@{username}</code>.
-            Usernames mirror GitHub — check the handle, or sign in to opt your own profile public.
+            No public profile for <code class="bg-muted rounded px-1 py-0.5 font-mono text-sm">@{username}</code> yet.
+            Usernames follow GitHub. If it's yours, turn it on in settings.
           </p>
           <div class="mt-2 flex gap-3">
             <a href="/" class={buttonVariants({ variant: 'outline' })}>Home</a>

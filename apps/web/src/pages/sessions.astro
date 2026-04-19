@@ -1,6 +1,5 @@
 ---
 import Layout from '../components/Layout.astro'
-import { Badge } from '@howicc/ui-web/badge'
 import {
   Card,
   CardContent,
@@ -9,9 +8,8 @@ import {
   CardTitle,
 } from '@howicc/ui-web/card'
 import ActivityFeedIsland from '../components/home/ActivityFeedIsland'
-import CopyCommandIsland from '../components/home/CopyCommandIsland'
-import MobileNavIsland from '../components/home/MobileNavIsland'
-import UserMenuIsland from '../components/home/UserMenuIsland'
+import SyncFirstSession from '../components/home/SyncFirstSession.astro'
+import AppTopBar from '../components/shared/AppTopBar.astro'
 import { createServerApiClient } from '../lib/api/client'
 import { unwrapSuccess } from '../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../lib/runtime/web-config.server'
@@ -20,6 +18,7 @@ import type { WebLocals } from '../lib/auth/types'
 import type {
   ProfileActivityItem,
   ProfileActivityResponse,
+  PublicProfileMineResponse,
 } from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
@@ -29,8 +28,6 @@ if (result instanceof Response) {
   return result
 }
 
-const user = result
-
 const api = createServerApiClient({
   baseUrl: getRuntimeWebConfig().apiServerUrl,
   cookie: Astro.request.headers.get('cookie'),
@@ -38,93 +35,42 @@ const api = createServerApiClient({
 
 const INITIAL_PAGE_SIZE = 25
 
-const activityResponse = await api.profile.activity({ limit: INITIAL_PAGE_SIZE }).catch(() => null)
+const [activityResponse, publicProfileResponse] = await Promise.all([
+  api.profile.activity({ limit: INITIAL_PAGE_SIZE }).catch(() => null),
+  api.publicProfile.mine().catch(() => null),
+])
 const activityEnvelope = unwrapSuccess<ProfileActivityResponse>(activityResponse)
+const publicProfileEnvelope = unwrapSuccess<PublicProfileMineResponse>(publicProfileResponse)
+const publicProfileUrl =
+  publicProfileEnvelope?.enabled && publicProfileEnvelope.username
+    ? `/${publicProfileEnvelope.username}`
+    : null
 
 const activityItems: ProfileActivityItem[] = activityEnvelope?.items ?? []
 const totalSessions = activityEnvelope?.total ?? 0
 const initialCursor: string | undefined = activityEnvelope?.nextCursor
 
-const navItems = [
-  { href: '/home', label: 'Home', active: false, note: undefined },
-  { href: '/sessions', label: 'Sessions', active: true, note: undefined },
-  { href: '/insights', label: 'Insights', active: false, note: undefined },
-]
 ---
 
 <Layout title="Sessions">
   <div class="archive-glow isolate min-h-dvh">
-    <header class="border-border/60 bg-background/88 supports-[backdrop-filter]:bg-background/76 sticky top-0 z-40 border-b backdrop-blur">
-      <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
-        <a
-          href="/"
-          aria-label="Homepage"
-          class="inline-flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight"
-        >
-          <span class="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg text-sm font-bold tabular-nums">H</span>
-          <span class="hidden sm:inline">{locals.productName}</span>
-        </a>
-
-        <nav aria-label="Primary" class="hidden items-center gap-1 text-sm lg:flex">
-          <ul role="list" class="flex items-center gap-1">
-            {navItems.map((item) => (
-              <li>
-                {item.active ? (
-                  <a
-                    href={item.href}
-                    aria-current="page"
-                    class="bg-secondary text-foreground shadow-subtle inline-flex h-8 items-center rounded-md px-3"
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <a
-                    href={item.href}
-                    class="text-muted-foreground hover:text-foreground inline-flex h-8 items-center gap-2 rounded-md px-3"
-                  >
-                    {item.label}
-                    {item.note ? (
-                      <Badge variant="secondary" className="h-4 px-1.5 text-[0.6875rem]">
-                        {item.note}
-                      </Badge>
-                    ) : null}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div class="ml-auto flex items-center gap-2">
-          <div class="hidden lg:block">
-            <UserMenuIsland
-              client:load
-              apiUrl={locals.authApiUrl}
-              name={user.name ?? null}
-              email={user.email}
-              image={user.image ?? null}
-            />
-          </div>
-          <div class="lg:hidden">
-            <MobileNavIsland client:load />
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppTopBar active="sessions" publicProfileUrl={publicProfileUrl} />
 
     <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
       <section class="flex flex-col gap-2">
-        <Badge variant="outline" className="gap-2 self-start">
-          <span class="bg-primary size-1.5 rounded-full"></span>
-          All sessions
-        </Badge>
         <h1 class="archive-page-title text-4xl sm:text-5xl">
           {totalSessions > 0
-            ? `Your ${totalSessions.toLocaleString()} synced ${totalSessions === 1 ? 'session' : 'sessions'}`
-            : 'Your sessions'}
+            ? `${totalSessions.toLocaleString()} ${totalSessions === 1 ? 'session' : 'sessions'}`
+            : 'No sessions yet'}
         </h1>
         <p class="text-ink-secondary max-w-[58ch] text-base text-pretty">
-          Everything you've synced from the CLI, newest first. Click a title to open the shared view; use the visibility toggle there to decide who else can see it.
+          {totalSessions > 0 ? (
+            'Newest first. Open one to read it or change who can see it.'
+          ) : (
+            <>
+              One <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">howicc sync</code> mirrors your local Claude Code sessions. They stay yours — private until you say otherwise.
+            </>
+          )}
         </p>
       </section>
 
@@ -133,8 +79,8 @@ const navItems = [
           <CardTitle className="archive-section-title text-xl">Recent activity</CardTitle>
           <CardDescription>
             {activityItems.length > 0
-              ? `Showing ${activityItems.length} to start — extend the list with Show more.`
-              : "You don't have any synced sessions yet. Sync your first with the CLI."}
+              ? `${activityItems.length} of ${totalSessions.toLocaleString()}. Load more below.`
+              : 'Run the CLI once and they show up here.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -149,13 +95,7 @@ const navItems = [
               showFilters
             />
           ) : (
-            <div class="flex flex-col gap-4">
-              <p class="text-foreground text-sm font-medium">Sync your first session</p>
-              <CopyCommandIsland client:load command="howicc sync" />
-              <p class="text-muted-foreground text-sm text-pretty">
-                Sessions live under <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">~/.claude/projects/</code> until you sync them.
-              </p>
-            </div>
+            <SyncFirstSession headline="No sessions to show yet." />
           )}
         </CardContent>
       </Card>

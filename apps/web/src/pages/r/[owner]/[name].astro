@@ -11,7 +11,9 @@ import {
 } from '@howicc/ui-web/card'
 import Histogram from '../../../components/insights/Histogram.astro'
 import StatBar from '../../../components/insights/StatBar.astro'
+import { Lock, Users } from 'lucide-react'
 import { formatCost, formatDuration } from '../../../components/home/format'
+import { formatModelName } from '../../../lib/models/display-name'
 import { createServerApiClient } from '../../../lib/api/client'
 import { unwrapSuccess } from '../../../lib/api/unwrap'
 import { getRuntimeWebConfig } from '../../../lib/runtime/web-config.server'
@@ -19,11 +21,19 @@ import type { WebLocals } from '../../../lib/auth/types'
 import type { RepoProfile, RepoProfileResponse } from '@howicc/contracts'
 
 const locals = Astro.locals as WebLocals
-const owner = Astro.params.owner ?? ''
-const name = Astro.params.name ?? ''
+const rawOwner = Astro.params.owner ?? ''
+const rawName = Astro.params.name ?? ''
+const owner = rawOwner.toLowerCase()
+const name = rawName.toLowerCase()
 
 if (!owner || !name) {
   return new Response(null, { status: 404 })
+}
+
+// GitHub treats owner/name case-insensitively; canonicalize to lowercase
+// so links, breadcrumbs, and social cards never fork by casing.
+if (rawOwner !== owner || rawName !== name) {
+  return Astro.redirect(`/r/${owner}/${name}`, 301)
 }
 
 const repositoryFullName = `${owner}/${name}`
@@ -37,7 +47,6 @@ const response = await api.repo.get(owner, name).catch(() => null)
 const envelope = unwrapSuccess<RepoProfileResponse>(response)
 const profile: RepoProfile | null = envelope?.profile ?? null
 const publicSessionCount: number = envelope?.sessionCount ?? 0
-const emptyMessage: string | undefined = envelope?.message
 const repoVisibility = envelope?.visibility ?? 'public'
 const adminHiddenCount = envelope?.adminHiddenCount
 const viewerIsAdmin = typeof adminHiddenCount === 'number'
@@ -180,11 +189,7 @@ const heroStats = profile
 
     <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
       <section class="flex flex-col gap-3">
-        <div class="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="gap-2">
-            <span class="bg-primary size-1.5 rounded-full"></span>
-            Repository
-          </Badge>
+        <div class="flex flex-wrap items-center gap-2 empty:hidden">
           {repoVisibility !== 'public' ? (
             <Badge variant="secondary" className="gap-1.5 text-[0.6875rem]">
               {repoVisibility === 'private' ? 'Private' : 'Members only'}
@@ -204,33 +209,28 @@ const heroStats = profile
         </h1>
         {profile ? (
           <p class="text-muted-foreground max-w-[62ch] text-base text-pretty">
-            Rolled up across every <strong class="text-foreground">public</strong> session shared
+            Rolled up from every <strong class="text-foreground">public</strong> session shared
             against <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">{repositoryFullName}</code>.
-            Private sessions never appear here — only conversations their owners explicitly made public.
+            Private sessions never show up here — only ones their owners explicitly made public.
           </p>
-        ) : (
-          <p class="text-muted-foreground max-w-[62ch] text-base text-pretty">
-            {emptyMessage ??
-              `No public sessions are shared against ${repositoryFullName} yet. Once a contributor flips a session to public, it shows up here.`}
-          </p>
-        )}
+        ) : null}
       </section>
 
       {!profile && repoVisibility === 'private' ? (
         <section class="border-border/60 bg-muted/30 flex flex-col items-center gap-3 rounded-xl border p-8 text-center">
-          <div class="bg-background border-border/60 grid size-12 place-items-center rounded-full border">
-            <span aria-hidden="true" class="text-xl">🔒</span>
+          <div class="bg-background border-border/60 text-muted-foreground grid size-12 place-items-center rounded-full border">
+            <Lock aria-hidden="true" className="size-5" />
           </div>
-          <h2 class="archive-section-title text-2xl">Aggregate stats are private</h2>
+          <h2 class="archive-section-title text-2xl">Private here</h2>
           <p class="text-muted-foreground max-w-[48ch] text-pretty text-sm">
-            An admin has marked this repo private on HowiCC. Individual conversations remain under their owners' control — shared <code class="bg-muted rounded px-1 py-0.5 font-mono text-xs">/s/:slug</code> links keep working.
+            An admin marked this repo private on HowiCC. Individual shared links still work — this page just doesn't aggregate.
           </p>
           {viewerIsAdmin ? (
             <a
               href={`/r/${owner}/${name}/settings`}
               class={buttonVariants({ variant: 'default' })}
             >
-              Open admin settings →
+              Open admin settings
             </a>
           ) : null}
         </section>
@@ -238,13 +238,12 @@ const heroStats = profile
 
       {!profile && repoVisibility === 'members' ? (
         <section class="border-border/60 bg-muted/30 flex flex-col items-center gap-3 rounded-xl border p-8 text-center">
-          <div class="bg-background border-border/60 grid size-12 place-items-center rounded-full border">
-            <span aria-hidden="true" class="text-xl">🧑‍🤝‍🧑</span>
+          <div class="bg-background border-border/60 text-muted-foreground grid size-12 place-items-center rounded-full border">
+            <Users aria-hidden="true" className="size-5" />
           </div>
-          <h2 class="archive-section-title text-2xl">Members-only repo</h2>
+          <h2 class="archive-section-title text-2xl">Members only</h2>
           <p class="text-muted-foreground max-w-[48ch] text-pretty text-sm">
-            Aggregate stats are restricted to GitHub collaborators with at least read access.
-            Sign in with a GitHub account that has access to see this page.
+            Only GitHub collaborators see the aggregate. Sign in with an account that has access.
           </p>
           {!viewerIsAuthenticated ? (
             <a href="/login" class={buttonVariants({ variant: 'default' })}>
@@ -403,9 +402,20 @@ const heroStats = profile
                       </tr>
                     </thead>
                     <tbody>
-                      {topModels.map((model) => (
+                      {topModels.map((model) => {
+                        const display = formatModelName(model.model)
+                        return (
                         <tr class="border-border/60 border-t">
-                          <td class="px-4 py-2 font-mono text-xs sm:px-6">{model.model}</td>
+                          <td class="px-4 py-2 sm:px-6">
+                            <div class="flex flex-col gap-0.5">
+                              <span class="text-foreground text-sm">{display.label}</span>
+                              {display.suffix ? (
+                                <span class="text-muted-foreground font-mono text-[0.6875rem]">{display.suffix}</span>
+                              ) : display.label !== model.model ? null : (
+                                <span class="text-muted-foreground font-mono text-[0.6875rem]">{model.model}</span>
+                              )}
+                            </div>
+                          </td>
                           <td class="px-4 py-2 text-right tabular-nums sm:px-6">
                             {model.sessionCount.toLocaleString()}
                           </td>
@@ -419,7 +429,8 @@ const heroStats = profile
                             {formatCost(model.estimatedCostUsd)}
                           </td>
                         </tr>
-                      ))}
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -432,9 +443,11 @@ const heroStats = profile
           <CardHeader>
             <CardTitle>No public sessions yet</CardTitle>
             <CardDescription>
-              {viewerIsAuthenticated
-                ? 'Flip one of your sessions to public on `/sessions` to seed this page.'
-                : 'Sign in and share a session against this repository to light this page up.'}
+              {viewerIsAuthenticated ? (
+                <>Make one of your sessions public on <a href="/sessions" class="hover:text-foreground underline underline-offset-2">/sessions</a> to light this page up.</>
+              ) : (
+                'Sign in, sync a session here, and this page fills in with everyone else who has.'
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
