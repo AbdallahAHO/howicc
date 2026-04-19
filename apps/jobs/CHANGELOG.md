@@ -1,5 +1,11 @@
 # @howicc/jobs
 
+## 0.0.6
+
+### Patch Changes
+
+- 8cfcd55: - align production D1 binding
+
 ## 0.0.5
 
 ### Patch Changes
