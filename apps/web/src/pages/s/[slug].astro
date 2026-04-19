@@ -5,6 +5,7 @@ import { buttonVariants } from '@howicc/ui-web/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@howicc/ui-web/card'
 import BlockRenderer from '../../components/blocks/BlockRenderer.astro'
 import PhaseSpine from '../../components/session/PhaseSpine.astro'
+import SessionViewRecorderIsland from '../../components/session/SessionViewRecorderIsland'
 import VisibilityMenuIsland from '../../components/session/VisibilityMenuIsland'
 import { classifyPhases } from '../../components/session/classifyPhases'
 import type {
@@ -108,6 +109,11 @@ const phaseGroups = doc
     {doc ? (
       <main class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 md:py-14">
         <section class="flex flex-col gap-3">
+          <SessionViewRecorderIsland
+            client:idle
+            apiUrl={locals.authApiUrl}
+            conversationId={doc.sharedMeta.conversationId}
+          />
           <div class="flex flex-wrap items-center gap-2">
             <Badge variant={visibilityTone[doc.sharedMeta.visibility]}>
               {visibilityLabel[doc.sharedMeta.visibility]}

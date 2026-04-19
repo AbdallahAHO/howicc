@@ -5,7 +5,6 @@ import {
   conversationViews,
   profileViews,
   sessionDigests,
-  userProfiles,
   users,
 } from '@howicc/db/schema'
 import type {
@@ -22,6 +21,7 @@ import type {
   SessionType,
   UserProfile,
 } from '@howicc/canonical'
+import { buildUserProfile } from '@howicc/profile'
 import type { ApiRuntime } from '../../runtime'
 import { getRuntimeDatabase } from '../../lib/runtime-resources'
 
@@ -220,14 +220,28 @@ export const getPublicProfile = async (
 
   const settings = parseSettings(user.publicProfileSettings)
 
-  const profileRow = await db
-    .select()
-    .from(userProfiles)
-    .where(eq(userProfiles.userId, user.id))
-    .limit(1)
+  const publicDigestRows = await db
+    .select({ digestJson: sessionDigests.digestJson })
+    .from(conversations)
+    .innerJoin(
+      sessionDigests,
+      and(
+        eq(sessionDigests.conversationId, conversations.id),
+        eq(sessionDigests.revisionId, conversations.currentRevisionId),
+      ),
+    )
+    .where(
+      and(
+        eq(conversations.ownerUserId, user.id),
+        eq(conversations.visibility, 'public'),
+      ),
+    )
 
-  const profile = profileRow[0]
-    ? (JSON.parse(profileRow[0].profileJson) as UserProfile)
+  const publicProfile = publicDigestRows.length
+    ? buildUserProfile(
+        user.id,
+        publicDigestRows.map(row => JSON.parse(row.digestJson) as SessionDigest),
+      )
     : null
 
   const githubAccount = await db
@@ -236,15 +250,15 @@ export const getPublicProfile = async (
     .where(and(eq(accounts.userId, user.id), eq(accounts.providerId, 'github')))
     .limit(1)
 
-  const stats = profile
+  const stats = publicProfile
     ? {
-        sessionCount: profile.activity.totalSessions,
-        totalDurationMs: profile.activity.totalDurationMs,
-        activeDays: profile.activity.activeDays,
-        currentStreak: profile.activity.currentStreak,
-        longestStreak: profile.activity.longestStreak,
-        firstSessionAt: profile.activity.firstSessionAt,
-        lastSessionAt: profile.activity.lastSessionAt,
+        sessionCount: publicProfile.activity.totalSessions,
+        totalDurationMs: publicProfile.activity.totalDurationMs,
+        activeDays: publicProfile.activity.activeDays,
+        currentStreak: publicProfile.activity.currentStreak,
+        longestStreak: publicProfile.activity.longestStreak,
+        firstSessionAt: publicProfile.activity.firstSessionAt,
+        lastSessionAt: publicProfile.activity.lastSessionAt,
       }
     : {
         sessionCount: 0,
@@ -254,8 +268,8 @@ export const getPublicProfile = async (
         longestStreak: 0,
       }
 
-  const filtered = profile
-    ? filterProfileByFlags(profile, settings)
+  const filtered = publicProfile
+    ? filterProfileByFlags(publicProfile, settings)
     : settings.showBadges
       ? { badges: [] as PublicProfileBadge[] }
       : {}
@@ -407,12 +421,20 @@ export const updateCallerPublicProfile = async (
 
 export const recordPublicProfileView = async (
   runtime: ApiRuntime,
-  params: { username: string; viewerKey: string; now?: Date },
+  params: {
+    username: string
+    viewerKey: string
+    viewerUserId?: string | null
+    now?: Date
+  },
 ): Promise<{ recorded: boolean; userFound: boolean; isPublic: boolean }> => {
   const user = await findUserByUsername(runtime, params.username)
   if (!user) return { recorded: false, userFound: false, isPublic: false }
   if (!user.publicProfileEnabled) {
     return { recorded: false, userFound: true, isPublic: false }
+  }
+  if (params.viewerUserId === user.id) {
+    return { recorded: false, userFound: true, isPublic: true }
   }
 
   const db = getRuntimeDatabase(runtime)

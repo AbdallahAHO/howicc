@@ -331,19 +331,22 @@ app.openapi(updateRepoVisibilityRoute, async c => {
       )
     }
 
-    const consent = await consentIsFresh(runtime, {
-      owner,
-      name,
-      userId: gate.userId,
-    })
-    if (!consent.fresh) {
-      return c.json(
-        toApiErrorPayload(
-          'consentRequired',
-          'Admin must acknowledge the private-repo notice within the last 24h.',
-        ),
-        400,
-      )
+    const current = await getRepoSettingsRow(runtime, owner, name)
+    if (current.visibility === 'private') {
+      const consent = await consentIsFresh(runtime, {
+        owner,
+        name,
+        userId: gate.userId,
+      })
+      if (!consent.fresh) {
+        return c.json(
+          toApiErrorPayload(
+            'consentRequired',
+            'Admin must acknowledge the private-repo notice within the last 24h.',
+          ),
+          400,
+        )
+      }
     }
 
     const secret = runtimeEnv.BETTER_AUTH_SECRET ?? 'howicc-dev-preview-token'
@@ -407,19 +410,22 @@ app.openapi(hideRepoConversationRoute, async c => {
       )
     }
 
-    const consent = await consentIsFresh(runtime, {
-      owner,
-      name,
-      userId: gate.userId,
-    })
-    if (!consent.fresh) {
-      return c.json(
-        toApiErrorPayload(
-          'consentRequired',
-          'Admin must acknowledge the private-repo notice within the last 24h.',
-        ),
-        400,
-      )
+    const current = await getRepoSettingsRow(runtime, owner, name)
+    if (current.visibility === 'private') {
+      const consent = await consentIsFresh(runtime, {
+        owner,
+        name,
+        userId: gate.userId,
+      })
+      if (!consent.fresh) {
+        return c.json(
+          toApiErrorPayload(
+            'consentRequired',
+            'Admin must acknowledge the private-repo notice within the last 24h.',
+          ),
+          400,
+        )
+      }
     }
 
     const result = await hideConversationFromRepo(runtime, {
@@ -475,19 +481,22 @@ app.openapi(unhideRepoConversationRoute, async c => {
       )
     }
 
-    const consent = await consentIsFresh(runtime, {
-      owner,
-      name,
-      userId: gate.userId,
-    })
-    if (!consent.fresh) {
-      return c.json(
-        toApiErrorPayload(
-          'consentRequired',
-          'Admin must acknowledge the private-repo notice within the last 24h.',
-        ),
-        400,
-      )
+    const current = await getRepoSettingsRow(runtime, owner, name)
+    if (current.visibility === 'private') {
+      const consent = await consentIsFresh(runtime, {
+        owner,
+        name,
+        userId: gate.userId,
+      })
+      if (!consent.fresh) {
+        return c.json(
+          toApiErrorPayload(
+            'consentRequired',
+            'Admin must acknowledge the private-repo notice within the last 24h.',
+          ),
+          400,
+        )
+      }
     }
 
     const removed = await unhideConversationFromRepo(runtime, {
