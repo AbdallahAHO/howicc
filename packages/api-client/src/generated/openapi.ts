@@ -1737,6 +1737,12 @@ export interface operations {
                 cursor?: string;
                 /** @description Number of items to return (1–50). Defaults to 20. */
                 limit?: string;
+                /** @description Case-insensitive substring match against conversation title and project key. Trimmed; ignored when empty. */
+                q?: string;
+                /** @description Exact-match repository full name (e.g. `owner/name`) from the session digest. */
+                repository?: string;
+                /** @description Limit the feed to a single visibility tier. */
+                visibility?: PathsProfileActivityGetParametersQueryVisibility;
             };
             header?: never;
             path?: never;
@@ -2269,6 +2275,11 @@ export enum PathsPricingModelsGetResponses200ContentApplicationJsonModelsSource 
 }
 export enum PathsPricingModelsGetResponses200ContentApplicationJsonSource {
     openrouter_public_catalog = "openrouter_public_catalog"
+}
+export enum PathsProfileActivityGetParametersQueryVisibility {
+    private = "private",
+    unlisted = "unlisted",
+    public = "public"
 }
 export enum ApiErrorCode {
     validation_failed = "validation_failed",

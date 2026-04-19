@@ -185,6 +185,26 @@ export const getProfileActivityRoute = createRoute({
           description: 'Number of items to return (1–50). Defaults to 20.',
           example: '20',
         }),
+      visibility: z
+        .enum(['private', 'unlisted', 'public'])
+        .optional()
+        .openapi({
+          description: 'Limit the feed to a single visibility tier.',
+        }),
+      q: z
+        .string()
+        .optional()
+        .openapi({
+          description:
+            'Case-insensitive substring match against conversation title and project key. Trimmed; ignored when empty.',
+          example: 'refactor',
+        }),
+      repository: z
+        .string()
+        .optional()
+        .openapi({
+          description: 'Exact-match repository full name (e.g. `owner/name`) from the session digest.',
+        }),
     }),
   },
   responses: {

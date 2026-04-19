@@ -184,9 +184,30 @@ app.openapi(getProfileActivityRoute, async c => {
       typeof rawLimit === 'string' && rawLimit.length > 0
         ? Number.parseInt(rawLimit, 10)
         : undefined
+
+    const rawVisibility = c.req.query('visibility')
+    const visibility =
+      rawVisibility === 'private' ||
+      rawVisibility === 'unlisted' ||
+      rawVisibility === 'public'
+        ? rawVisibility
+        : undefined
+
+    const rawQuery = c.req.query('q')
+    const q = typeof rawQuery === 'string' ? rawQuery.trim() : undefined
+
+    const rawRepository = c.req.query('repository')
+    const repository =
+      typeof rawRepository === 'string' && rawRepository.length > 0
+        ? rawRepository
+        : undefined
+
     const page = await listUserProfileActivity(runtime, userId, {
       cursor,
       limit: Number.isFinite(parsedLimit) ? parsedLimit : undefined,
+      visibility,
+      q,
+      repository,
     })
 
     return c.json(

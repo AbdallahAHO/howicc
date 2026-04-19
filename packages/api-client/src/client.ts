@@ -1,4 +1,9 @@
-import { ApiPaths, ConversationVisibility, UploadAssetKind } from './generated/openapi'
+import {
+  ApiPaths,
+  ConversationVisibility,
+  PathsProfileActivityGetParametersQueryVisibility,
+  UploadAssetKind,
+} from './generated/openapi'
 import {
   createApiFetchClient,
   type ApiClientConfig,
@@ -205,13 +210,29 @@ export const createApiClient = (config: ApiClientConfig) => {
     profile: {
       get: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getProfile)),
       stats: () => unwrapFetchResult(fetchClient.GET(ApiPaths.getProfileStats)),
-      activity: (query?: { cursor?: string; limit?: number }) =>
+      activity: (query?: {
+        cursor?: string
+        limit?: number
+        visibility?: 'private' | 'unlisted' | 'public'
+        q?: string
+        repository?: string
+      }) =>
         unwrapFetchResult(
           fetchClient.GET(ApiPaths.getProfileActivity, {
             params: {
               query: {
                 ...(query?.cursor !== undefined ? { cursor: query.cursor } : {}),
                 ...(query?.limit !== undefined ? { limit: String(query.limit) } : {}),
+                ...(query?.visibility !== undefined
+                  ? {
+                      visibility:
+                        query.visibility as PathsProfileActivityGetParametersQueryVisibility,
+                    }
+                  : {}),
+                ...(query?.q !== undefined && query.q.length > 0 ? { q: query.q } : {}),
+                ...(query?.repository !== undefined && query.repository.length > 0
+                  ? { repository: query.repository }
+                  : {}),
               },
             },
           }),

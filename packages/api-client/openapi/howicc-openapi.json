@@ -3976,6 +3976,42 @@
             "description": "Number of items to return (1–50). Defaults to 20.",
             "name": "limit",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "private",
+                "unlisted",
+                "public"
+              ],
+              "description": "Limit the feed to a single visibility tier."
+            },
+            "required": false,
+            "description": "Limit the feed to a single visibility tier.",
+            "name": "visibility",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive substring match against conversation title and project key. Trimmed; ignored when empty.",
+              "example": "refactor"
+            },
+            "required": false,
+            "description": "Case-insensitive substring match against conversation title and project key. Trimmed; ignored when empty.",
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Exact-match repository full name (e.g. `owner/name`) from the session digest."
+            },
+            "required": false,
+            "description": "Exact-match repository full name (e.g. `owner/name`) from the session digest.",
+            "name": "repository",
+            "in": "query"
           }
         ],
         "responses": {

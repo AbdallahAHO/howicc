@@ -1,4 +1,4 @@
-import { and, eq, lt, sql } from 'drizzle-orm'
+import { and, eq, like, lt, or, sql, type SQL } from 'drizzle-orm'
 import { sessionDigests, userProfiles, conversations } from '@howicc/db/schema'
 import type {
   ProviderId,
@@ -245,10 +245,21 @@ export const MAX_ACTIVITY_LIMIT = 50
  *   cursor: firstPage.nextCursor,
  * })
  */
+export type ActivityVisibility = 'private' | 'unlisted' | 'public'
+
+const escapeLikePattern = (value: string) =>
+  value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
+
 export const listUserProfileActivity = async (
   runtime: ApiRuntime,
   userId: string,
-  options: { cursor?: string; limit?: number } = {},
+  options: {
+    cursor?: string
+    limit?: number
+    visibility?: ActivityVisibility
+    q?: string
+    repository?: string
+  } = {},
 ): Promise<ProfileActivityPage> => {
   const db = getRuntimeDatabase(runtime)
   const limit = Math.min(
@@ -260,9 +271,36 @@ export const listUserProfileActivity = async (
   const cursorValid = cursorDate && !Number.isNaN(cursorDate.valueOf())
 
   const ownerFilter = eq(sessionDigests.ownerUserId, userId)
-  const whereClause = cursorValid
-    ? and(ownerFilter, lt(sessionDigests.createdAt, cursorDate))
-    : ownerFilter
+
+  // Base filters apply to both the page query and the total count so the
+  // UI never shows "Showing N of M" where M isn't in-filter.
+  const baseConditions: SQL[] = [ownerFilter]
+  if (options.visibility) {
+    baseConditions.push(eq(conversations.visibility, options.visibility))
+  }
+  if (options.repository) {
+    baseConditions.push(eq(sessionDigests.repository, options.repository))
+  }
+  const trimmedQuery = options.q?.trim()
+  if (trimmedQuery && trimmedQuery.length > 0) {
+    const pattern = `%${escapeLikePattern(trimmedQuery)}%`
+    const titleLike = like(sql`lower(${conversations.title})`, pattern.toLowerCase())
+    const projectLike = like(
+      sql`lower(${sessionDigests.projectKey})`,
+      pattern.toLowerCase(),
+    )
+    const searchCondition = or(titleLike, projectLike)
+    if (searchCondition) baseConditions.push(searchCondition)
+  }
+
+  const pageConditions = cursorValid
+    ? [...baseConditions, lt(sessionDigests.createdAt, cursorDate)]
+    : baseConditions
+
+  const pageWhereClause =
+    pageConditions.length === 1 ? pageConditions[0] : and(...pageConditions)
+  const totalWhereClause =
+    baseConditions.length === 1 ? baseConditions[0] : and(...baseConditions)
 
   const rows = await db
     .select({
@@ -275,7 +313,7 @@ export const listUserProfileActivity = async (
     })
     .from(sessionDigests)
     .innerJoin(conversations, currentRevisionJoin)
-    .where(whereClause)
+    .where(pageWhereClause)
     .orderBy(sql`${sessionDigests.createdAt} desc`)
     .limit(limit + 1)
 
@@ -283,7 +321,7 @@ export const listUserProfileActivity = async (
     .select({ count: sql<number>`count(*)` })
     .from(sessionDigests)
     .innerJoin(conversations, currentRevisionJoin)
-    .where(ownerFilter)
+    .where(totalWhereClause)
   const total = totalResult[0]?.count ?? 0
 
   const hasMore = rows.length > limit
