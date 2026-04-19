@@ -445,6 +445,40 @@ describe('syncCommand', () => {
     expect(stderr).toEqual([])
   })
 
+  it('shows the interactive picker slice as a subset of the total session count', async () => {
+    const sessions = Array.from({ length: 25 }, (_, index) =>
+      createSession(`session-${index + 1}`, `2026-04-${String(15 - Math.min(index, 9)).padStart(2, '0')}T09:00:00.000Z`),
+    )
+
+    const store = new CliConfigStore()
+    store.setAuthToken({
+      token: 'hwi_test',
+      user: {
+        id: 'user_123',
+        email: 'abdallah@example.com',
+        name: 'Abdallah',
+      },
+    })
+
+    mocks.discoverClaudeSessions.mockResolvedValue(sessions)
+    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
+      new Map(
+        sessions.map(session => [
+          `claude_code:${session.sessionId}`,
+          `hash-${session.sessionId}`,
+        ]),
+      ),
+    )
+    mocks.checkbox.mockResolvedValue([])
+
+    await syncCommand(undefined, { select: true })
+
+    expect(stdout.join('\n')).toContain(
+      'Showing the 20 most recent sessions in the picker out of 25 total.',
+    )
+    expect(mocks.createSession).not.toHaveBeenCalled()
+  })
+
   it('retries transient asset upload failures and still finalizes the session', async () => {
     const session = createSession('retryable', '2026-04-15T09:00:00.000Z')
 
@@ -725,7 +759,8 @@ describe('syncCommand', () => {
       privacy: createPrivacyPreflight({ reviews: 1 }),
     })
     mocks.confirm.mockReset()
-    mocks.confirm.mockResolvedValueOnce(true).mockResolvedValueOnce(false)
+    mocks.confirm.mockResolvedValueOnce(true)
+    mocks.select.mockResolvedValueOnce('skip_once')
 
     await syncCommand(undefined, { all: true })
 
@@ -742,5 +777,116 @@ describe('syncCommand', () => {
     )
     expect(stdout.join('\n')).toContain('Privacy Pre-flight')
     expect(stderr).toEqual([])
+  })
+
+  it('can approve all remaining review-only sessions after the first prompt', async () => {
+    const firstSession = createSession('review-a', '2026-04-15T09:00:00.000Z')
+    const secondSession = createSession('review-b', '2026-04-14T09:00:00.000Z')
+
+    const store = new CliConfigStore()
+    store.setAuthToken({
+      token: 'hwi_test',
+      user: {
+        id: 'user_123',
+        email: 'abdallah@example.com',
+        name: 'Abdallah',
+      },
+    })
+
+    mocks.discoverClaudeSessions.mockResolvedValue([firstSession, secondSession])
+    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
+      new Map([
+        ['claude_code:review-a', 'hash-review-a'],
+        ['claude_code:review-b', 'hash-review-b'],
+      ]),
+    )
+    mocks.prepareSessionSync.mockImplementation(async session => ({
+      ...createPreparedSession(session, `hash-${session.sessionId}`),
+      privacy: createPrivacyPreflight({ reviews: 1 }),
+    }))
+    mocks.confirm.mockReset()
+    mocks.confirm.mockResolvedValueOnce(true)
+    mocks.select.mockResolvedValueOnce('approve_all')
+
+    await syncCommand(undefined, { all: true })
+
+    expect(mocks.select).toHaveBeenCalledTimes(1)
+    expect(mocks.createSession).toHaveBeenCalledTimes(2)
+    expect(stdout.join('\n')).toContain('Finished sync run. 2 synced, 0 skipped, 0 failed.')
+  })
+
+  it('prints a grouped run summary for skipped and failed sessions', async () => {
+    const unchangedSession = createSession('exact', '2026-04-13T09:00:00.000Z')
+    const blockedSession = createSession('blocked', '2026-04-14T09:00:00.000Z')
+    const failingSession = createSession('failing', '2026-04-15T09:00:00.000Z')
+
+    const store = new CliConfigStore()
+    store.setAuthToken({
+      token: 'hwi_test',
+      user: {
+        id: 'user_123',
+        email: 'abdallah@example.com',
+        name: 'Abdallah',
+      },
+    })
+    store.setSyncedRevision({
+      provider: 'claude_code',
+      sessionId: unchangedSession.sessionId,
+      conversationId: 'conv_exact',
+      revisionId: 'rev_exact',
+      sourceRevisionHash: 'hash-exact',
+      syncedAt: '2026-04-13T10:00:00.000Z',
+    })
+
+    mocks.discoverClaudeSessions.mockResolvedValue([
+      unchangedSession,
+      blockedSession,
+      failingSession,
+    ])
+    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
+      new Map([
+        ['claude_code:exact', 'hash-exact'],
+        ['claude_code:blocked', 'hash-blocked'],
+        ['claude_code:failing', 'hash-failing'],
+      ]),
+    )
+    mocks.prepareSessionSync.mockImplementation(async session => {
+      if (session.sessionId === blockedSession.sessionId) {
+        return {
+          ...createPreparedSession(session, 'hash-blocked'),
+          privacy: createPrivacyPreflight({ blocks: 1 }),
+        }
+      }
+
+      if (session.sessionId === failingSession.sessionId) {
+        return createPreparedSession(session, 'hash-failing')
+      }
+
+      return createPreparedSession(session, 'hash-exact')
+    })
+    mocks.finalize.mockImplementation(async input => {
+      if (input.sourceRevisionHash === 'hash-failing') {
+        return {
+          success: false,
+          error: 'Could not reserve a unique conversation slug. Please retry the sync.',
+        }
+      }
+
+      return {
+        success: true,
+        conversationId: input.conversationId ?? `conv_${input.sourceRevisionHash}`,
+        revisionId: `rev_${input.sourceRevisionHash}`,
+      }
+    })
+
+    await syncCommand(undefined, { all: true, yes: true })
+
+    const output = stdout.join('\n')
+    expect(output).toContain('Run Summary')
+    expect(output).toContain('unchanged revision — exact')
+    expect(output).toContain('blocked by privacy pre-flight — blocked')
+    expect(output).toContain(
+      'upload failed: Could not reserve a unique conversation slug. Please retry the sync. — failing',
+    )
   })
 })

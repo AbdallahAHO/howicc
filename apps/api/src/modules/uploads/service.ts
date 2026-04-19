@@ -487,6 +487,19 @@ const findConversationBySource = async (
   return bySource[0]
 }
 
+const findConversationById = async (
+  db: UploadDatabase,
+  conversationId: string,
+) => {
+  const rows = await db
+    .select()
+    .from(conversations)
+    .where(eq(conversations.id, conversationId))
+    .limit(1)
+
+  return rows[0]
+}
+
 const findOrCreateConversation = async (
   db: UploadDatabase,
   user: AuthenticatedCliUser,
@@ -512,49 +525,49 @@ const findOrCreateConversation = async (
       sourceSessionId: input.sourceSessionId,
     })
 
-  const slug = await resolveUniqueSlug(
-    db,
-    buildConversationSlug(input.title, input.sourceSessionId),
-    conversationId,
-  )
+  const findById = () => findConversationById(db, conversationId)
+  const baseSlug = buildConversationSlug(input.title, input.sourceSessionId)
 
-  try {
-    await db.insert(conversations).values({
-      id: conversationId,
-      ownerUserId: user.id,
+  for (let attempt = 0; attempt < conversationSlugReservationAttempts; attempt += 1) {
+    const slug = await resolveUniqueSlug(
+      db,
+      buildConversationSlugCandidate(baseSlug, conversationId, attempt),
+      conversationId,
+    )
+    const conversationRow = buildConversationRow({
+      conversationId,
+      userId: user.id,
       slug,
       title: input.title,
-      visibility: 'private',
-      status: 'draft',
       sourceApp: input.sourceApp,
       sourceSessionId: input.sourceSessionId,
       sourceProjectKey: input.sourceProjectKey,
-      currentRevisionId: null,
-      createdAt: now,
-      updatedAt: now,
+      now,
     })
-  } catch (error) {
-    if (isConstraintViolation(error)) {
+
+    try {
+      await db.insert(conversations).values(conversationRow)
+      return conversationRow
+    } catch (error) {
+      if (!isConstraintViolation(error)) {
+        throw new ApiError(
+          'internalError',
+          'Could not create the conversation record.',
+        )
+      }
+
       const raced = await findBySource()
       if (raced) return raced
+
+      const created = await findById()
+      if (created) return created
     }
-    throw error
   }
 
-  const created = await db
-    .select()
-    .from(conversations)
-    .where(eq(conversations.id, conversationId))
-    .limit(1)
-
-  if (!created[0]) {
-    throw new ApiError(
-      'internalError',
-      'The conversation row could not be created.',
-    )
-  }
-
-  return created[0]
+  throw new ApiError(
+    'internalError',
+    'Could not reserve a unique conversation slug. Please retry the sync.',
+  )
 }
 
 const findOrCreateRevision = async (
@@ -923,6 +936,51 @@ const buildConversationSlug = (title: string, fallback: string) => {
 
   return slug || fallback.toLowerCase()
 }
+
+const conversationSlugReservationAttempts = 5
+
+const buildConversationSlugCandidate = (
+  baseSlug: string,
+  conversationId: string,
+  attempt: number,
+) => {
+  if (attempt === 0) {
+    return baseSlug
+  }
+
+  const suffix = conversationId.slice(-6)
+
+  if (attempt === 1) {
+    return `${baseSlug}-${suffix}`
+  }
+
+  const extra = createStableHash(`${conversationId}:${attempt}`).slice(0, 4)
+  return `${baseSlug}-${suffix}-${extra}`
+}
+
+const buildConversationRow = (input: {
+  conversationId: string
+  userId: string
+  slug: string
+  title: string
+  sourceApp: string
+  sourceSessionId: string
+  sourceProjectKey: string
+  now: Date
+}): ConversationRow => ({
+  id: input.conversationId,
+  ownerUserId: input.userId,
+  slug: input.slug,
+  title: input.title,
+  visibility: 'private',
+  status: 'draft',
+  sourceApp: input.sourceApp,
+  sourceSessionId: input.sourceSessionId,
+  sourceProjectKey: input.sourceProjectKey,
+  currentRevisionId: null,
+  createdAt: input.now,
+  updatedAt: input.now,
+})
 
 /**
  * Resolves a slug that does not collide with any existing conversation.

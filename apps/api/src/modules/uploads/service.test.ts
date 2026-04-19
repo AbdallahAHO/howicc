@@ -288,6 +288,123 @@ const createFinalizeDb = (state: UploadServiceState) => ({
   }),
 })
 
+const createFinalizeDbWithQueuedConversationReads = (input: {
+  state: UploadServiceState
+  conversationReadQueue: ConversationState[][]
+  failConversationInsertAttempts?: number
+}) => {
+  let conversationInsertAttempts = 0
+
+  return {
+    select: () => ({
+      from: (table: unknown) => {
+        if (table === uploadSessions) {
+          return {
+            where: () => ({
+              limit: async (_limit: number) => [input.state.uploadSession],
+            }),
+          }
+        }
+
+        if (table === uploadSessionAssets) {
+          return {
+            where: async () => input.state.uploadAssets ?? [],
+          }
+        }
+
+        if (table === conversations) {
+          return {
+            where: () => ({
+              limit: async (_limit: number) => {
+                const queued = input.conversationReadQueue.shift()
+
+                if (queued) {
+                  return queued
+                }
+
+                return input.state.conversation ? [input.state.conversation] : []
+              },
+            }),
+          }
+        }
+
+        if (table === conversationRevisions) {
+          return {
+            where: () => ({
+              limit: async (_limit: number) =>
+                input.state.revision ? [input.state.revision] : [],
+            }),
+          }
+        }
+
+        throw new Error('Unexpected select table in uploads finalize test.')
+      },
+    }),
+    insert: (table: unknown) => ({
+      values: async (value: Record<string, unknown>) => {
+        if (table === conversations) {
+          conversationInsertAttempts += 1
+
+          if (conversationInsertAttempts <= (input.failConversationInsertAttempts ?? 0)) {
+            throw new Error('SQLITE_CONSTRAINT: UNIQUE constraint failed')
+          }
+
+          input.state.conversation = value as unknown as ConversationState
+          return
+        }
+
+        if (table === conversationRevisions) {
+          input.state.revision = value as unknown as RevisionState
+          return
+        }
+
+        if (table === conversationAssets) {
+          input.state.conversationAssets ??= []
+          input.state.conversationAssets.push(value as unknown as ConversationAssetState)
+          return
+        }
+
+        throw new Error('Unexpected insert table in uploads finalize test.')
+      },
+    }),
+    update: (table: unknown) => ({
+      set: (values: Record<string, unknown>) => {
+        if (table === conversations) {
+          return {
+            where: async () => {
+              input.state.conversation = {
+                ...(input.state.conversation as ConversationState),
+                ...values,
+              }
+            },
+          }
+        }
+
+        if (table === uploadSessions) {
+          return {
+            where: () => ({
+              returning: async () => {
+                if (input.state.uploadSession.status !== 'draft') {
+                  return []
+                }
+
+                input.state.uploadSession = {
+                  ...input.state.uploadSession,
+                  ...values,
+                } as UploadSessionState
+
+                return [{ id: input.state.uploadSession.id }]
+              },
+            }),
+          }
+        }
+
+        throw new Error('Unexpected update table in uploads finalize test.')
+      },
+    }),
+  }
+}
+
 const createStorage = (
   objects: Map<string, { body: ArrayBuffer; contentType?: string }>,
 ) => ({
@@ -707,6 +824,154 @@ describe('upload service', () => {
     expect(storageObjects.has(buildCanonicalKey(conversationId!, revisionHash))).toBe(true)
     expect(storageObjects.has(buildRenderKey(conversationId!, revisionHash))).toBe(true)
     expect(mocks.upsertSessionDigest).toHaveBeenCalledOnce()
+  })
+
+  it('retries conversation creation with a suffixed slug after a stale collision read', async () => {
+    const now = new Date()
+    const createdAt = now.toISOString()
+    const canonical = {
+      kind: 'canonical_session',
+      schemaVersion: 1,
+      parserVersion: 'test-parser',
+      provider: 'claude_code',
+      source: {
+        sessionId: 'session_1',
+        projectKey: 'project-key',
+        sourceRevisionHash: 'rev-hash',
+        transcriptSha256: 'transcript-hash',
+        importedAt: createdAt,
+      },
+      metadata: {
+        title: 'Session title',
+        cwd: '/tmp/project',
+        createdAt,
+        updatedAt: createdAt,
+        gitBranch: 'main',
+      },
+      selection: {
+        strategy: 'leaf',
+        branchCount: 1,
+      },
+      stats: {
+        visibleMessageCount: 1,
+        toolRunCount: 0,
+        artifactCount: 0,
+        subagentCount: 0,
+      },
+      events: [],
+      agents: [],
+      assets: [],
+      artifacts: [],
+      searchText: 'Session title',
+      providerData: {},
+    } as const
+
+    const render = {
+      kind: 'render_document',
+      schemaVersion: 1,
+      session: {
+        sessionId: 'session_1',
+        title: 'Session title',
+        provider: 'claude_code',
+        createdAt,
+        updatedAt: createdAt,
+        gitBranch: 'main',
+        stats: {
+          messageCount: 1,
+          toolRunCount: 0,
+          activityGroupCount: 0,
+        },
+      },
+      blocks: [],
+    }
+
+    const sourceBundleBody = new TextEncoder().encode('bundle').buffer
+    const canonicalBody = gzipJson(canonical)
+    const renderBody = gzipJson(render)
+
+    const state: UploadServiceState = {
+      uploadSession: {
+        id: 'upload_1',
+        userId: user.id,
+        sourceRevisionHash: 'rev-hash',
+        status: 'draft',
+        expiresAt: new Date(Date.now() + 60_000),
+        finalizedAt: null,
+        createdAt: now,
+      },
+      uploadAssets: [
+        {
+          id: 'uasset_source',
+          uploadSessionId: 'upload_1',
+          kind: 'source_bundle',
+          storageKey: 'draft-uploads/upload_1/source_bundle',
+          sha256: sha256(sourceBundleBody),
+          bytes: sourceBundleBody.byteLength,
+          contentType: 'application/gzip',
+          uploadedAt: now,
+          createdAt: now,
+        },
+        {
+          id: 'uasset_canonical',
+          uploadSessionId: 'upload_1',
+          kind: 'canonical_json',
+          storageKey: 'draft-uploads/upload_1/canonical_json',
+          sha256: sha256(canonicalBody),
+          bytes: canonicalBody.byteLength,
+          contentType: 'application/gzip',
+          uploadedAt: now,
+          createdAt: now,
+        },
+        {
+          id: 'uasset_render',
+          uploadSessionId: 'upload_1',
+          kind: 'render_json',
+          storageKey: 'draft-uploads/upload_1/render_json',
+          sha256: sha256(renderBody),
+          bytes: renderBody.byteLength,
+          contentType: 'application/gzip',
+          uploadedAt: now,
+          createdAt: now,
+        },
+      ],
+      conversationAssets: [],
+    }
+
+    const storageObjects = new Map<string, { body: ArrayBuffer; contentType?: string }>([
+      ['draft-uploads/upload_1/source_bundle', { body: sourceBundleBody, contentType: 'application/gzip' }],
+      ['draft-uploads/upload_1/canonical_json', { body: toArrayBuffer(canonicalBody), contentType: 'application/gzip' }],
+      ['draft-uploads/upload_1/render_json', { body: toArrayBuffer(renderBody), contentType: 'application/gzip' }],
+    ])
+
+    mocks.getRuntimeDatabase.mockReturnValue(
+      createFinalizeDbWithQueuedConversationReads({
+        state,
+        conversationReadQueue: [[], [], [], [], [], []],
+        failConversationInsertAttempts: 1,
+      }),
+    )
+    mocks.getRuntimeStorage.mockReturnValue(createStorage(storageObjects))
+
+    const result = await finalizeRevisionUpload(runtime, user, {
+      uploadId: 'upload_1',
+      sourceRevisionHash: 'rev-hash',
+      sourceApp: 'claude_code',
+      sourceSessionId: 'session_1',
+      sourceProjectKey: 'project-key',
+      title: 'Session title',
+      assets: state.uploadAssets!.map(asset => ({
+        kind: asset.kind,
+        key: asset.storageKey,
+        sha256: asset.sha256,
+        bytes: asset.bytes,
+      })),
+    })
+
+    expect(result).toEqual({
+      conversationId: state.conversation?.id,
+      revisionId: state.revision?.id,
+    })
+    expect(state.conversation?.slug).toMatch(/^session-title-[a-z0-9]{6}$/)
   })
 
   it('rejects asset uploads once the upload session is finalized', async () => {

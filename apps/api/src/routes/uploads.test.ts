@@ -172,4 +172,38 @@ describe('upload routes', () => {
       error: 'The upload session has expired. Start a new sync and try again.',
     })
   })
+
+  it('sanitizes unexpected finalize errors instead of returning raw internal messages', async () => {
+    mocks.finalizeRevisionUpload.mockRejectedValue(
+      new Error('Failed query: insert into "conversations" (...) values (...)'),
+    )
+
+    const response = await uploadRoutes.request(
+      'http://localhost/uploads/finalize',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer hwi_test',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          uploadId: 'upload_1',
+          sourceRevisionHash: 'rev-hash',
+          sourceApp: 'claude_code',
+          sourceSessionId: 'session_1',
+          sourceProjectKey: 'project-key',
+          title: 'Session title',
+          assets: [],
+        }),
+      },
+      runtimeEnv,
+    )
+
+    expect(response.status).toBe(500)
+    await expect(response.json()).resolves.toEqual({
+      success: false,
+      code: 'internal_error',
+      error: 'Internal error',
+    })
+  })
 })

@@ -63,6 +63,16 @@ type SyncCommandOptions = {
   yes?: boolean
 }
 
+type SyncRunOutcome = {
+  sessionId: string
+  status: 'skipped' | 'failed'
+  reason: string
+  detail?: string
+}
+
+type PrivacyReviewMode = 'ask' | 'approve_all' | 'skip_all'
+type PrivacyReviewChoice = 'approve_once' | 'approve_all' | 'skip_once' | 'skip_all'
+
 export const syncCommand = async (
   sessionId?: string,
   options: SyncCommandOptions = {},
@@ -150,6 +160,8 @@ export const syncCommand = async (
   let syncedCount = 0
   let skippedCount = 0
   let failedCount = 0
+  const outcomes: SyncRunOutcome[] = []
+  let privacyReviewMode: PrivacyReviewMode = options.yes ? 'approve_all' : 'ask'
 
   for (const [index, session] of sessions.entries()) {
     const latestSyncedRevision = store.getLatestSyncedRevisionForSession({
@@ -176,6 +188,11 @@ export const syncCommand = async (
       ) {
         skippedCount += 1
         spinner.info(`${title} skipped because the revision hash is unchanged`)
+        outcomes.push({
+          sessionId: session.sessionId,
+          status: 'skipped',
+          reason: 'unchanged revision',
+        })
         continue
       }
 
@@ -188,20 +205,26 @@ export const syncCommand = async (
           printError('Blocked this upload because privacy pre-flight found sensitive content.')
           printHint(`Run \`howicc preview ${session.sessionId}\` to inspect a redacted render preview locally.`)
           spinner.fail(`${title} blocked by privacy pre-flight`)
+          outcomes.push({
+            sessionId: session.sessionId,
+            status: 'failed',
+            reason: 'blocked by privacy pre-flight',
+          })
           continue
         }
 
         if (preparedSession.privacy.status === 'review' && !options.yes) {
-          const shouldContinueAfterReview = await safePrompt(() =>
-            confirm({
-              message: 'Privacy pre-flight found review items for this session. Upload it anyway?',
-              default: false,
-            }),
-          )
+          const reviewDecision = await resolvePrivacyReviewDecision(privacyReviewMode)
+          privacyReviewMode = reviewDecision.mode
 
-          if (!shouldContinueAfterReview) {
+          if (!reviewDecision.shouldUpload) {
             skippedCount += 1
             spinner.info(`${title} skipped after privacy review`)
+            outcomes.push({
+              sessionId: session.sessionId,
+              status: 'skipped',
+              reason: 'skipped after privacy review',
+            })
             continue
           }
         }
@@ -295,9 +318,16 @@ export const syncCommand = async (
       )
     } catch (error) {
       failedCount += 1
+      const detail = error instanceof Error ? error.message : 'Unknown error'
       spinner.fail(
-        `${title} failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `${title} failed: ${detail}`,
       )
+      outcomes.push({
+        sessionId: session.sessionId,
+        status: 'failed',
+        reason: 'upload failed',
+        detail,
+      })
     }
   }
 
@@ -305,6 +335,8 @@ export const syncCommand = async (
   printSuccess(
     `Finished sync run. ${syncedCount} synced, ${skippedCount} skipped, ${failedCount} failed.`,
   )
+
+  printSyncRunSummary(outcomes)
 
   if (failedCount === 0 && skippedCount > 0 && !options.force) {
     printHint('Use `howicc sync --force` when you want to re-upload unchanged revisions.')
@@ -564,7 +596,7 @@ const selectSessionsInteractively = async (
 
   if (selectionPool.length < sessions.length) {
     printHint(
-      `Showing the ${selectionPool.length} most recent sessions in the picker. Use \`howicc sync --recent <n>\` for a wider slice.`,
+      `Showing the ${selectionPool.length} most recent sessions in the picker out of ${sessions.length} total. Use \`howicc sync --recent <n>\` for a wider slice.`,
     )
     console.log()
   }
@@ -648,6 +680,106 @@ const printPrivacyPreflight = (
 
   for (const finding of getTopPrivacyFindings(privacy.inspection, 3)) {
     printWarning(formatPrivacyFinding(finding))
+  }
+
+  console.log()
+}
+
+const resolvePrivacyReviewDecision = async (
+  currentMode: PrivacyReviewMode,
+): Promise<{
+  mode: PrivacyReviewMode
+  shouldUpload: boolean
+}> => {
+  if (currentMode === 'approve_all') {
+    return {
+      mode: currentMode,
+      shouldUpload: true,
+    }
+  }
+
+  if (currentMode === 'skip_all') {
+    return {
+      mode: currentMode,
+      shouldUpload: false,
+    }
+  }
+
+  const decision = await safePrompt(() =>
+    select({
+      message: 'Privacy pre-flight found review items for this session.',
+      choices: [
+        {
+          name: 'Upload this session',
+          value: 'approve_once',
+        },
+        {
+          name: 'Upload this and all remaining review-only sessions',
+          value: 'approve_all',
+        },
+        {
+          name: 'Skip this session',
+          value: 'skip_once',
+        },
+        {
+          name: 'Skip this and all remaining review-only sessions',
+          value: 'skip_all',
+        },
+      ],
+      default: 'skip_once',
+    }),
+  ) as PrivacyReviewChoice
+
+  if (decision === 'approve_all') {
+    return {
+      mode: 'approve_all',
+      shouldUpload: true,
+    }
+  }
+
+  if (decision === 'skip_all') {
+    return {
+      mode: 'skip_all',
+      shouldUpload: false,
+    }
+  }
+
+  return {
+    mode: 'ask',
+    shouldUpload: decision === 'approve_once',
+  }
+}
+
+const printSyncRunSummary = (outcomes: SyncRunOutcome[]) => {
+  if (outcomes.length === 0) {
+    return
+  }
+
+  const groupedOutcomes = new Map<string, SyncRunOutcome[]>()
+
+  for (const outcome of outcomes) {
+    const groupKey = outcome.detail
+      ? `${outcome.reason}: ${outcome.detail}`
+      : outcome.reason
+    const group = groupedOutcomes.get(groupKey)
+
+    if (group) {
+      group.push(outcome)
+      continue
+    }
+
+    groupedOutcomes.set(groupKey, [outcome])
+  }
+
+  printSection('Run Summary')
+
+  for (const [groupKey, group] of groupedOutcomes) {
+    const prefix =
+      group[0]?.status === 'failed'
+        ? chalk.red('✗')
+        : chalk.yellow('•')
+    const sessionIds = group.map(outcome => formatShortSessionId(outcome.sessionId)).join(', ')
+    console.log(`  ${prefix} ${groupKey} — ${sessionIds}`)
   }
 
   console.log()
