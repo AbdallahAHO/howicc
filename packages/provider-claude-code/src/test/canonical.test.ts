@@ -444,4 +444,183 @@ describe('buildClaudeCanonicalSession', () => {
     expect(canonical.searchText).not.toContain('Set model to Opus 4.6')
     expect(canonical.searchText).not.toContain('Background command "Verify MCP GET still works"')
   })
+
+  it('keeps visible messages and tool runs when system summaries hang off attachment parents', async () => {
+    const workingDirectory = await mkdtemp(path.join(tmpdir(), 'howicc-canonical-'))
+    tempDirectories.push(workingDirectory)
+
+    const sessionId = '123e4567-e89b-42d3-a456-426614174004'
+    const transcriptPath = path.join(workingDirectory, `${sessionId}.jsonl`)
+
+    await writeFile(
+      transcriptPath,
+      [
+        {
+          type: 'user',
+          uuid: 'u1',
+          timestamp: '2026-04-20T10:00:00.000Z',
+          slug: 'khromata-judgments',
+          cwd: workingDirectory,
+          gitBranch: 'main',
+          message: {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: 'can you check @data/khromata_judgments_117.json',
+              },
+            ],
+          },
+        },
+        {
+          type: 'assistant',
+          uuid: 'a1',
+          parentUuid: 'u1',
+          timestamp: '2026-04-20T10:00:01.000Z',
+          message: {
+            role: 'assistant',
+            content: [
+              { type: 'text', text: 'Inspecting the dataset now.' },
+              {
+                type: 'tool_use',
+                id: 'tool_1',
+                name: 'Bash',
+                input: { command: 'jq length data/khromata_judgments_117.json' },
+              },
+            ],
+          },
+        },
+        {
+          type: 'user',
+          uuid: 'u2',
+          parentUuid: 'a1',
+          timestamp: '2026-04-20T10:00:02.000Z',
+          message: {
+            role: 'user',
+            content: [
+              {
+                type: 'tool_result',
+                tool_use_id: 'tool_1',
+                content: [{ type: 'text', text: '237' }],
+              },
+            ],
+          },
+        },
+        {
+          type: 'attachment',
+          uuid: 'att_async',
+          parentUuid: 'u2',
+          timestamp: '2026-04-20T10:00:03.000Z',
+          attachment: { type: 'async_hook_response' },
+        },
+        {
+          type: 'assistant',
+          uuid: 'a2',
+          parentUuid: 'att_async',
+          timestamp: '2026-04-20T10:00:04.000Z',
+          message: {
+            role: 'assistant',
+            content: [
+              {
+                type: 'text',
+                text: 'Solid dataset. You have 237 judgments to train from.',
+              },
+            ],
+          },
+        },
+        {
+          type: 'attachment',
+          uuid: 'att_hook',
+          parentUuid: 'a2',
+          timestamp: '2026-04-20T10:00:05.000Z',
+          attachment: { type: 'hook_success' },
+        },
+        {
+          type: 'system',
+          uuid: 's1',
+          parentUuid: 'att_hook',
+          timestamp: '2026-04-20T10:00:06.000Z',
+          subtype: 'stop_hook_summary',
+          hookInfos: [{ command: 'cmux-notify.sh', durationMs: 44 }],
+        },
+        {
+          type: 'system',
+          uuid: 's2',
+          parentUuid: 's1',
+          timestamp: '2026-04-20T10:00:07.000Z',
+          subtype: 'turn_duration',
+          content: 'turn_duration',
+        },
+        {
+          type: 'system',
+          uuid: 's3',
+          parentUuid: 's2',
+          timestamp: '2026-04-20T10:00:08.000Z',
+          subtype: 'away_summary',
+          content: "You're improving Khromata's neural networks.",
+        },
+      ]
+        .map(entry => JSON.stringify(entry))
+        .join('\n'),
+    )
+
+    const transcriptFile = await createSourceFileDescriptor({
+      kind: 'transcript',
+      absolutePath: transcriptPath,
+      relPath: `${sessionId}.jsonl`,
+    })
+
+    const session: DiscoveredSession = {
+      provider: 'claude_code',
+      sessionId,
+      projectKey: 'project-key',
+      projectPath: workingDirectory,
+      transcriptPath,
+      updatedAt: '2026-04-20T10:00:08.000Z',
+      sizeBytes: transcriptFile.bytes,
+      slug: 'khromata-judgments',
+      gitBranch: 'main',
+    }
+
+    const canonical = await buildClaudeCanonicalSession({
+      bundle: {
+        kind: 'agent_source_bundle',
+        version: 1,
+        provider: 'claude_code',
+        sessionId,
+        projectKey: 'project-key',
+        projectPath: workingDirectory,
+        capturedAt: '2026-04-20T10:00:09.000Z',
+        files: [transcriptFile],
+        manifest: {
+          transcript: {
+            relPath: transcriptFile.relPath,
+            absolutePath: transcriptPath,
+          },
+          slug: 'khromata-judgments',
+          cwd: workingDirectory,
+          gitBranch: 'main',
+          planFiles: [],
+          toolResults: [],
+          subagents: [],
+          remoteAgents: [],
+          warnings: [],
+        },
+      },
+      session,
+      parserVersion: 'test',
+    })
+
+    expect(canonical.metadata.title).toBe('can you check @data/khromata_judgments_117.json')
+    expect(canonical.stats.visibleMessageCount).toBe(3)
+    expect(canonical.stats.toolRunCount).toBe(1)
+    expect(canonical.events.filter(event => event.type === 'hook')).toHaveLength(1)
+    expect(
+      canonical.events.some(
+        event =>
+          event.type === 'assistant_message' &&
+          event.text.includes('Solid dataset.'),
+      ),
+    ).toBe(true)
+  })
 })
