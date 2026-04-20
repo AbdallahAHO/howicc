@@ -1,4 +1,6 @@
+import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
+import type { CanonicalSession, SessionArtifact } from '@howicc/canonical'
 import {
   inspectSegments,
   redactText,
@@ -8,16 +10,45 @@ import {
   type PrivacySummary,
 } from '@howicc/privacy'
 import type { SourceBundle } from '@howicc/parser-core'
-import type { RenderBlock, RenderDocument } from '@howicc/render'
-import { createSourceBundleArchiveManifest } from './source-bundle-archive'
+import { buildRenderDocument, type RenderBlock, type RenderDocument } from '@howicc/render'
+import {
+  buildSourceBundleArchive,
+  buildSourceBundleArchiveFromEntries,
+  createSourceBundleArchiveManifest,
+} from './source-bundle-archive'
 
 export type CliPrivacyPreflightStatus = 'clear' | 'warning' | 'review' | 'block'
+export type CliSyncPrivacyMode = 'sanitize' | 'strict'
+export type CliPreparedPrivacyAction = 'clear' | 'review' | 'sanitized' | 'block'
 
 export type CliPrivacyPreflight = {
   status: CliPrivacyPreflightStatus
   inspection: PrivacyInspection
   sourceInspection: PrivacyInspection
+  canonicalInspection: PrivacyInspection
   renderInspection: PrivacyInspection
+}
+
+export type CliPrivacySanitizationReport = {
+  redactedTextValueCount: number
+  removedTextValueCount: number
+  redactedSourceFileCount: number
+  removedSourceFileCount: number
+}
+
+export type CliPreparedSessionPrivacy = {
+  action: CliPreparedPrivacyAction
+  mode: CliSyncPrivacyMode
+  preflight: CliPrivacyPreflight
+  uploadInspection: CliPrivacyPreflight
+  report: CliPrivacySanitizationReport
+}
+
+export type CliPrivacySafeUpload = {
+  canonical: CanonicalSession
+  render: RenderDocument
+  sourceBundleArchive: Uint8Array
+  privacy: CliPreparedSessionPrivacy
 }
 
 export type RedactedRenderPreview = {
@@ -25,26 +56,202 @@ export type RedactedRenderPreview = {
   hiddenLineCount: number
 }
 
+type StringFieldContext = {
+  path: Array<string | number>
+  key: string | number
+  parent: Record<string, unknown> | unknown[]
+  value: string
+}
+
+type SanitizedSourceBundle = {
+  archive: Uint8Array
+  inspection: PrivacyInspection
+  report: CliPrivacySanitizationReport
+}
+
+type CanonicalSanitizationResult = {
+  value: CanonicalSession
+  report: CliPrivacySanitizationReport
+}
+
+const emptySummary = (): PrivacySummary => ({
+  warnings: 0,
+  reviews: 0,
+  blocks: 0,
+})
+
+const emptyInspection = (): PrivacyInspection => ({
+  findings: [],
+  summary: emptySummary(),
+})
+
+const emptySanitizationReport = (): CliPrivacySanitizationReport => ({
+  redactedTextValueCount: 0,
+  removedTextValueCount: 0,
+  redactedSourceFileCount: 0,
+  removedSourceFileCount: 0,
+})
+
+const canonicalIgnoredKeys = new Set([
+  'id',
+  'uuid',
+  'parentUuid',
+  'toolUseId',
+  'sessionId',
+  'sourceRevisionHash',
+  'transcriptSha256',
+  'projectKey',
+  'createdAt',
+  'updatedAt',
+  'importedAt',
+  'schemaVersion',
+  'parserVersion',
+  'provider',
+  'kind',
+  'artifactType',
+  'hookEvent',
+  'status',
+  'eventId',
+  'taskId',
+  'agentId',
+  'model',
+  'mcpServerName',
+  'type',
+  'role',
+  'slashName',
+  'name',
+  'matchedCatalogId',
+  'matchedCanonicalSlug',
+  'matchType',
+  'reliability',
+  'source',
+])
+
+const nonCollapsibleCanonicalKeys = new Set([
+  'projectPath',
+  'cwd',
+  'filePath',
+  'path',
+  'relPath',
+  'absolutePath',
+  'gitBranch',
+  'slug',
+  'fullName',
+  'repo',
+  'repository',
+  'server',
+  'assetId',
+  'fileUuid',
+  'canonicalSlug',
+])
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
 /**
- * Inspect the raw source bundle inputs plus the public-facing render output
- * before a sync run uploads anything.
+ * Inspect the raw source bundle inputs, canonical payload, and public-facing render
+ * output before a sync run uploads anything.
  */
 export const inspectSessionPrivacy = async (input: {
   bundle: SourceBundle
+  canonical: CanonicalSession
   render: RenderDocument
 }): Promise<CliPrivacyPreflight> => {
-  const [sourceInspection, renderInspection] = await Promise.all([
+  const [sourceInspection, canonicalInspection, renderInspection] = await Promise.all([
     inspectSourceBundlePrivacy(input.bundle),
+    Promise.resolve(inspectCanonicalPrivacy(input.canonical)),
     Promise.resolve(inspectSegments(buildRenderPrivacySegments(input.render))),
   ])
 
-  const inspection = mergeInspections(sourceInspection, renderInspection)
+  return buildCliPrivacyPreflight({
+    sourceInspection,
+    canonicalInspection,
+    renderInspection,
+  })
+}
+
+/**
+ * Build the exact assets a sync run would upload under the requested privacy policy.
+ *
+ * `sanitize` keeps conversation structure but replaces sensitive text or source files
+ * with deterministic placeholders before upload. `strict` preserves the current
+ * fail-or-review behavior.
+ */
+export const buildPrivacySafeUpload = async (input: {
+  bundle: SourceBundle
+  canonical: CanonicalSession
+  render: RenderDocument
+  mode: CliSyncPrivacyMode
+}): Promise<CliPrivacySafeUpload> => {
+  const preflight = await inspectSessionPrivacy(input)
+
+  if (input.mode === 'strict') {
+    const rawArchive = await buildSourceBundleArchive(input.bundle)
+    const action =
+      preflight.status === 'block'
+        ? 'block'
+        : preflight.status === 'review'
+          ? 'review'
+          : 'clear'
+
+    return {
+      canonical: input.canonical,
+      render: input.render,
+      sourceBundleArchive: rawArchive,
+      privacy: {
+        action,
+        mode: input.mode,
+        preflight,
+        uploadInspection: preflight,
+        report: emptySanitizationReport(),
+      },
+    }
+  }
+
+  if (preflight.status === 'clear') {
+    const rawArchive = await buildSourceBundleArchive(input.bundle)
+
+    return {
+      canonical: input.canonical,
+      render: input.render,
+      sourceBundleArchive: rawArchive,
+      privacy: {
+        action: 'clear',
+        mode: input.mode,
+        preflight,
+        uploadInspection: preflight,
+        report: emptySanitizationReport(),
+      },
+    }
+  }
+
+  const sanitizedCanonical = sanitizeCanonicalForUpload(input.canonical)
+  const sanitizedSourceBundle = await sanitizeSourceBundleForUpload(input.bundle)
+  const report = mergeSanitizationReports(
+    sanitizedCanonical.report,
+    sanitizedSourceBundle.report,
+  )
+  const sanitizedRender = buildSanitizedRenderDocument(
+    sanitizedCanonical.value,
+    report,
+  )
+  const uploadInspection = buildCliPrivacyPreflight({
+    sourceInspection: sanitizedSourceBundle.inspection,
+    canonicalInspection: inspectCanonicalPrivacy(sanitizedCanonical.value),
+    renderInspection: inspectSegments(buildRenderPrivacySegments(sanitizedRender)),
+  })
 
   return {
-    status: derivePrivacyStatus(inspection.summary),
-    inspection,
-    sourceInspection,
-    renderInspection,
+    canonical: sanitizedCanonical.value,
+    render: sanitizedRender,
+    sourceBundleArchive: sanitizedSourceBundle.archive,
+    privacy: {
+      action: uploadInspection.status === 'block' ? 'block' : 'sanitized',
+      mode: input.mode,
+      preflight,
+      uploadInspection,
+      report,
+    },
   }
 }
 
@@ -58,6 +265,27 @@ export const formatPrivacySummary = (summary: PrivacySummary): string => {
     `${summary.reviews} ${pluralize(summary.reviews, 'review')}`,
     `${summary.warnings} ${pluralize(summary.warnings, 'warning')}`,
   ].join(', ')
+}
+
+export const formatPrivacySanitizationReport = (
+  report: CliPrivacySanitizationReport,
+): string => {
+  const parts = [
+    report.removedTextValueCount > 0
+      ? `${report.removedTextValueCount} removed text ${pluralize(report.removedTextValueCount, 'field')}`
+      : undefined,
+    report.redactedTextValueCount > 0
+      ? `${report.redactedTextValueCount} redacted text ${pluralize(report.redactedTextValueCount, 'field')}`
+      : undefined,
+    report.removedSourceFileCount > 0
+      ? `${report.removedSourceFileCount} replaced source ${pluralize(report.removedSourceFileCount, 'file')}`
+      : undefined,
+    report.redactedSourceFileCount > 0
+      ? `${report.redactedSourceFileCount} redacted source ${pluralize(report.redactedSourceFileCount, 'file')}`
+      : undefined,
+  ].filter((part): part is string => Boolean(part))
+
+  return parts.length > 0 ? parts.join(', ') : 'no upload-time sanitization'
 }
 
 export const getTopPrivacyFindings = (
@@ -118,6 +346,26 @@ export const buildRedactedRenderPreview = (
   }
 }
 
+const buildCliPrivacyPreflight = (input: {
+  sourceInspection: PrivacyInspection
+  canonicalInspection: PrivacyInspection
+  renderInspection: PrivacyInspection
+}): CliPrivacyPreflight => {
+  const inspection = mergeInspections(
+    input.sourceInspection,
+    input.canonicalInspection,
+    input.renderInspection,
+  )
+
+  return {
+    status: derivePrivacyStatus(inspection.summary),
+    inspection,
+    sourceInspection: input.sourceInspection,
+    canonicalInspection: input.canonicalInspection,
+    renderInspection: input.renderInspection,
+  }
+}
+
 const inspectSourceBundlePrivacy = async (
   bundle: SourceBundle,
 ): Promise<PrivacyInspection> => {
@@ -142,6 +390,372 @@ const inspectSourceBundlePrivacy = async (
   }
 
   return inspectSegments(segments)
+}
+
+const inspectCanonicalPrivacy = (
+  canonical: CanonicalSession,
+): PrivacyInspection =>
+  inspectSegments(buildCanonicalPrivacySegments(canonical))
+
+const buildCanonicalPrivacySegments = (
+  canonical: CanonicalSession,
+): PrivacySegment[] => {
+  const segments: PrivacySegment[] = []
+
+  walkStringFields(canonical, field => {
+    if (!shouldInspectCanonicalField(field)) {
+      return
+    }
+
+    pushSegment(segments, {
+      id: `canonical:${field.path.join('.')}`,
+      kind: `canonical_${String(field.path[0] ?? 'field')}`,
+      path: isPathLikeCanonicalKey(field.key) ? field.value : undefined,
+      role: resolveCanonicalFieldRole(field.path, field.parent),
+      text: field.value,
+    })
+  })
+
+  return segments
+}
+
+const sanitizeCanonicalForUpload = (
+  canonical: CanonicalSession,
+): CanonicalSanitizationResult => {
+  const sanitized = structuredClone(canonical)
+  const report = emptySanitizationReport()
+
+  walkStringFields(sanitized, field => {
+    if (!shouldInspectCanonicalField(field)) {
+      return
+    }
+
+    const redaction = redactText(field.value)
+    if (!redaction.changed) {
+      return
+    }
+
+    const collapseOnBlock =
+      redaction.summary.blocks > 0 && shouldCollapseCanonicalFieldOnBlock(field)
+    const nextValue = collapseOnBlock
+      ? buildCanonicalPrivacyPlaceholder(field)
+      : redaction.value
+
+    setFieldValue(field.parent, field.key, nextValue)
+
+    if (collapseOnBlock) {
+      report.removedTextValueCount += 1
+      return
+    }
+
+    report.redactedTextValueCount += 1
+  })
+
+  sanitized.searchText = buildSanitizedSearchText(sanitized)
+
+  return {
+    value: sanitized,
+    report,
+  }
+}
+
+const buildSanitizedSearchText = (canonical: CanonicalSession) => {
+  const parts: string[] = []
+  const seen = new Set<string>()
+  const push = (value: string | undefined) => {
+    const normalized = value?.trim()
+    if (!normalized || seen.has(normalized)) {
+      return
+    }
+
+    seen.add(normalized)
+    parts.push(normalized)
+  }
+
+  push(canonical.metadata.title)
+  push(canonical.metadata.customTitle)
+  push(canonical.metadata.summary)
+  push(canonical.metadata.tag)
+
+  for (const event of canonical.events) {
+    switch (event.type) {
+      case 'user_message':
+      case 'assistant_message':
+      case 'system_notice':
+      case 'compact_boundary':
+        push(event.text)
+        break
+      case 'hook':
+        push(event.label)
+        push(event.text)
+        break
+      case 'tool_call':
+        push(event.toolName)
+        push(event.commentLabel)
+        break
+      case 'tool_result':
+        push(event.text)
+        break
+      case 'subagent_ref':
+        push(event.label)
+        break
+    }
+  }
+
+  for (const artifact of canonical.artifacts) {
+    collectArtifactSearchText(parts, seen, artifact)
+  }
+
+  for (const agent of canonical.agents) {
+    push(agent.title)
+    push(asOptionalString(agent.metadata?.description))
+
+    for (const event of agent.events) {
+      if ('text' in event) {
+        push(typeof event.text === 'string' ? event.text : undefined)
+      }
+    }
+  }
+
+  return parts.join('\n\n')
+}
+
+const collectArtifactSearchText = (
+  parts: string[],
+  seen: Set<string>,
+  artifact: SessionArtifact,
+) => {
+  const push = (value: string | undefined) => {
+    const normalized = value?.trim()
+    if (!normalized || seen.has(normalized)) {
+      return
+    }
+
+    seen.add(normalized)
+    parts.push(normalized)
+  }
+
+  switch (artifact.artifactType) {
+    case 'plan':
+      push(artifact.content)
+      push(artifact.slug)
+      break
+    case 'question_interaction':
+      for (const question of artifact.questions) {
+        push(question.header)
+        push(question.question)
+        for (const option of question.options) {
+          push(option.label)
+          push(option.description)
+          push(option.preview)
+        }
+      }
+      for (const answer of Object.values(artifact.answers ?? {})) {
+        push(answer)
+      }
+      push(artifact.feedbackText)
+      break
+    case 'tool_decision':
+      push(artifact.feedbackText)
+      push(artifact.toolName)
+      break
+    case 'tool_output':
+      push(artifact.toolName)
+      push(artifact.previewText)
+      break
+    case 'todo_snapshot':
+      for (const todo of artifact.todos) {
+        push(todo.content)
+      }
+      break
+    case 'task_status_timeline':
+      for (const entry of artifact.entries) {
+        push(entry.description)
+        push(entry.deltaSummary ?? undefined)
+      }
+      break
+    case 'mcp_resource':
+      push(artifact.name)
+      push(artifact.description)
+      push(artifact.uri)
+      break
+    case 'structured_output':
+      push(JSON.stringify(artifact.data, null, 2))
+      break
+    case 'invoked_skill_set':
+      for (const skill of artifact.skills) {
+        push(skill.name)
+        push(skill.path)
+        push(skill.inlineContent)
+      }
+      break
+    case 'brief_delivery':
+      push(artifact.message)
+      for (const attachment of artifact.attachments) {
+        push(attachment.path)
+      }
+      break
+  }
+}
+
+const sanitizeSourceBundleForUpload = async (
+  bundle: SourceBundle,
+): Promise<SanitizedSourceBundle> => {
+  const report = emptySanitizationReport()
+  const encoder = new TextEncoder()
+  const sanitizedFiles = await Promise.all(
+    bundle.files.map(async (file, index) => {
+      const rawText = new TextDecoder().decode(await readFile(file.absolutePath))
+      const redaction = redactText(rawText)
+      const removed = redaction.summary.blocks > 0
+      const sanitizedText = removed
+        ? buildSourceFilePrivacyPlaceholder(file.relPath, file.kind)
+        : redaction.value
+
+      if (removed) {
+        report.removedSourceFileCount += 1
+      } else if (redaction.changed) {
+        report.redactedSourceFileCount += 1
+      }
+
+      const body = encoder.encode(sanitizedText)
+      const archivePath = `source/${String(index + 1).padStart(4, '0')}-${file.kind}.txt`
+      const redactedRelPath = redactText(file.relPath).value
+
+      return {
+        archivePath,
+        relPath: redactedRelPath,
+        kind: file.kind,
+        body,
+        sha256: sha256Hex(body),
+        privacyAction: removed
+          ? 'removed'
+          : redaction.changed
+            ? 'redacted'
+            : 'unchanged',
+      }
+    }),
+  )
+
+  const manifestBody = encoder.encode(
+    JSON.stringify(
+      {
+        kind: 'sanitized_agent_source_bundle_archive',
+        version: 1,
+        provider: bundle.provider,
+        sessionId: bundle.sessionId,
+        projectKey: bundle.projectKey,
+        capturedAt: bundle.capturedAt,
+        privacy: {
+          report,
+        },
+        files: sanitizedFiles.map(file => ({
+          archivePath: file.archivePath,
+          relPath: file.relPath,
+          kind: file.kind,
+          bytes: file.body.byteLength,
+          sha256: file.sha256,
+          privacyAction: file.privacyAction,
+        })),
+        manifest: sanitizeSourceBundleManifest(bundle),
+      },
+      null,
+      2,
+    ),
+  )
+
+  const archive = buildSourceBundleArchiveFromEntries([
+    {
+      path: 'manifest.json',
+      body: manifestBody,
+      mtime: new Date(bundle.capturedAt),
+    },
+    ...sanitizedFiles.map(file => ({
+      path: file.archivePath,
+      body: file.body,
+      mtime: new Date(bundle.capturedAt),
+    })),
+  ])
+
+  const inspection = inspectSegments([
+    {
+      id: 'sanitized-source:manifest',
+      kind: 'sanitized_source_manifest',
+      path: 'manifest.json',
+      text: new TextDecoder().decode(manifestBody),
+    },
+    ...sanitizedFiles.map(file => ({
+      id: `sanitized-source:file:${file.archivePath}`,
+      kind: `sanitized_source_${file.kind}`,
+      path: file.relPath,
+      text: new TextDecoder().decode(file.body),
+    })),
+  ])
+
+  return {
+    archive,
+    inspection,
+    report,
+  }
+}
+
+const sanitizeSourceBundleManifest = (bundle: SourceBundle) => {
+  const sanitize = (value: string | undefined) =>
+    value ? redactText(value).value : value
+
+  return {
+    transcript: {
+      relPath: sanitize(bundle.manifest.transcript.relPath),
+    },
+    slug: sanitize(bundle.manifest.slug),
+    cwd: sanitize(bundle.manifest.cwd),
+    gitBranch: bundle.manifest.gitBranch,
+    planFiles: bundle.manifest.planFiles.map(file => ({
+      relPath: sanitize(file.relPath),
+      agentId: file.agentId,
+    })),
+    toolResults: bundle.manifest.toolResults.map(file => ({
+      relPath: sanitize(file.relPath),
+    })),
+    subagents: bundle.manifest.subagents.map(subagent => ({
+      agentId: subagent.agentId,
+      transcriptRelPath: sanitize(subagent.transcriptRelPath),
+      metaRelPath: sanitize(subagent.metaRelPath),
+      agentType: subagent.agentType,
+      description: sanitize(subagent.description),
+    })),
+    remoteAgents: bundle.manifest.remoteAgents.map(file => ({
+      relPath: sanitize(file.relPath),
+    })),
+    warnings: bundle.manifest.warnings.map(warning => sanitize(warning) ?? warning),
+  }
+}
+
+const buildSanitizedRenderDocument = (
+  canonical: CanonicalSession,
+  report: CliPrivacySanitizationReport,
+) => {
+  const render = buildRenderDocument(canonical)
+
+  if (!hasSanitizationChanges(report)) {
+    return render
+  }
+
+  const blocks: RenderBlock[] = [
+    {
+      type: 'callout',
+      id: 'privacy-sanitization',
+      tone: 'warning',
+      title: 'Privacy sanitized before sync',
+      body: formatPrivacySanitizationReport(report),
+    },
+    ...render.blocks,
+  ]
+
+  return {
+    ...render,
+    blocks,
+  }
 }
 
 const buildRenderPrivacySegments = (render: RenderDocument): PrivacySegment[] => {
@@ -415,10 +1029,7 @@ const mergeInspections = (...inspections: PrivacyInspection[]): PrivacyInspectio
       findings: [...merged.findings, ...inspection.findings],
       summary: mergeSummaries(merged.summary, inspection.summary),
     }),
-    {
-      findings: [],
-      summary: { warnings: 0, reviews: 0, blocks: 0 },
-    },
+    emptyInspection(),
   )
 
 const mergeSummaries = (left: PrivacySummary, right: PrivacySummary): PrivacySummary => ({
@@ -426,6 +1037,26 @@ const mergeSummaries = (left: PrivacySummary, right: PrivacySummary): PrivacySum
   reviews: left.reviews + right.reviews,
   blocks: left.blocks + right.blocks,
 })
+
+const mergeSanitizationReports = (
+  left: CliPrivacySanitizationReport,
+  right: CliPrivacySanitizationReport,
+): CliPrivacySanitizationReport => ({
+  redactedTextValueCount:
+    left.redactedTextValueCount + right.redactedTextValueCount,
+  removedTextValueCount:
+    left.removedTextValueCount + right.removedTextValueCount,
+  redactedSourceFileCount:
+    left.redactedSourceFileCount + right.redactedSourceFileCount,
+  removedSourceFileCount:
+    left.removedSourceFileCount + right.removedSourceFileCount,
+})
+
+const hasSanitizationChanges = (report: CliPrivacySanitizationReport) =>
+  report.redactedTextValueCount > 0 ||
+  report.removedTextValueCount > 0 ||
+  report.redactedSourceFileCount > 0 ||
+  report.removedSourceFileCount > 0
 
 const derivePrivacyStatus = (
   summary: PrivacySummary,
@@ -470,11 +1101,197 @@ const pushJsonSegment = (
   })
 }
 
+const walkStringFields = (
+  value: unknown,
+  visit: (field: StringFieldContext) => void,
+  path: Array<string | number> = [],
+) => {
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => {
+      if (typeof entry === 'string') {
+        visit({
+          path: [...path, index],
+          key: index,
+          parent: value,
+          value: entry,
+        })
+        return
+      }
+
+      walkStringFields(entry, visit, [...path, index])
+    })
+    return
+  }
+
+  if (!isRecord(value)) {
+    return
+  }
+
+  for (const [key, entry] of Object.entries(value)) {
+    if (typeof entry === 'string') {
+      visit({
+        path: [...path, key],
+        key,
+        parent: value,
+        value: entry,
+      })
+      continue
+    }
+
+    walkStringFields(entry, visit, [...path, key])
+  }
+}
+
+const shouldInspectCanonicalField = (field: StringFieldContext) => {
+  const key = String(field.key)
+  const root = String(field.path[0] ?? '')
+
+  if (root === 'searchText') {
+    return false
+  }
+
+  if (
+    root === 'source' &&
+    ['sessionId', 'projectKey', 'sourceRevisionHash', 'transcriptSha256'].includes(key)
+  ) {
+    return false
+  }
+
+  return !canonicalIgnoredKeys.has(key)
+}
+
+const shouldCollapseCanonicalFieldOnBlock = (field: StringFieldContext) => {
+  const key = String(field.key)
+  return !nonCollapsibleCanonicalKeys.has(key)
+}
+
+const isPathLikeCanonicalKey = (key: string | number) => {
+  const normalized = String(key)
+  return (
+    normalized === 'path' ||
+    normalized === 'filePath' ||
+    normalized === 'cwd' ||
+    normalized === 'projectPath' ||
+    normalized === 'absolutePath' ||
+    normalized === 'relPath'
+  )
+}
+
+const resolveCanonicalFieldRole = (
+  path: Array<string | number>,
+  parent: Record<string, unknown> | unknown[],
+) => {
+  if (path[0] !== 'events' && path[0] !== 'agents') {
+    return undefined
+  }
+
+  if (isRecord(parent) && typeof parent.role === 'string') {
+    return parent.role
+  }
+
+  return undefined
+}
+
+const buildCanonicalPrivacyPlaceholder = (field: StringFieldContext) => {
+  const key = String(field.key)
+
+  if (field.path[0] === 'metadata' && key === 'title') {
+    return 'Private session'
+  }
+
+  if (field.path[0] === 'metadata') {
+    return 'Content removed for privacy during sync.'
+  }
+
+  if (field.path[0] === 'events' && isRecord(field.parent)) {
+    const eventType = typeof field.parent.type === 'string' ? field.parent.type : undefined
+
+    if (eventType === 'user_message') {
+      return 'This user message was removed for privacy during sync.'
+    }
+
+    if (eventType === 'assistant_message') {
+      return 'This assistant message was removed for privacy during sync.'
+    }
+
+    if (eventType === 'system_notice') {
+      return 'This system notice was removed for privacy during sync.'
+    }
+
+    if (eventType === 'hook') {
+      return 'This hook detail was removed for privacy during sync.'
+    }
+  }
+
+  if (field.path[0] === 'artifacts' && isRecord(field.parent)) {
+    const artifactType =
+      typeof field.parent.artifactType === 'string'
+        ? field.parent.artifactType
+        : undefined
+
+    switch (artifactType) {
+      case 'plan':
+        return 'This plan was removed for privacy during sync.'
+      case 'question_interaction':
+        return 'This question content was removed for privacy during sync.'
+      case 'tool_output':
+        return 'This tool output was removed for privacy during sync.'
+      case 'brief_delivery':
+        return 'This delivery note was removed for privacy during sync.'
+      default:
+        return 'This artifact content was removed for privacy during sync.'
+    }
+  }
+
+  if (field.path[0] === 'agents') {
+    return 'This subagent content was removed for privacy during sync.'
+  }
+
+  if (key === 'command') {
+    return 'Command removed for privacy during sync.'
+  }
+
+  if (key === 'uri') {
+    return 'Resource URI removed for privacy during sync.'
+  }
+
+  return 'Content removed for privacy during sync.'
+}
+
+const setFieldValue = (
+  parent: Record<string, unknown> | unknown[],
+  key: string | number,
+  value: string,
+) => {
+  if (Array.isArray(parent) && typeof key === 'number') {
+    parent[key] = value
+    return
+  }
+
+  ;(parent as Record<string, unknown>)[String(key)] = value
+}
+
+const buildSourceFilePrivacyPlaceholder = (
+  relPath: string,
+  kind: SourceBundle['files'][number]['kind'],
+) => [
+  'This source file was removed for privacy during sync.',
+  `Kind: ${kind}`,
+  `Original path: ${redactText(relPath).value}`,
+].join('\n')
+
+const sha256Hex = (body: Uint8Array) =>
+  createHash('sha256').update(body).digest('hex')
+
 const toJsonText = (value: unknown) => JSON.stringify(value, null, 2)
 
 const describePrivacyScope = (finding: PrivacyFinding) => {
-  if (finding.segmentKind?.startsWith('source_')) {
+  if (finding.segmentKind?.startsWith('source_') || finding.segmentKind?.startsWith('sanitized_source_')) {
     return 'source bundle'
+  }
+
+  if (finding.segmentKind?.startsWith('canonical_')) {
+    return 'canonical upload'
   }
 
   if (finding.segmentKind?.startsWith('render_')) {
@@ -505,3 +1322,6 @@ const truncatePreview = (value: string, maxLength = 96) => {
 
 const pluralize = (count: number, singular: string) =>
   count === 1 ? singular : `${singular}s`
+
+const asOptionalString = (value: unknown) =>
+  typeof value === 'string' ? value : undefined

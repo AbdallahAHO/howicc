@@ -88,10 +88,11 @@ describe('previewCommand', () => {
 
     expect(output).toContain('HowiCC Preview')
     expect(output).toContain('Findings')
-    expect(output).toContain('Render Preview')
+    expect(output).toContain('Upload-safe Preview')
+    expect(output).toContain('Sanitized')
     expect(output).toContain('Bearer <redacted>')
     expect(output).toContain('/Users/<redacted>/Developer/personal/howicc/apps/cli/src/index.ts')
-    expect(output).toContain('This upload would be blocked by privacy pre-flight')
+    expect(output).toContain('Default sync will upload the sanitized version shown above.')
     expect(output).not.toContain('abcdefghijklmnopqrstuvwxyz123456')
     expect(output).not.toContain('/Users/abdallah/Developer/personal/howicc/apps/cli/src/index.ts')
     expect(stderr).toEqual([])

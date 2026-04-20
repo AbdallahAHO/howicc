@@ -339,7 +339,7 @@ describe.sequential('CLI smoke', () => {
     expect(Object.values(await readSyncedRevisions(harness))).toHaveLength(0)
   })
 
-  it('blocks sync locally before any upload when privacy pre-flight finds secret material', async () => {
+  it('sanitizes sensitive sessions before upload in the default sync mode', async () => {
     const harness = await createCliSmokeHarness()
     const sessionId = '123e4567-e89b-42d3-a456-426614174019'
 
@@ -355,6 +355,34 @@ describe.sequential('CLI smoke', () => {
     })
 
     const result = await runCli(harness, ['sync', '--all', '--yes'])
+
+    expect(result.code).toBe(0)
+    expectNoCliFailure(result)
+    expect(result.stdout).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
+    expect(result.stdout).toContain('Privacy')
+    expect(result.stdout).toContain('sanitized before upload')
+    expect(harness.apiState.createSessionBodies).toHaveLength(1)
+    expect(harness.apiState.uploadBodies).toHaveLength(3)
+    expect(harness.apiState.finalizeBodies).toHaveLength(1)
+    expect(Object.values(await readSyncedRevisions(harness))).toHaveLength(1)
+  })
+
+  it('blocks sensitive sessions before upload in strict privacy mode', async () => {
+    const harness = await createCliSmokeHarness()
+    const sessionId = '123e4567-e89b-42d3-a456-426614174020'
+
+    await seedAuthToken(harness)
+    await writeSessionTranscript(harness, {
+      sessionId,
+      turns: [
+        {
+          user: 'Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456',
+          assistant: 'This session should never reach the upload API in strict mode.',
+        },
+      ],
+    })
+
+    const result = await runCli(harness, ['sync', '--all', '--yes', '--privacy', 'strict'])
 
     expect(result.code).toBe(0)
     expect(result.stdout).toContain('Privacy Pre-flight')

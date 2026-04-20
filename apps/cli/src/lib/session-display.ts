@@ -71,7 +71,20 @@ export const getLocalSessionSyncStatus = (
     return 'never_synced'
   }
 
-  return syncState.currentSyncedRevision ? 'synced' : 'updated_since_sync'
+  if (syncState.currentSyncedRevision) {
+    return 'synced'
+  }
+
+  if (!syncState.currentRevisionKnown) {
+    const sessionUpdatedAt = Date.parse(session.updatedAt)
+    const lastSyncedAt = Date.parse(syncState.latestSyncedRevision.syncedAt)
+
+    if (!Number.isNaN(sessionUpdatedAt) && !Number.isNaN(lastSyncedAt)) {
+      return sessionUpdatedAt <= lastSyncedAt ? 'synced' : 'updated_since_sync'
+    }
+  }
+
+  return 'updated_since_sync'
 }
 
 export const formatLocalSessionSyncLabel = (
@@ -88,7 +101,11 @@ export const formatLocalSessionSyncLabel = (
     return `Updated since last sync (${formatRelativeTime(session.updatedAt)})`
   }
 
-  return `Synced ${formatRelativeTime(syncState!.currentSyncedRevision!.syncedAt)}`
+  if (syncState?.currentSyncedRevision) {
+    return `Synced ${formatRelativeTime(syncState.currentSyncedRevision.syncedAt)}`
+  }
+
+  return `Looks unchanged since last sync (${formatRelativeTime(syncState!.latestSyncedRevision!.syncedAt)})`
 }
 
 export const getSessionTitle = (input: {

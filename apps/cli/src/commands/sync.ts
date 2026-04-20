@@ -6,8 +6,6 @@ import type { DiscoveredSession } from '@howicc/parser-core'
 import { CliConfigStore } from '../config/store'
 import { createCliApiClient } from '../lib/api'
 import {
-  buildDiscoveredSessionKey,
-  buildSessionSourceRevisionHashIndex,
   discoverClaudeSessions,
   getPricingCatalog,
 } from '../lib/claude'
@@ -36,11 +34,16 @@ import {
   shouldSkipSessionSync,
 } from '../lib/sync'
 import {
+  formatPrivacySanitizationReport,
   formatPrivacyFinding,
   formatPrivacySummary,
   getTopPrivacyFindings,
 } from '../lib/privacy'
-import type { CliPrivacyPreflight } from '../lib/privacy'
+import type {
+  CliPreparedSessionPrivacy,
+  CliPrivacyPreflight,
+  CliSyncPrivacyMode,
+} from '../lib/privacy'
 import type { CliSessionRevisionSyncState } from '../types'
 
 const uploadAssetRetryDelaysMs = [250, 750] as const
@@ -58,6 +61,7 @@ type SyncCommandOptions = {
   all?: boolean
   force?: boolean
   limit?: number
+  privacy?: CliSyncPrivacyMode
   recent?: number
   select?: boolean
   yes?: boolean
@@ -68,6 +72,11 @@ type SyncRunOutcome = {
   status: 'skipped' | 'failed'
   reason: string
   detail?: string
+}
+
+type SyncSanitizationOutcome = {
+  sessionId: string
+  detail: string
 }
 
 type PrivacyReviewMode = 'ask' | 'approve_all' | 'skip_all'
@@ -104,13 +113,8 @@ export const syncCommand = async (
     return
   }
 
-  const revisionHashSpinner = ora('Computing local revision hashes...').start()
-  const revisionHashIndex = await buildSessionSourceRevisionHashIndex(discoveredSessions)
-  revisionHashSpinner.stop()
-
   const sessions = await resolveSessionsToSync({
     discoveredSessions,
-    revisionHashIndex,
     sessionId,
     options,
     store,
@@ -130,7 +134,7 @@ export const syncCommand = async (
   printHint(`Selected ${sessions.length} session${sessions.length === 1 ? '' : 's'}.`)
 
   for (const session of sessions.slice(0, 5)) {
-    const syncState = getSessionSyncState(store, session, revisionHashIndex)
+    const syncState = getSessionSyncState(store, session)
     console.log(
       `  ${chalk.cyan('•')} ${getSessionTitle({ session })} ${chalk.dim(`(${formatLocalSessionSyncLabel(session, syncState)})`)}`,
     )
@@ -157,10 +161,12 @@ export const syncCommand = async (
   }
 
   const pricingCatalog = await getPricingCatalog()
+  const privacyMode = options.privacy ?? 'sanitize'
   let syncedCount = 0
   let skippedCount = 0
   let failedCount = 0
   const outcomes: SyncRunOutcome[] = []
+  const sanitizationOutcomes: SyncSanitizationOutcome[] = []
   let privacyReviewMode: PrivacyReviewMode = options.yes ? 'approve_all' : 'ask'
 
   for (const [index, session] of sessions.entries()) {
@@ -169,10 +175,15 @@ export const syncCommand = async (
       sessionId: session.sessionId,
     })
     const title = truncateText(getSessionTitle({ session }), 72)
-    const spinner = ora(`[${index + 1}/${sessions.length}] ${title}`).start()
+    const spinner = ora(
+      buildSessionProgressLabel(index, sessions.length, title, 'preparing local session'),
+    ).start()
 
     try {
-      const preparedSession = await prepareSessionSync(session, { pricingCatalog })
+      const preparedSession = await prepareSessionSync(session, {
+        pricingCatalog,
+        privacyMode,
+      })
       const currentSyncedRevision = store.getSyncedRevision({
         provider: session.provider,
         sessionId: session.sessionId,
@@ -196,41 +207,56 @@ export const syncCommand = async (
         continue
       }
 
-      if (preparedSession.privacy.status !== 'clear') {
+      if (preparedSession.privacy.action === 'block') {
         spinner.stop()
         printPrivacyPreflight(session.sessionId, preparedSession.privacy)
+        failedCount += 1
+        printError(
+          preparedSession.privacy.mode === 'sanitize'
+            ? 'Blocked this upload because the sanitized payload still contains sensitive content.'
+            : 'Blocked this upload because privacy pre-flight found sensitive content.',
+        )
+        printHint(
+          `Run \`howicc preview ${session.sessionId}\` to inspect the upload-safe preview locally.`,
+        )
+        spinner.fail(`${title} blocked by privacy pre-flight`)
+        outcomes.push({
+          sessionId: session.sessionId,
+          status: 'failed',
+          reason:
+            preparedSession.privacy.mode === 'sanitize'
+              ? 'sanitized upload still blocked'
+              : 'blocked by privacy pre-flight',
+        })
+        continue
+      }
 
-        if (preparedSession.privacy.status === 'block') {
-          failedCount += 1
-          printError('Blocked this upload because privacy pre-flight found sensitive content.')
-          printHint(`Run \`howicc preview ${session.sessionId}\` to inspect a redacted render preview locally.`)
-          spinner.fail(`${title} blocked by privacy pre-flight`)
+      if (preparedSession.privacy.action === 'review' && !options.yes) {
+        spinner.stop()
+        printPrivacyPreflight(session.sessionId, preparedSession.privacy)
+        const reviewDecision = await resolvePrivacyReviewDecision(privacyReviewMode)
+        privacyReviewMode = reviewDecision.mode
+
+        if (!reviewDecision.shouldUpload) {
+          skippedCount += 1
+          spinner.info(`${title} skipped after privacy review`)
           outcomes.push({
             sessionId: session.sessionId,
-            status: 'failed',
-            reason: 'blocked by privacy pre-flight',
+            status: 'skipped',
+            reason: 'skipped after privacy review',
           })
           continue
         }
 
-        if (preparedSession.privacy.status === 'review' && !options.yes) {
-          const reviewDecision = await resolvePrivacyReviewDecision(privacyReviewMode)
-          privacyReviewMode = reviewDecision.mode
-
-          if (!reviewDecision.shouldUpload) {
-            skippedCount += 1
-            spinner.info(`${title} skipped after privacy review`)
-            outcomes.push({
-              sessionId: session.sessionId,
-              status: 'skipped',
-              reason: 'skipped after privacy review',
-            })
-            continue
-          }
-        }
-
         spinner.start()
       }
+
+      spinner.text = buildSessionProgressLabel(
+        index,
+        sessions.length,
+        title,
+        'creating upload session',
+      )
 
       const createSessionResult = await api.uploads.createSession({
         sourceRevisionHash: preparedSession.sourceRevisionHash,
@@ -256,7 +282,13 @@ export const syncCommand = async (
         createSessionResult.assetTargets.map(target => [target.kind, target.key]),
       )
 
-      for (const asset of preparedSession.assets) {
+      for (const [assetIndex, asset] of preparedSession.assets.entries()) {
+        spinner.text = buildSessionProgressLabel(
+          index,
+          sessions.length,
+          title,
+          `uploading ${formatAssetKind(asset.kind)} (${assetIndex + 1}/${preparedSession.assets.length})`,
+        )
         await uploadAssetWithRetry({
           upload: () => api.uploads.uploadAsset({
             uploadId: createSessionResult.uploadId,
@@ -268,6 +300,13 @@ export const syncCommand = async (
           uploadId: createSessionResult.uploadId,
         })
       }
+
+      spinner.text = buildSessionProgressLabel(
+        index,
+        sessions.length,
+        title,
+        'finalizing',
+      )
 
       const finalizeResult = await api.uploads.finalize({
         uploadId: createSessionResult.uploadId,
@@ -313,8 +352,16 @@ export const syncCommand = async (
       })
 
       syncedCount += 1
+
+      if (preparedSession.privacy.action === 'sanitized') {
+        sanitizationOutcomes.push({
+          sessionId: session.sessionId,
+          detail: formatPrivacySanitizationReport(preparedSession.privacy.report),
+        })
+      }
+
       spinner.succeed(
-        `${title} synced to ${finalizeResult.conversationId} (${finalizeResult.revisionId})`,
+        `${title} synced to ${finalizeResult.conversationId} (${finalizeResult.revisionId})${preparedSession.privacy.action === 'sanitized' ? ' · sanitized' : ''}`,
       )
     } catch (error) {
       failedCount += 1
@@ -336,6 +383,7 @@ export const syncCommand = async (
     `Finished sync run. ${syncedCount} synced, ${skippedCount} skipped, ${failedCount} failed.`,
   )
 
+  printSanitizationSummary(sanitizationOutcomes)
   printSyncRunSummary(outcomes)
 
   if (failedCount === 0 && skippedCount > 0 && !options.force) {
@@ -481,7 +529,6 @@ const sleep = (ms: number) =>
 
 const resolveSessionsToSync = async (input: {
   discoveredSessions: DiscoveredSession[]
-  revisionHashIndex: Map<string, string | undefined>
   sessionId?: string
   options: SyncCommandOptions
   store: CliConfigStore
@@ -513,7 +560,6 @@ const resolveSessionsToSync = async (input: {
     return selectSessionsInteractively(
       input.discoveredSessions,
       input.store,
-      input.revisionHashIndex,
       recentLimit,
     )
   }
@@ -521,11 +567,7 @@ const resolveSessionsToSync = async (input: {
   if (input.options.yes) {
     return selectDefaultSessionsForSync({
       sessions: input.discoveredSessions,
-      getSyncState: session => getSessionSyncState(
-        input.store,
-        session,
-        input.revisionHashIndex,
-      ),
+      getSyncState: session => getSessionSyncState(input.store, session),
       limit: recentLimit,
     })
   }
@@ -533,7 +575,6 @@ const resolveSessionsToSync = async (input: {
   return chooseInteractiveSyncPlan(
     input.discoveredSessions,
     input.store,
-    input.revisionHashIndex,
     recentLimit,
   )
 }
@@ -541,12 +582,11 @@ const resolveSessionsToSync = async (input: {
 const chooseInteractiveSyncPlan = async (
   sessions: DiscoveredSession[],
   store: CliConfigStore,
-  revisionHashIndex: Map<string, string | undefined>,
   recentLimit: number,
 ) => {
   const defaultSessions = selectDefaultSessionsForSync({
     sessions,
-    getSyncState: session => getSessionSyncState(store, session, revisionHashIndex),
+    getSyncState: session => getSessionSyncState(store, session),
     limit: recentLimit,
   })
 
@@ -576,7 +616,7 @@ const chooseInteractiveSyncPlan = async (
   }
 
   if (choice === 'select') {
-    return selectSessionsInteractively(sessions, store, revisionHashIndex, recentLimit)
+    return selectSessionsInteractively(sessions, store, recentLimit)
   }
 
   return defaultSessions
@@ -585,7 +625,6 @@ const chooseInteractiveSyncPlan = async (
 const selectSessionsInteractively = async (
   sessions: DiscoveredSession[],
   store: CliConfigStore,
-  revisionHashIndex: Map<string, string | undefined>,
   recentLimit: number,
 ) => {
   const maxChoices = Math.max(12, recentLimit * 4)
@@ -607,12 +646,12 @@ const selectSessionsInteractively = async (
       choices: selectionPool.map(session => ({
         name: formatSyncChoice(
           session,
-          getSessionSyncState(store, session, revisionHashIndex),
+          getSessionSyncState(store, session),
         ),
         value: session.sessionId,
         checked: getLocalSessionSyncStatus(
           session,
-          getSessionSyncState(store, session, revisionHashIndex),
+          getSessionSyncState(store, session),
         ) !== 'synced',
       })),
       pageSize: Math.min(12, selectionPool.length),
@@ -649,12 +688,10 @@ const formatSyncChoice = (
 const getSessionSyncState = (
   store: CliConfigStore,
   session: DiscoveredSession,
-  revisionHashIndex: Map<string, string | undefined>,
 ) =>
   store.getSessionRevisionSyncState({
     provider: session.provider,
     sessionId: session.sessionId,
-    sourceRevisionHash: revisionHashIndex.get(buildDiscoveredSessionKey(session)),
   })
 
 const getRecentLimit = (options: SyncCommandOptions) => {
@@ -669,16 +706,49 @@ const getRecentLimit = (options: SyncCommandOptions) => {
   return 5
 }
 
+const buildSessionProgressLabel = (
+  index: number,
+  total: number,
+  title: string,
+  stage: string,
+) => `[${index + 1}/${total}] ${title} · ${stage}`
+
+const formatAssetKind = (kind: 'source_bundle' | 'canonical_json' | 'render_json') => {
+  switch (kind) {
+    case 'source_bundle':
+      return 'source bundle'
+    case 'canonical_json':
+      return 'canonical data'
+    case 'render_json':
+      return 'render data'
+  }
+}
+
+const hasPrivacySanitizationChanges = (privacy: CliPreparedSessionPrivacy) =>
+  privacy.report.redactedTextValueCount > 0 ||
+  privacy.report.removedTextValueCount > 0 ||
+  privacy.report.redactedSourceFileCount > 0 ||
+  privacy.report.removedSourceFileCount > 0
+
 const printPrivacyPreflight = (
   sessionId: string,
-  privacy: CliPrivacyPreflight,
+  privacy: CliPreparedSessionPrivacy,
 ) => {
   printSection(`Privacy Pre-flight · ${formatShortSessionId(sessionId)}`)
-  printHint(`Overall: ${formatPrivacySummary(privacy.inspection.summary)}`)
-  printHint(`Source bundle: ${formatPrivacySummary(privacy.sourceInspection.summary)}`)
-  printHint(`Render preview: ${formatPrivacySummary(privacy.renderInspection.summary)}`)
+  printHint(`Overall: ${formatPrivacySummary(privacy.preflight.inspection.summary)}`)
+  printHint(`Source bundle: ${formatPrivacySummary(privacy.preflight.sourceInspection.summary)}`)
+  printHint(`Canonical upload: ${formatPrivacySummary(privacy.preflight.canonicalInspection.summary)}`)
+  printHint(`Render preview: ${formatPrivacySummary(privacy.preflight.renderInspection.summary)}`)
 
-  for (const finding of getTopPrivacyFindings(privacy.inspection, 3)) {
+  if (privacy.mode === 'sanitize') {
+    printHint(`Upload payload: ${formatPrivacySummary(privacy.uploadInspection.inspection.summary)}`)
+
+    if (hasPrivacySanitizationChanges(privacy)) {
+      printHint(`Sanitized: ${formatPrivacySanitizationReport(privacy.report)}`)
+    }
+  }
+
+  for (const finding of getTopPrivacyFindings(privacy.preflight.inspection, 3)) {
     printWarning(formatPrivacyFinding(finding))
   }
 
@@ -748,6 +818,34 @@ const resolvePrivacyReviewDecision = async (
     mode: 'ask',
     shouldUpload: decision === 'approve_once',
   }
+}
+
+const printSanitizationSummary = (outcomes: SyncSanitizationOutcome[]) => {
+  if (outcomes.length === 0) {
+    return
+  }
+
+  const groupedOutcomes = new Map<string, SyncSanitizationOutcome[]>()
+
+  for (const outcome of outcomes) {
+    const group = groupedOutcomes.get(outcome.detail)
+
+    if (group) {
+      group.push(outcome)
+      continue
+    }
+
+    groupedOutcomes.set(outcome.detail, [outcome])
+  }
+
+  printSection('Privacy')
+
+  for (const [detail, group] of groupedOutcomes) {
+    const sessionIds = group.map(outcome => formatShortSessionId(outcome.sessionId)).join(', ')
+    console.log(`  ${chalk.yellow('•')} sanitized before upload: ${detail} — ${sessionIds}`)
+  }
+
+  console.log()
 }
 
 const printSyncRunSummary = (outcomes: SyncRunOutcome[]) => {

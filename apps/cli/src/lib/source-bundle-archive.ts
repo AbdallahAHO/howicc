@@ -9,27 +9,17 @@ type TarEntry = {
   mtime?: Date
 }
 
+export type SourceBundleArchiveEntry = {
+  path: string
+  body: Uint8Array
+  mtime?: Date
+}
+
 export const buildSourceBundleArchive = async (
   bundle: SourceBundle,
 ): Promise<Uint8Array> => {
-  const archiveEntries: TarEntry[] = [
-    {
-      path: 'manifest.json',
-      body: new TextEncoder().encode(
-        JSON.stringify(createSourceBundleArchiveManifest(bundle), null, 2),
-      ),
-      mtime: new Date(bundle.capturedAt),
-    },
-    ...(await Promise.all(
-      bundle.files.map(async file => ({
-        path: file.relPath,
-        body: new Uint8Array(await readFile(file.absolutePath)),
-        mtime: new Date(bundle.capturedAt),
-      })),
-    )),
-  ]
-
-  return gzipBytes(createTarArchive(archiveEntries))
+  const archiveEntries = await createSourceBundleArchiveEntries(bundle)
+  return buildSourceBundleArchiveFromEntries(archiveEntries)
 }
 
 /**
@@ -81,6 +71,38 @@ export const createSourceBundleArchiveManifest = (bundle: SourceBundle) => ({
     warnings: bundle.manifest.warnings,
   },
 })
+
+export const buildSourceBundleArchiveFromEntries = (
+  entries: SourceBundleArchiveEntry[],
+): Uint8Array =>
+  gzipBytes(
+    createTarArchive(
+      entries.map(entry => ({
+        path: entry.path,
+        body: entry.body,
+        mtime: entry.mtime,
+      })),
+    ),
+  )
+
+const createSourceBundleArchiveEntries = async (
+  bundle: SourceBundle,
+): Promise<SourceBundleArchiveEntry[]> => [
+  {
+    path: 'manifest.json',
+    body: new TextEncoder().encode(
+      JSON.stringify(createSourceBundleArchiveManifest(bundle), null, 2),
+    ),
+    mtime: new Date(bundle.capturedAt),
+  },
+  ...(await Promise.all(
+    bundle.files.map(async file => ({
+      path: file.relPath,
+      body: new Uint8Array(await readFile(file.absolutePath)),
+      mtime: new Date(bundle.capturedAt),
+    })),
+  )),
+]
 
 const createTarArchive = (entries: TarEntry[]): Uint8Array => {
   const chunks: Uint8Array[] = []

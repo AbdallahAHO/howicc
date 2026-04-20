@@ -161,6 +161,7 @@ export class CliConfigStore {
     return {
       currentSyncedRevision,
       latestSyncedRevision,
+      currentRevisionKnown: typeof input.sourceRevisionHash === 'string',
     }
   }
 
