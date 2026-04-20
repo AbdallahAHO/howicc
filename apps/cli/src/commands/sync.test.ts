@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { DiscoveredSession } from '@howicc/parser-core'
+import type { CliPreparedSessionPrivacy, CliPrivacyPreflight } from '../lib/privacy'
 
 const storeContext = vi.hoisted(() => ({
   cwd: '',
@@ -126,7 +127,7 @@ const createPreparedSession = (session: DiscoveredSession, sourceRevisionHash: s
     sourceSessionId: session.sessionId,
     sourceProjectKey: session.projectKey,
     title: `${session.sessionId} title`,
-    privacy: createPrivacyPreflight(),
+    privacy: createPreparedPrivacy(),
     assets: [
       createAsset('source_bundle'),
       createAsset('canonical_json'),
@@ -135,23 +136,73 @@ const createPreparedSession = (session: DiscoveredSession, sourceRevisionHash: s
   }
 }
 
-const createPrivacyPreflight = (input?: {
+const createPreparedPrivacy = (input?: {
   blocks?: number
   reviews?: number
   warnings?: number
-}) => {
+  action?: CliPreparedSessionPrivacy['action']
+  mode?: CliPreparedSessionPrivacy['mode']
+  uploadBlocks?: number
+  uploadReviews?: number
+  uploadWarnings?: number
+  report?: Partial<CliPreparedSessionPrivacy['report']>
+}): CliPreparedSessionPrivacy => {
   const summary = {
     blocks: input?.blocks ?? 0,
     reviews: input?.reviews ?? 0,
     warnings: input?.warnings ?? 0,
   }
 
+  const preflight = createPrivacyPreflight(summary)
+  const uploadInspection = createPrivacyPreflight({
+    blocks:
+      input?.uploadBlocks ??
+      (input?.action === 'sanitized' ? 0 : summary.blocks),
+    reviews:
+      input?.uploadReviews ??
+      (input?.action === 'sanitized' ? 0 : summary.reviews),
+    warnings:
+      input?.uploadWarnings ??
+      (input?.action === 'sanitized' ? 0 : summary.warnings),
+  })
+
+  return {
+    action:
+      input?.action ??
+      (summary.blocks > 0
+        ? 'block'
+        : summary.reviews > 0
+          ? 'review'
+          : 'clear'),
+    mode: input?.mode ?? 'sanitize',
+    preflight,
+    uploadInspection,
+    report: {
+      redactedTextValueCount: input?.report?.redactedTextValueCount ?? 0,
+      removedTextValueCount: input?.report?.removedTextValueCount ?? 0,
+      redactedSourceFileCount: input?.report?.redactedSourceFileCount ?? 0,
+      removedSourceFileCount: input?.report?.removedSourceFileCount ?? 0,
+    },
+  }
+}
+
+const createPrivacyPreflight = (summary: {
+  blocks?: number
+  reviews?: number
+  warnings?: number
+}): CliPrivacyPreflight => {
+  const counts = {
+    blocks: summary.blocks ?? 0,
+    reviews: summary.reviews ?? 0,
+    warnings: summary.warnings ?? 0,
+  }
+
   const status =
-    summary.blocks > 0
+    counts.blocks > 0
       ? 'block'
-      : summary.reviews > 0
+      : counts.reviews > 0
         ? 'review'
-        : summary.warnings > 0
+        : counts.warnings > 0
           ? 'warning'
           : 'clear'
 
@@ -164,23 +215,31 @@ const createPrivacyPreflight = (input?: {
           : [
               {
                 ruleId: 'privacy-fixture',
-                category: summary.blocks > 0 ? 'secret' : 'filesystem',
+                category: counts.blocks > 0 ? 'secret' : 'filesystem',
                 severity: status === 'warning' ? 'warning' : status,
                 start: 0,
                 end: 12,
                 matchedTextLength: 12,
                 replacement: '<redacted>',
-                maskedPreview: summary.blocks > 0 ? 'Bearer <redacted>' : '/Users/<redacted>/project',
-                segmentKind: summary.blocks > 0 ? 'source_transcript' : 'render_message',
+                maskedPreview: counts.blocks > 0 ? 'Bearer <redacted>' : '/Users/<redacted>/project',
+                segmentKind: counts.blocks > 0 ? 'source_transcript' : 'render_message',
               },
             ],
-      summary,
+      summary: counts,
     },
     sourceInspection: {
       findings: [],
       summary: {
-        blocks: summary.blocks,
+        blocks: counts.blocks,
         reviews: 0,
+        warnings: 0,
+      },
+    },
+    canonicalInspection: {
+      findings: [],
+      summary: {
+        blocks: 0,
+        reviews: counts.reviews,
         warnings: 0,
       },
     },
@@ -188,8 +247,8 @@ const createPrivacyPreflight = (input?: {
       findings: [],
       summary: {
         blocks: 0,
-        reviews: summary.reviews,
-        warnings: summary.warnings,
+        reviews: counts.reviews,
+        warnings: counts.warnings,
       },
     },
   }
@@ -299,13 +358,6 @@ describe('syncCommand', () => {
     })
 
     mocks.discoverClaudeSessions.mockResolvedValue(sessions)
-    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
-      new Map([
-        ['claude_code:exact', 'hash-exact'],
-        ['claude_code:changed', 'hash-changed-new'],
-        ['claude_code:fresh', 'hash-fresh'],
-      ]),
-    )
     mocks.prepareSessionSync.mockImplementation(async session => {
       if (session.sessionId === exactSession.sessionId) {
         return createPreparedSession(session, 'hash-exact')
@@ -321,6 +373,7 @@ describe('syncCommand', () => {
     await syncCommand(undefined, { all: true, yes: true })
 
     expect(mocks.whoami).toHaveBeenCalledTimes(1)
+    expect(mocks.buildSessionSourceRevisionHashIndex).not.toHaveBeenCalled()
     expect(mocks.prepareSessionSync).toHaveBeenCalledTimes(3)
     expect(mocks.createSession).toHaveBeenCalledTimes(2)
     expect(
@@ -693,7 +746,7 @@ describe('syncCommand', () => {
     expect(stderr).toEqual([])
   })
 
-  it('blocks a session locally when privacy pre-flight finds blocking content', async () => {
+  it('uploads a sanitized payload by default when privacy pre-flight finds blocking content', async () => {
     const session = createSession('privacy-blocked', '2026-04-15T09:00:00.000Z')
 
     const store = new CliConfigStore()
@@ -707,19 +760,23 @@ describe('syncCommand', () => {
     })
 
     mocks.discoverClaudeSessions.mockResolvedValue([session])
-    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
-      new Map([['claude_code:privacy-blocked', 'hash-privacy-blocked']]),
-    )
     mocks.prepareSessionSync.mockResolvedValue({
       ...createPreparedSession(session, 'hash-privacy-blocked'),
-      privacy: createPrivacyPreflight({ blocks: 1 }),
+      privacy: createPreparedPrivacy({
+        blocks: 1,
+        action: 'sanitized',
+        report: {
+          removedTextValueCount: 2,
+          removedSourceFileCount: 1,
+        },
+      }),
     })
 
     await syncCommand(undefined, { all: true, yes: true })
 
-    expect(mocks.createSession).not.toHaveBeenCalled()
-    expect(mocks.uploadAsset).not.toHaveBeenCalled()
-    expect(mocks.finalize).not.toHaveBeenCalled()
+    expect(mocks.createSession).toHaveBeenCalledTimes(1)
+    expect(mocks.uploadAsset).toHaveBeenCalledTimes(3)
+    expect(mocks.finalize).toHaveBeenCalledTimes(1)
 
     const updatedStore = new CliConfigStore()
 
@@ -729,15 +786,54 @@ describe('syncCommand', () => {
         sessionId: session.sessionId,
         sourceRevisionHash: 'hash-privacy-blocked',
       }),
-    ).toBeUndefined()
+    ).toMatchObject({
+      conversationId: 'conv_hash-privacy-blocked',
+      revisionId: 'rev_hash-privacy-blocked',
+    })
 
+    const output = stdout.join('\n')
+    expect(output).toContain('Finished sync run. 1 synced, 0 skipped, 0 failed.')
+    expect(output).toContain('Privacy')
+    expect(output).toContain('sanitized before upload: 2 removed text fields, 1 replaced source file')
+    expect(output).not.toContain('Privacy Pre-flight')
+    expect(stderr).toEqual([])
+  })
+
+  it('blocks a session locally in strict privacy mode when pre-flight finds blocking content', async () => {
+    const session = createSession('privacy-blocked', '2026-04-15T09:00:00.000Z')
+
+    const store = new CliConfigStore()
+    store.setAuthToken({
+      token: 'hwi_test',
+      user: {
+        id: 'user_123',
+        email: 'abdallah@example.com',
+        name: 'Abdallah',
+      },
+    })
+
+    mocks.discoverClaudeSessions.mockResolvedValue([session])
+    mocks.prepareSessionSync.mockResolvedValue({
+      ...createPreparedSession(session, 'hash-privacy-blocked'),
+      privacy: createPreparedPrivacy({
+        blocks: 1,
+        action: 'block',
+        mode: 'strict',
+      }),
+    })
+
+    await syncCommand(undefined, { all: true, yes: true, privacy: 'strict' })
+
+    expect(mocks.createSession).not.toHaveBeenCalled()
+    expect(mocks.uploadAsset).not.toHaveBeenCalled()
+    expect(mocks.finalize).not.toHaveBeenCalled()
     expect(stdout.join('\n')).toContain('Privacy Pre-flight')
     expect(stderr.join('\n')).toContain(
       'Blocked this upload because privacy pre-flight found sensitive content.',
     )
   })
 
-  it('skips a session when review findings are declined interactively', async () => {
+  it('skips a session when strict review findings are declined interactively', async () => {
     const session = createSession('privacy-review', '2026-04-15T09:00:00.000Z')
 
     const store = new CliConfigStore()
@@ -751,18 +847,19 @@ describe('syncCommand', () => {
     })
 
     mocks.discoverClaudeSessions.mockResolvedValue([session])
-    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
-      new Map([['claude_code:privacy-review', 'hash-privacy-review']]),
-    )
     mocks.prepareSessionSync.mockResolvedValue({
       ...createPreparedSession(session, 'hash-privacy-review'),
-      privacy: createPrivacyPreflight({ reviews: 1 }),
+      privacy: createPreparedPrivacy({
+        reviews: 1,
+        action: 'review',
+        mode: 'strict',
+      }),
     })
     mocks.confirm.mockReset()
     mocks.confirm.mockResolvedValueOnce(true)
     mocks.select.mockResolvedValueOnce('skip_once')
 
-    await syncCommand(undefined, { all: true })
+    await syncCommand(undefined, { all: true, privacy: 'strict' })
 
     expect(mocks.createSession).not.toHaveBeenCalled()
     expect(mocks.uploadAsset).not.toHaveBeenCalled()
@@ -779,7 +876,7 @@ describe('syncCommand', () => {
     expect(stderr).toEqual([])
   })
 
-  it('can approve all remaining review-only sessions after the first prompt', async () => {
+  it('can approve all remaining strict review-only sessions after the first prompt', async () => {
     const firstSession = createSession('review-a', '2026-04-15T09:00:00.000Z')
     const secondSession = createSession('review-b', '2026-04-14T09:00:00.000Z')
 
@@ -794,21 +891,19 @@ describe('syncCommand', () => {
     })
 
     mocks.discoverClaudeSessions.mockResolvedValue([firstSession, secondSession])
-    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
-      new Map([
-        ['claude_code:review-a', 'hash-review-a'],
-        ['claude_code:review-b', 'hash-review-b'],
-      ]),
-    )
     mocks.prepareSessionSync.mockImplementation(async session => ({
       ...createPreparedSession(session, `hash-${session.sessionId}`),
-      privacy: createPrivacyPreflight({ reviews: 1 }),
+      privacy: createPreparedPrivacy({
+        reviews: 1,
+        action: 'review',
+        mode: 'strict',
+      }),
     }))
     mocks.confirm.mockReset()
     mocks.confirm.mockResolvedValueOnce(true)
     mocks.select.mockResolvedValueOnce('approve_all')
 
-    await syncCommand(undefined, { all: true })
+    await syncCommand(undefined, { all: true, privacy: 'strict' })
 
     expect(mocks.select).toHaveBeenCalledTimes(1)
     expect(mocks.createSession).toHaveBeenCalledTimes(2)
@@ -843,18 +938,15 @@ describe('syncCommand', () => {
       blockedSession,
       failingSession,
     ])
-    mocks.buildSessionSourceRevisionHashIndex.mockResolvedValue(
-      new Map([
-        ['claude_code:exact', 'hash-exact'],
-        ['claude_code:blocked', 'hash-blocked'],
-        ['claude_code:failing', 'hash-failing'],
-      ]),
-    )
     mocks.prepareSessionSync.mockImplementation(async session => {
       if (session.sessionId === blockedSession.sessionId) {
         return {
           ...createPreparedSession(session, 'hash-blocked'),
-          privacy: createPrivacyPreflight({ blocks: 1 }),
+          privacy: createPreparedPrivacy({
+            blocks: 1,
+            action: 'block',
+            mode: 'strict',
+          }),
         }
       }
 
@@ -879,7 +971,7 @@ describe('syncCommand', () => {
       }
     })
 
-    await syncCommand(undefined, { all: true, yes: true })
+    await syncCommand(undefined, { all: true, yes: true, privacy: 'strict' })
 
     const output = stdout.join('\n')
     expect(output).toContain('Run Summary')

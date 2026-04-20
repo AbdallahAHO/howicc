@@ -12,6 +12,7 @@ import { cliVersion } from './version'
 
 const program = new Command()
 type ExportFormat = 'bundle' | 'canonical' | 'render'
+type SyncPrivacyMode = 'sanitize' | 'strict'
 
 const parsePositiveIntegerOption = (value: string) => {
   if (!/^\d+$/.test(value)) {
@@ -33,6 +34,14 @@ const parseExportFormatOption = (value: string): ExportFormat => {
   }
 
   throw new InvalidArgumentError('Format must be one of: bundle, canonical, render.')
+}
+
+const parseSyncPrivacyModeOption = (value: string): SyncPrivacyMode => {
+  if (value === 'sanitize' || value === 'strict') {
+    return value
+  }
+
+  throw new InvalidArgumentError('Privacy mode must be one of: sanitize, strict.')
 }
 
 program
@@ -116,13 +125,14 @@ program
   .option('--all', 'Sync every discovered session')
   .option('--select', 'Choose sessions interactively before uploading')
   .option('--force', 'Upload even when the local revision hash is unchanged')
+  .option('--privacy <mode>', 'sanitize | strict', parseSyncPrivacyModeOption, 'sanitize')
   .option('--recent <number>', 'Sync the N most recent discovered sessions', parsePositiveIntegerOption)
   .option('-l, --limit <number>', 'Legacy alias for --recent', parsePositiveIntegerOption)
   .option('-y, --yes', 'Skip the final confirmation prompt')
   .action(syncCommand)
   .addHelpText(
     'after',
-    `\nExamples:\n  $ howicc sync\n  $ howicc sync --select\n  $ howicc sync --recent 10\n  $ howicc sync 01HXYZABCDEF\n  $ howicc sync --all --force\n`,
+    `\nExamples:\n  $ howicc sync\n  $ howicc sync --select\n  $ howicc sync --recent 10\n  $ howicc sync --privacy strict\n  $ howicc sync 01HXYZABCDEF\n  $ howicc sync --all --force\n`,
   )
 
 program.addHelpText(

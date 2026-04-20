@@ -44,6 +44,12 @@ const pricingCatalog = normalizeOpenRouterCatalog(
         pricing: { prompt: '0.000015', completion: '0.000075' },
       },
       {
+        id: 'anthropic/claude-opus-4.7',
+        canonical_slug: 'anthropic/claude-4.7-opus',
+        name: 'Anthropic: Claude Opus 4.7',
+        pricing: { prompt: '0.000015', completion: '0.000075' },
+      },
+      {
         id: 'anthropic/claude-opus-4.5',
         canonical_slug: 'anthropic/claude-4.5-opus-20251124',
         name: 'Anthropic: Claude Opus 4.5',
@@ -224,6 +230,26 @@ describeWithLocalClaude('local Claude Code integration', () => {
     expect(metrics.modelSelectionTimeline?.some(entry => entry.modelLabel.length > 0)).toBe(
       true,
     )
+  })
+
+  it('keeps message and tool counts for real sessions whose latest summaries hang off attachments', async () => {
+    const session = await findSessionContaining('khromata_judgments_117.json')
+
+    if (!session) {
+      return
+    }
+
+    const canonical = await parseRealSession(session)
+
+    expect(canonical.searchText).toContain('khromata_judgments_117.json')
+    expect(
+      canonical.events.some(
+        event => 'text' in event && event.text?.includes('khromata_judgments_117.json'),
+      ),
+    ).toBe(true)
+    expect(canonical.stats.visibleMessageCount).toBeGreaterThan(0)
+    expect(canonical.stats.toolRunCount).toBeGreaterThan(0)
+    expect(canonical.events.some(event => event.type === 'hook')).toBe(true)
   })
 
   it('parses a real session with plan files into plan artifacts', async () => {

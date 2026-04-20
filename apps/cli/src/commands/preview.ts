@@ -2,8 +2,10 @@ import ora from 'ora'
 import { redactText } from '@howicc/privacy'
 import { inspectClaudeSession } from '../lib/claude'
 import {
+  buildPrivacySafeUpload,
   buildRedactedRenderPreview,
   formatPrivacyFinding,
+  formatPrivacySanitizationReport,
   formatPrivacySummary,
   getTopPrivacyFindings,
   inspectSessionPrivacy,
@@ -28,10 +30,17 @@ export const previewCommand = async (sessionId: string) => {
 
   const privacy = await inspectSessionPrivacy({
     bundle: result.bundle,
+    canonical: result.canonical,
     render: result.render,
   })
-  const preview = buildRedactedRenderPreview(result.render)
-  const safeTitle = redactText(result.render.session.title).value
+  const safeUpload = await buildPrivacySafeUpload({
+    bundle: result.bundle,
+    canonical: result.canonical,
+    render: result.render,
+    mode: 'sanitize',
+  })
+  const preview = buildRedactedRenderPreview(safeUpload.render)
+  const safeTitle = redactText(safeUpload.render.session.title).value
 
   spinner.stop()
 
@@ -39,7 +48,16 @@ export const previewCommand = async (sessionId: string) => {
   printKeyValue('Session', safeTitle)
   printKeyValue('Overall', formatPrivacySummary(privacy.inspection.summary))
   printKeyValue('Source', formatPrivacySummary(privacy.sourceInspection.summary))
+  printKeyValue('Canonical', formatPrivacySummary(privacy.canonicalInspection.summary))
   printKeyValue('Render', formatPrivacySummary(privacy.renderInspection.summary))
+  printKeyValue(
+    'Upload',
+    formatPrivacySummary(safeUpload.privacy.uploadInspection.inspection.summary),
+  )
+  printKeyValue(
+    'Sanitized',
+    formatPrivacySanitizationReport(safeUpload.privacy.report),
+  )
   printKeyValue('Updated', formatAbsoluteTime(result.render.session.updatedAt))
   console.log()
 
@@ -55,7 +73,7 @@ export const previewCommand = async (sessionId: string) => {
     console.log()
   }
 
-  printSection('Render Preview')
+  printSection('Upload-safe Preview')
 
   if (preview.lines.length === 0) {
     printInfo('No renderable text blocks were produced for this session yet.')
@@ -73,19 +91,33 @@ export const previewCommand = async (sessionId: string) => {
 
   console.log()
 
+  if (safeUpload.privacy.action === 'block') {
+    printHint(
+      'This session still contains blocking privacy findings after upload-time sanitization and would be rejected in sync.',
+    )
+    return
+  }
+
+  if (safeUpload.privacy.action === 'sanitized') {
+    printHint(
+      'Default sync will upload the sanitized version shown above. `howicc sync --privacy strict` keeps the old block/review behavior.',
+    )
+    return
+  }
+
   if (privacy.status === 'block') {
     printHint(
-      'This upload would be blocked by privacy pre-flight until the sensitive content is removed or redacted.',
+      'Strict privacy mode would block this upload. Default sync sanitizes it before upload instead.',
     )
     return
   }
 
   if (privacy.status === 'review') {
     printHint(
-      'This session contains review-level privacy findings. Sync will ask for confirmation before upload.',
+      'Strict privacy mode would ask before upload. Default sync can upload the sanitized version immediately.',
     )
     return
   }
 
-  printHint('This session is clear to sync from a privacy-preflight perspective.')
+  printHint('This session is clear to sync without upload-time sanitization.')
 }

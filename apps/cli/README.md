@@ -91,7 +91,13 @@ Default behavior is intentionally opinionated:
 - verifies CLI auth before doing work
 - prefers sessions that look new or changed since the last sync
 - asks for confirmation before upload unless `--yes` is passed
+- sanitizes privacy findings before upload by default instead of dropping the whole session
 - skips unchanged revisions unless `--force` is passed
+
+Privacy handling:
+
+- default `--privacy sanitize` redacts or replaces sensitive message/source content and uploads a placeholder-backed version of the session
+- `--privacy strict` keeps the old fail-or-review behavior when you want to inspect every privacy finding manually
 
 Useful examples:
 
@@ -99,6 +105,7 @@ Useful examples:
 howicc sync
 howicc sync --select
 howicc sync --recent 10
+howicc sync --privacy strict
 howicc sync 01HXYZABCDEF
 howicc sync --all --force
 ```

@@ -4,10 +4,12 @@ import { gzipJson } from '@howicc/storage/compression'
 import type { DiscoveredSession } from '@howicc/parser-core'
 import type { CliSessionRevisionSyncState } from '../types'
 import { buildCanonicalFromSession } from './claude'
-import type { CliPrivacyPreflight } from './privacy'
-import { inspectSessionPrivacy } from './privacy'
+import {
+  buildPrivacySafeUpload,
+  type CliPreparedSessionPrivacy,
+  type CliSyncPrivacyMode,
+} from './privacy'
 import { getLocalSessionSyncStatus } from './session-display'
-import { buildSourceBundleArchive } from './source-bundle-archive'
 
 export type PreparedSyncAsset = {
   kind: 'source_bundle' | 'canonical_json' | 'render_json'
@@ -24,7 +26,7 @@ export type PreparedSessionSync = {
   sourceSessionId: string
   sourceProjectKey: string
   title: string
-  privacy: CliPrivacyPreflight
+  privacy: CliPreparedSessionPrivacy
   assets: PreparedSyncAsset[]
 }
 
@@ -76,7 +78,10 @@ export const shouldSkipSessionSync = (input: {
 
 export const prepareSessionSync = async (
   session: DiscoveredSession,
-  options?: { pricingCatalog?: OpenRouterCatalog },
+  options?: {
+    pricingCatalog?: OpenRouterCatalog
+    privacyMode?: CliSyncPrivacyMode
+  },
 ): Promise<PreparedSessionSync> => {
   const inspectedSession = await buildCanonicalFromSession(session, {
     pricingCatalog: options?.pricingCatalog,
@@ -86,9 +91,11 @@ export const prepareSessionSync = async (
     throw new Error(`Session ${session.sessionId} was not found in local Claude storage.`)
   }
 
-  const privacy = await inspectSessionPrivacy({
+  const safeUpload = await buildPrivacySafeUpload({
     bundle: inspectedSession.bundle,
+    canonical: inspectedSession.canonical,
     render: inspectedSession.render,
+    mode: options?.privacyMode ?? 'sanitize',
   })
 
   return {
@@ -97,15 +104,15 @@ export const prepareSessionSync = async (
     sourceApp: inspectedSession.canonical.provider,
     sourceSessionId: inspectedSession.canonical.source.sessionId,
     sourceProjectKey: inspectedSession.canonical.source.projectKey,
-    title: inspectedSession.render.session.title,
-    privacy,
+    title: safeUpload.render.session.title,
+    privacy: safeUpload.privacy,
     assets: [
       createPreparedAsset(
         'source_bundle',
-        await buildSourceBundleArchive(inspectedSession.bundle),
+        safeUpload.sourceBundleArchive,
       ),
-      createPreparedAsset('canonical_json', gzipJson(inspectedSession.canonical)),
-      createPreparedAsset('render_json', gzipJson(inspectedSession.render)),
+      createPreparedAsset('canonical_json', gzipJson(safeUpload.canonical)),
+      createPreparedAsset('render_json', gzipJson(safeUpload.render)),
     ],
   }
 }

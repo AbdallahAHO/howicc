@@ -12,6 +12,7 @@ export type CliSyncedRevision = {
 export type CliSessionRevisionSyncState = {
   currentSyncedRevision?: CliSyncedRevision
   latestSyncedRevision?: CliSyncedRevision
+  currentRevisionKnown?: boolean
 }
 
 export type CliConfig = {
