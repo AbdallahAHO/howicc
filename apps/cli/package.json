@@ -1,6 +1,6 @@
 {
   "name": "howicc",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "HowiCC CLI for inspecting, exporting, and eventually syncing local coding-agent conversations",
   "license": "MIT",
   "main": "./dist/index.cjs",
