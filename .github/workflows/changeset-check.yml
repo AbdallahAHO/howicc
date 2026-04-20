@@ -19,5 +19,8 @@ jobs:
 
       - uses: ./.github/actions/setup
 
+      - name: Verify release-surface generator
+        run: node --test ./scripts/auto-changeset.test.mjs
+
       - name: Verify changeset coverage
         run: pnpm exec changeset status --since=origin/${{ github.base_ref }}

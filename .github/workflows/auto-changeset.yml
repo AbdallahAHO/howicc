@@ -35,6 +35,13 @@ jobs:
           # https://docs.github.com/actions/security-guides/automatic-token-authentication
           token: ${{ secrets.CHANGESET_BOT_TOKEN || secrets.GITHUB_TOKEN }}
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Verify release-surface generator
+        run: node --test ./scripts/auto-changeset.test.mjs
+
       - name: Generate changeset from commits
         env:
           BASE_BRANCH: ${{ github.base_ref }}
