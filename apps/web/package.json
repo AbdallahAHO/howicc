@@ -31,7 +31,7 @@
     "@howicc/ui": "workspace:*",
     "@howicc/ui-web": "workspace:*",
     "@tailwindcss/vite": "^4.1.7",
-    "astro": "^6.1.7",
+    "astro": "^6.1.10",
     "envin": "^1.2.0",
     "lucide-react": "^0.562.0",
     "react": "^19.2.5",
