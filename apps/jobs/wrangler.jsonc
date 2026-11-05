@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-04-09",
   "account_id": "8767944cf017742f142dba58aea8858d",
-  "workers_dev": true,
+  "workers_dev": false,
   "observability": {
     "enabled": true
   },
