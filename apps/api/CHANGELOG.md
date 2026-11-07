@@ -1,5 +1,11 @@
 # @howicc/api
 
+## 0.2.1
+
+### Patch Changes
+
+- f6e24e9: Bump hono to 4.12.25.
+
 ## 0.2.0
 
 ### Minor Changes
