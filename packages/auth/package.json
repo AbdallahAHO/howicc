@@ -22,7 +22,7 @@
     "@better-auth/drizzle-adapter": "^1.6.4",
     "@howicc/contracts": "workspace:*",
     "@howicc/db": "workspace:*",
-    "better-auth": "^1.6.4",
+    "better-auth": "^1.6.13",
     "envin": "^1.2.0",
     "zod": "^4.3.6"
   },
