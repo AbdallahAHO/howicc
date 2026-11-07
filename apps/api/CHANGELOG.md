@@ -1,5 +1,11 @@
 # @howicc/api
 
+## 0.2.2
+
+### Patch Changes
+
+- 4d63543: Bump better-auth to 1.6.13.
+
 ## 0.2.1
 
 ### Patch Changes
